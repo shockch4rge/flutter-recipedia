@@ -3,6 +3,7 @@ import 'package:flutter_recipedia/screens/home_screen.dart';
 import 'package:flutter_recipedia/screens/login_screen.dart';
 import 'package:flutter_recipedia/screens/reset_password_screen.dart';
 import 'package:flutter_recipedia/screens/signup_screen.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,30 @@ class App extends StatelessWidget {
 
   static const primaryColor = Color(0xFF795DFE);
   static const primaryAccent = Color(0xFF4B23EA);
+  static final heartOutlinedIcon = SvgPicture.asset(
+    "assets/heart_outlined.svg",
+    width: 20,
+    height: 20,
+    color: App.primaryAccent,
+  );
+  static final heartFilledIcon = SvgPicture.asset(
+    "assets/heart_filled.svg",
+    width: 20,
+    height: 20,
+    color: App.primaryAccent,
+  );
+  static final chatBubbleIcon = SvgPicture.asset(
+    "assets/chat_bubble.svg",
+    width: 20,
+    height: 20,
+    color: App.primaryAccent,
+  );
+  static final shareIcon = SvgPicture.asset(
+    "assets/share.svg",
+    width: 20,
+    height: 20,
+    color: App.primaryAccent,
+  );
 
   // a list of screens for the bottom nav bar to access
   static const screens = [HomeScreen()];
@@ -34,8 +59,6 @@ class App extends StatelessWidget {
           theme: ThemeData(
             fontFamily: "WorkSans",
             textTheme: const TextTheme(
-              bodyText1: TextStyle(fontSize: 16, color: Colors.black),
-              subtitle2: TextStyle(fontSize: 14, color: App.primaryColor),
               headline1: TextStyle(
                   color: App.primaryAccent,
                   letterSpacing: 1.5,
@@ -46,13 +69,17 @@ class App extends StatelessWidget {
                   color: App.primaryAccent,
                   fontWeight: FontWeight.bold),
               headline3: TextStyle(
-                  fontSize: 24,
-                  color: App.primaryColor,
+                  fontSize: 20,
+                  color: App.primaryAccent,
                   fontWeight: FontWeight.w600),
               headline4: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: App.primaryColor,
-                  fontWeight: FontWeight.w500),
+                  fontWeight: FontWeight.w600),
+              subtitle2: TextStyle(fontSize: 14, color: App.primaryColor),
+              bodyText1: TextStyle(fontSize: 16, color: Colors.black),
+              bodyText2: TextStyle(
+                  fontSize: 13, color: Colors.black, wordSpacing: 0.5),
             ),
           ),
           // TODO: Use a ternary to check sign-in status and replace routes accordingly
