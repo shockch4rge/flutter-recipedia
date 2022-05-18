@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "106303308002",
+    "project_id": "flutter-recipedia",
+    "storage_bucket": "flutter-recipedia.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106303308002:android:f093442d29c04d434c1ebb",
+        "android_client_info": {
+          "package_name": "favteo.com.flutter_recipedia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "106303308002-ecoptrmaceggc0vlf39sie5rmihfmaa4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1SXi7j6Z5H1bGB2WQGTvrqjRdhzDjEZA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "106303308002-ecoptrmaceggc0vlf39sie5rmihfmaa4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
