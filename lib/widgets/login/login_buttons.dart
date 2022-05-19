@@ -14,8 +14,11 @@ class SignInButton extends StatelessWidget {
       child: ElevatedButton(
           style: ButtonStyle(
             elevation: MaterialStateProperty.all(0),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(9.0))),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(9.0),
+              ),
+            ),
             backgroundColor: MaterialStateProperty.all(App.primaryAccent),
           ),
           onPressed: () => onPressed(),
@@ -52,12 +55,20 @@ class GoogleSignInButton extends StatelessWidget {
           ),
         ),
         style: ButtonStyle(
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(9.0))),
-            elevation: MaterialStateProperty.all(0),
-            side: MaterialStateProperty.all(
-                const BorderSide(color: App.primaryAccent)),
-            backgroundColor: MaterialStateProperty.all(Colors.white)),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(9.0),
+            ),
+          ),
+          elevation: MaterialStateProperty.all(0),
+          side: MaterialStateProperty.all(
+            const BorderSide(color: App.primaryAccent),
+          ),
+          overlayColor: MaterialStateProperty.all(
+            App.primaryColor.withOpacity(0.1),
+          ),
+          backgroundColor: MaterialStateProperty.all(Colors.white),
+        ),
       ),
     );
   }
