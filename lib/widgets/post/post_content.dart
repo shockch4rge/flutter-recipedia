@@ -1,10 +1,80 @@
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/main.dart';
+import 'package:flutter_recipedia/widgets/post/post_options.dart';
 
 import '../../models/recipe.dart';
+
+class UserHeadline extends StatelessWidget {
+  const UserHeadline({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        TextButton.icon(
+          onPressed: () {},
+          style: TextButton.styleFrom(padding: EdgeInsets.zero),
+          icon: CachedNetworkImage(
+            imageUrl: "flutter-recipedia.appspot.com/lisapfp2.png",
+            imageBuilder: (context, imageProvider) => Container(
+              width: 36,
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            placeholder: (context, url) => Container(
+              width: 20,
+              height: 20,
+              margin: const EdgeInsets.only(right: 15),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                backgroundColor: Colors.grey.shade200,
+                color: Colors.grey.shade300,
+              ),
+            ),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+          ),
+          label: Text("lisahannigan",
+              style: Theme.of(context).textTheme.headline4),
+        )
+      ],
+    );
+  }
+}
+
+class UserHeadlineMock extends StatelessWidget {
+  const UserHeadlineMock({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      onPressed: () {},
+      style: TextButton.styleFrom(
+          padding: EdgeInsets.zero, splashFactory: NoSplash.splashFactory),
+      icon: Container(
+        width: 36,
+        margin: const EdgeInsets.only(right: 8),
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: AssetImage("assets/images/post_placeholder.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+      label: Text("lisahannigan", style: Theme.of(context).textTheme.headline4),
+    );
+  }
+}
 
 class PostHeader extends StatelessWidget {
   const PostHeader({Key? key}) : super(key: key);
@@ -12,41 +82,31 @@ class PostHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: Size.infinite.width,
       height: 60,
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                margin: const EdgeInsets.only(right: 15),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage("assets/images/post_placeholder.jpg"),
-                  ),
-                ),
-              ),
-              Text(
-                "lisahannigan",
-                style: Theme.of(context).textTheme.headline4,
-              ),
-            ],
-          ),
-          Material(
-            child: InkWell(
-              onTap: () {},
-              borderRadius: BorderRadius.circular(99),
-              child:
-                  Ink(color: Colors.white, child: const Icon(Icons.more_horiz)),
-            ),
-          )
+        children: const [
+          UserHeadlineMock(),
+          PostOptions(),
         ],
+      ),
+    );
+  }
+}
+
+class PostImageMock extends StatelessWidget {
+  const PostImageMock({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 400,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/images/post_placeholder.jpg"),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -57,13 +117,24 @@ class PostImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: Size.infinite.width,
-      height: 400,
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/images/post_placeholder.jpg"),
-          fit: BoxFit.cover,
+    return CachedNetworkImage(
+      imageUrl: "flutter-recipedia.appspot.com/post_placeholder.jpg",
+      imageBuilder: (context, imageProvider) => Container(
+        height: 400,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: imageProvider,
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+      placeholder: (context, url) => SizedBox(
+        height: 400,
+        child: Center(
+          child: CircularProgressIndicator(
+            backgroundColor: Colors.grey.shade200,
+            color: Colors.grey.shade300,
+          ),
         ),
       ),
     );
@@ -80,7 +151,7 @@ class PostContent extends StatelessWidget {
     return Column(
       children: [
         const PostHeader(),
-        const PostImage(),
+        const PostImageMock(),
         Container(
           padding: const EdgeInsets.only(left: 22, right: 22, bottom: 30),
           child: Column(
@@ -148,13 +219,13 @@ class PostContent extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed("/view-recipe"),
                         style: ButtonStyle(
                           padding: MaterialStateProperty.all(EdgeInsets.zero),
                           shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8))),
-                          elevation: MaterialStateProperty.all(0),
                         ),
                         child: Ink(
                           decoration: BoxDecoration(
