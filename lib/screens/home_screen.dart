@@ -26,6 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const Text("recipedia", style: TextStyle(color: App.primaryColor)),
       ),
       body: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        cacheExtent: 500,
         itemCount: 3,
         itemBuilder: (BuildContext context, int index) {
           return const PostContent(
