@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/screens/home_screen.dart';
-import 'package:flutter_recipedia/screens/login_screen.dart';
-import 'package:flutter_recipedia/screens/reset_password_screen.dart';
-import 'package:flutter_recipedia/screens/signup_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/reset_password_screen.dart';
+import 'screens/signup_screen.dart';
+import 'screens/view_recipe_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +57,7 @@ class App extends StatelessWidget {
         }
       },
       child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'recipedia',
           theme: ThemeData(
             fontFamily: "WorkSans",
@@ -89,6 +92,7 @@ class App extends StatelessWidget {
             "/signup": (context) => const SignUpScreen(),
             "/reset-password": (context) => const ResetPasswordScreen(),
             "/home": (context) => const HomeScreen(),
+            "/view-recipe": (context) => const ViewRecipeScreen(),
           }),
     );
   }
