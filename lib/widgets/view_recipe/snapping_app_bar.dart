@@ -1,87 +1,33 @@
 import 'package:flutter/material.dart';
 
-class SnappingAppBar extends StatefulWidget {
-  const SnappingAppBar({Key? key}) : super(key: key);
-
-  @override
-  _SnappingAppBarState createState() => _SnappingAppBarState();
-}
-
-class _SnappingAppBarState extends State<SnappingAppBar> {
-  final _controller = ScrollController();
-
-  double get minHeight => kToolbarHeight + MediaQuery.of(context).padding.top;
-  double get maxHeight => 200 + MediaQuery.of(context).padding.top;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: NotificationListener<ScrollEndNotification>(
-        onNotification: (_) {
-          _snapAppbar();
-          return false;
-        },
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          controller: _controller,
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              stretch: true,
-              flexibleSpace: Header(
-                maxHeight: maxHeight,
-                minHeight: minHeight,
-              ),
-              expandedHeight: maxHeight - MediaQuery.of(context).padding.top,
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.all(8),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return _buildCard(index);
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Card _buildCard(int index) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.only(left: 12, right: 12, top: 12),
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
-        child: Text("Item $index"),
-      ),
-    );
-  }
-
-  void _snapAppbar() {
-    final scrollDistance = maxHeight - minHeight;
-
-    if (_controller.offset > 0 && _controller.offset < scrollDistance) {
-      final double snapOffset =
-          _controller.offset / scrollDistance > 0.5 ? scrollDistance : 0;
-
-      Future.microtask(
-        () => _controller.animateTo(snapOffset,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOutCubicEmphasized),
-      );
-    }
-  }
-}
-
-class Header extends StatelessWidget {
+class SnappingAppBar extends StatelessWidget {
   final double maxHeight;
   final double minHeight;
 
-  const Header({Key? key, required this.maxHeight, required this.minHeight})
+  const SnappingAppBar(
+      {Key? key, required this.maxHeight, required this.minHeight})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      pinned: true,
+      stretch: true,
+      flexibleSpace: SnappingAppBarSpacer(
+        maxHeight: maxHeight,
+        minHeight: minHeight,
+      ),
+      expandedHeight: maxHeight - MediaQuery.of(context).padding.top,
+    );
+  }
+}
+
+class SnappingAppBarSpacer extends StatelessWidget {
+  final double maxHeight;
+  final double minHeight;
+
+  const SnappingAppBarSpacer(
+      {Key? key, required this.maxHeight, required this.minHeight})
       : super(key: key);
 
   @override
