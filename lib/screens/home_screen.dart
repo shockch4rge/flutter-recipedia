@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/utils/mock_data.dart';
 
 import '../main.dart';
-import '../models/recipe.dart';
 import '../widgets/common/bottom_navbar.dart';
 import '../widgets/post/post_content.dart';
 
@@ -30,10 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
         cacheExtent: 500,
         itemCount: 3,
         itemBuilder: (BuildContext context, int index) {
-          return const PostContent(
-            recipe: Recipe(
-                title: "Grilled Cheese Sandwiches",
-                description: "American goodness!"),
+          return PostContent(
+            recipe: getMockRecipe(),
           );
         },
       ),
