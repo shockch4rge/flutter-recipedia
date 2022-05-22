@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/models/recipe.dart';
 
 class SnappingAppBar extends StatelessWidget {
   final double maxHeight;
   final double minHeight;
+  final Recipe recipe;
 
   const SnappingAppBar(
-      {Key? key, required this.maxHeight, required this.minHeight})
+      {Key? key,
+      required this.recipe,
+      required this.maxHeight,
+      required this.minHeight})
       : super(key: key);
 
   @override
@@ -14,6 +19,7 @@ class SnappingAppBar extends StatelessWidget {
       pinned: true,
       stretch: true,
       flexibleSpace: SnappingAppBarSpacer(
+        recipe: recipe,
         maxHeight: maxHeight,
         minHeight: minHeight,
       ),
@@ -25,9 +31,13 @@ class SnappingAppBar extends StatelessWidget {
 class SnappingAppBarSpacer extends StatelessWidget {
   final double maxHeight;
   final double minHeight;
+  final Recipe recipe;
 
   const SnappingAppBarSpacer(
-      {Key? key, required this.maxHeight, required this.minHeight})
+      {Key? key,
+      required this.recipe,
+      required this.maxHeight,
+      required this.minHeight})
       : super(key: key);
 
   @override
@@ -66,7 +76,7 @@ class SnappingAppBarSpacer extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8),
         margin: const EdgeInsets.only(bottom: 12, left: 12),
         child: Text(
-          "Neapolitan Pizza",
+          recipe.title,
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
           style: TextStyle(
@@ -102,7 +112,7 @@ class SnappingAppBarSpacer extends StatelessWidget {
 
   Image _buildImage() {
     return Image.asset(
-      "assets/images/post_placeholder.jpg",
+      recipe.imageUrl,
       fit: BoxFit.cover,
     );
   }
