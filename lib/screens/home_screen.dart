@@ -6,6 +6,7 @@ import '../widgets/common/bottom_navbar.dart';
 import '../widgets/post/post_content.dart';
 
 class HomeScreen extends StatefulWidget {
+  static const String routeName = "/home";
   const HomeScreen({Key? key}) : super(key: key);
 
   @override

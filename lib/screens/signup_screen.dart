@@ -3,6 +3,8 @@ import 'package:flutter_recipedia/main.dart';
 import 'package:flutter_recipedia/widgets/signup/signup_form.dart';
 
 class SignUpScreen extends StatefulWidget {
+  static const String routeName = "/signup";
+
   const SignUpScreen({Key? key}) : super(key: key);
 
   @override
