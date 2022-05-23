@@ -4,6 +4,8 @@ import 'package:flutter_recipedia/widgets/forgot_password/reset_password_form.da
 import '../main.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
+  static const String routeName = "/reset-password";
+
   const ResetPasswordScreen({Key? key}) : super(key: key);
 
   @override
