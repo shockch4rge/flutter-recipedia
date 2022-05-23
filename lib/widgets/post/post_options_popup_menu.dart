@@ -5,8 +5,13 @@ import 'package:flutter_recipedia/main.dart';
 // This is the type used by the popup menu below.
 enum PostOption { save, share }
 
-class PostOptions extends StatelessWidget {
-  const PostOptions({Key? key}) : super(key: key);
+class PostOptionsPopupMenu extends StatelessWidget {
+  final void Function() onSaveTapped;
+  final void Function() onShareTapped;
+
+  const PostOptionsPopupMenu(
+      {Key? key, required this.onSaveTapped, required this.onShareTapped})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +29,7 @@ class PostOptions extends StatelessWidget {
     return [
       PopupMenuItem(
         value: PostOption.share,
+        onTap: onShareTapped,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: const [
@@ -37,6 +43,7 @@ class PostOptions extends StatelessWidget {
       ),
       PopupMenuItem(
         value: PostOption.share,
+        onTap: onSaveTapped,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
