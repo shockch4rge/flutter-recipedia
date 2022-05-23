@@ -100,7 +100,7 @@ class SnappingAppBarSpacer extends StatelessWidget {
             Colors.transparent,
             ColorTween(
               begin: Colors.black87,
-              end: Colors.black38,
+              end: Colors.black45,
             ).evaluate(animation)!,
           ],
           begin: Alignment.topCenter,
