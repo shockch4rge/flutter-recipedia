@@ -63,36 +63,59 @@ class App extends StatelessWidget {
             fontFamily: "WorkSans",
             textTheme: const TextTheme(
               headline1: TextStyle(
-                  color: App.primaryAccent,
-                  letterSpacing: 1.5,
-                  fontSize: 44,
-                  fontWeight: FontWeight.w900),
+                color: App.primaryAccent,
+                letterSpacing: 1.5,
+                fontSize: 44,
+                fontWeight: FontWeight.w900,
+              ),
               headline2: TextStyle(
-                  fontSize: 30,
-                  color: App.primaryAccent,
-                  fontWeight: FontWeight.bold),
+                fontSize: 30,
+                color: App.primaryAccent,
+                fontWeight: FontWeight.bold,
+              ),
               headline3: TextStyle(
-                  fontSize: 20,
-                  color: App.primaryAccent,
-                  fontWeight: FontWeight.w600),
+                fontSize: 26,
+                color: App.primaryAccent,
+                fontWeight: FontWeight.w600,
+              ),
               headline4: TextStyle(
-                  fontSize: 14,
-                  color: App.primaryColor,
-                  fontWeight: FontWeight.w600),
-              subtitle2: TextStyle(fontSize: 14, color: App.primaryColor),
-              bodyText1: TextStyle(fontSize: 16, color: Colors.black),
+                fontSize: 14,
+                color: App.primaryColor,
+                fontWeight: FontWeight.w600,
+              ),
+              subtitle1: TextStyle(
+                fontSize: 14,
+                color: App.primaryAccent,
+                fontWeight: FontWeight.w600,
+              ),
+              subtitle2: TextStyle(
+                fontSize: 12,
+                color: App.primaryColor,
+              ),
+              bodyText1: TextStyle(
+                fontSize: 16,
+                color: Colors.black,
+              ),
               bodyText2: TextStyle(
-                  fontSize: 13, color: Colors.black, wordSpacing: 0.5),
+                fontSize: 13,
+                color: Colors.black,
+                wordSpacing: 0.5,
+              ),
+              labelMedium: TextStyle(
+                fontSize: 14,
+                color: Colors.black,
+              ),
             ),
           ),
           // TODO: Use a ternary to check sign-in status and replace routes accordingly
           initialRoute: "/",
           routes: {
-            "/": (context) => const LoginScreen(),
-            "/signup": (context) => const SignUpScreen(),
-            "/reset-password": (context) => const ResetPasswordScreen(),
-            "/home": (context) => const HomeScreen(),
-            "/view-recipe": (context) => const ViewRecipeScreen(),
+            LoginScreen.routeName: (context) => const LoginScreen(),
+            SignUpScreen.routeName: (context) => const SignUpScreen(),
+            ResetPasswordScreen.routeName: (context) =>
+                const ResetPasswordScreen(),
+            HomeScreen.routeName: (context) => const HomeScreen(),
+            ViewRecipeScreen.routeName: (context) => const ViewRecipeScreen(),
           }),
     );
   }
