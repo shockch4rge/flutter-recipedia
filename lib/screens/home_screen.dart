@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/main.dart';
 import 'package:flutter_recipedia/utils/mock_data.dart';
+import 'package:flutter_recipedia/widgets/common/appbar.dart';
 
-import '../main.dart';
 import '../widgets/common/bottom_navbar.dart';
 import '../widgets/post/post_content.dart';
 
@@ -18,13 +19,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomNavbar(),
-      appBar: AppBar(
-        elevation: 0,
-        toolbarHeight: 50,
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title:
-            const Text("recipedia", style: TextStyle(color: App.primaryColor)),
+      appBar: const Appbar(
+        title: Text(
+          "recipedia",
+          style: TextStyle(color: App.primaryColor),
+        ),
       ),
       body: ListView.builder(
         physics: const BouncingScrollPhysics(),
