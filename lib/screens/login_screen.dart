@@ -20,12 +20,12 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.only(top: 140, left: 30, right: 30),
           child: Column(
             children: [
-              Text("Welcome to recipedia.",
-                  style: Theme.of(context).textTheme.headline1),
-              const SizedBox(height: 84),
-              const SizedBox(
-                child: LoginForm(),
+              Text(
+                "Welcome to recipedia.",
+                style: Theme.of(context).textTheme.headline1,
               ),
+              const SizedBox(height: 84),
+              const SizedBox(child: LoginForm()),
             ],
           ),
         ));

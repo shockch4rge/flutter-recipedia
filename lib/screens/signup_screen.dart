@@ -23,18 +23,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Align(
               alignment: Alignment.topLeft,
               child: TextButton.icon(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: App.primaryColor,
+                  size: 16,
+                ),
+                label: const Text(
+                  "Back to login",
+                  style: TextStyle(
                     color: App.primaryColor,
-                    size: 16,
                   ),
-                  label: const Text(
-                    "Back to login",
-                    style: TextStyle(
-                      color: App.primaryColor,
-                    ),
-                  )),
+                ),
+              ),
             ),
           ),
           Container(
@@ -45,14 +46,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   alignment: Alignment.centerLeft,
                   child: SizedBox(
                     width: 300,
-                    child: Text("Sign up for an account.",
-                        style: Theme.of(context).textTheme.headline1),
+                    child: Text(
+                      "Sign up for an account.",
+                      style: Theme.of(context).textTheme.headline1,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 34),
-                const SizedBox(
-                  child: SignUpForm(),
-                ),
+                const SizedBox(child: SignUpForm()),
               ],
             ),
           )

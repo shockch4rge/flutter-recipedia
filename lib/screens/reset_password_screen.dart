@@ -24,18 +24,19 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             child: Align(
               alignment: Alignment.topLeft,
               child: TextButton.icon(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: App.primaryColor,
+                  size: 16,
+                ),
+                label: const Text(
+                  "Back to login",
+                  style: TextStyle(
                     color: App.primaryColor,
-                    size: 16,
                   ),
-                  label: const Text(
-                    "Back to login",
-                    style: TextStyle(
-                      color: App.primaryColor,
-                    ),
-                  )),
+                ),
+              ),
             ),
           ),
           Container(
@@ -46,8 +47,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   alignment: Alignment.centerLeft,
                   child: SizedBox(
                     width: 300,
-                    child: Text("Reset your password.",
-                        style: Theme.of(context).textTheme.headline1),
+                    child: Text(
+                      "Reset your password.",
+                      style: Theme.of(context).textTheme.headline1,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 58),
@@ -56,9 +59,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 const SizedBox(height: 58),
-                const SizedBox(
-                  child: ResetPasswordForm(),
-                ),
+                const SizedBox(child: ResetPasswordForm()),
               ],
             ),
           )

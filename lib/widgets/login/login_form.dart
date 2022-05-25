@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/widgets/login/login_buttons.dart';
 
 import '../../main.dart';
+import '../../utils/auth_helper.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
@@ -24,19 +26,20 @@ class _LoginFormState extends State<LoginForm> {
       child: Column(
         children: [
           TextFormField(
-            // validator: (value) =>
-            //     AuthHelper.isEmail(value!) ? null : "Wrong email!",
-            // onChanged: (value) => {
-            //   if (_formKey.currentState!.validate())
-            //     {
-            //       setState(() => {_email = value})
-            //     }
-            // },
+            validator: (value) =>
+                AuthHelper.isEmail(value!) ? null : "Wrong email!",
+            onChanged: (value) => {
+              if (_formKey.currentState!.validate())
+                setState(() {
+                  _email = value;
+                })
+            },
             decoration: InputDecoration(
               hoverColor: App.primaryAccent,
               border: const OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(7))),
+                borderSide: BorderSide.none,
+                borderRadius: BorderRadius.all(Radius.circular(7)),
+              ),
               filled: true,
               fillColor: Colors.grey.shade200,
               hintStyle: TextStyle(color: Colors.grey.shade400),
@@ -44,7 +47,8 @@ class _LoginFormState extends State<LoginForm> {
               label: Text(
                 "Email",
                 style: TextStyle(
-                    color: Theme.of(context).textTheme.headline3?.color),
+                  color: Theme.of(context).textTheme.headline3?.color,
+                ),
               ),
             ),
           ),
@@ -56,9 +60,9 @@ class _LoginFormState extends State<LoginForm> {
                 style: TextStyle(
                   color: Theme.of(context).textTheme.headline3?.color,
                 ),
-                onChanged: (value) => setState(
-                  () => {_password = value},
-                ),
+                onChanged: (value) => setState(() {
+                  _password = value;
+                }),
                 decoration: InputDecoration(
                   suffixIcon: const Icon(Icons.lock),
                   filled: true,
@@ -89,6 +93,7 @@ class _LoginFormState extends State<LoginForm> {
                       ),
                     ),
                     onPressed: () =>
+                        // TODO: swap to pushReplacedNamed when you need to test
                         Navigator.of(context).pushNamed("/reset-password"),
                   ),
                 ),
@@ -101,17 +106,19 @@ class _LoginFormState extends State<LoginForm> {
               Column(
                 children: [
                   SignInButton(onPressed: () async {
-                    // if (_formKey.currentState!.validate()) {
-                    //   ScaffoldMessenger.of(context).showSnackBar(
-                    //       const SnackBar(content: Text("Processing data")));
-                    // }
+                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                      email: _email,
+                      password: _password,
+                    );
 
-                    await Navigator.of(context).pushNamed("/home");
+                    Navigator.of(context).pushNamed("/home");
                   }),
                   SizedBox(width: Size.infinite.width, height: 10),
                 ],
               ),
-              GoogleSignInButton(onPressed: () {}),
+              GoogleSignInButton(
+                onPressed: () {},
+              ),
               Padding(
                 padding: const EdgeInsets.only(top: 10.0),
                 child: TextButton(
@@ -121,8 +128,9 @@ class _LoginFormState extends State<LoginForm> {
                       color: App.primaryAccent,
                     ),
                   ),
-                  onPressed: () async =>
-                      await Navigator.of(context).pushNamed("/signup"),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/signup");
+                  },
                 ),
               ),
             ],

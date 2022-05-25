@@ -3,7 +3,7 @@ import 'package:flutter_recipedia/main.dart';
 import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:flutter_recipedia/widgets/common/appbar.dart';
 
-import '../widgets/common/bottom_navbar.dart';
+import '../widgets/common/navbar.dart';
 import '../widgets/post/post_content.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: const BottomNavbar(),
+      bottomNavigationBar: const Navbar(),
       appBar: const Appbar(
         title: Text(
           "recipedia",
@@ -30,9 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         cacheExtent: 500,
         itemCount: 3,
         itemBuilder: (BuildContext context, int index) {
-          return PostContent(
-            recipe: getMockRecipe(),
-          );
+          return PostContent(recipe: mockRecipe);
         },
       ),
     );
