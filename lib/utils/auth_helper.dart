@@ -1,5 +1,11 @@
 class AuthHelper {
-  static var emailPattern = RegExp(
+  static get upperCasePattern => RegExp('((.*[A-Z]){2})');
+  static get lowerCasePattern => RegExp('((.*[a-z]){3})');
+  static get specialCharsPattern => RegExp('((.*[!@#\$&*]){1})');
+  static get digitsPattern => RegExp('((.*[0-9]){2})');
+  static get lengthPattern => RegExp('.{8}');
+
+  static final emailPattern = RegExp(
       '/^(([^<>()[]\\.,;:s@"]+(.[^<>()[]\\.,;:s@"]+)*)|(".+"))@(([[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}])|(([a-zA-Z-0-9]+.)+[a-zA-Z]{2,}))');
 
   static isEmail(String email) {
@@ -7,38 +13,17 @@ class AuthHelper {
   }
 
   static isPassword(String password) {
-    List<bool> cases = [
-      hasDigits(password),
-      hasUpperCaseLetters(password),
-      hasLength(password),
-      hasSpecialCharacters(password),
+    final List<bool> cases = [
+      match(password, digitsPattern),
+      match(password, upperCasePattern),
+      match(password, lengthPattern),
+      match(password, specialCharsPattern),
     ];
 
     return cases.every((_case) => _case);
   }
 
-  static hasUpperCaseLetters(String password, {int quantity = 2}) {
-    final regex = RegExp('((.*[A-Z]){$quantity})');
-    return regex.allMatches(password).isNotEmpty;
-  }
-
-  static hasSpecialCharacters(String password, {int quantity = 1}) {
-    final regex = RegExp('((.*[!@#\$&*]){$quantity})');
-    return regex.allMatches(password).isNotEmpty;
-  }
-
-  static hasDigits(String password, {int quantity = 2}) {
-    final regex = RegExp('((.*[0-9]){$quantity})');
-    return regex.allMatches(password).isNotEmpty;
-  }
-
-  static hasLowerCaseLetters(String password, {int quantity = 3}) {
-    final regex = RegExp('((.*[a-z]){$quantity})');
-    return regex.allMatches(password).isNotEmpty;
-  }
-
-  static hasLength(String password, {int length = 8}) {
-    final regex = RegExp('.{$length}');
-    return regex.allMatches(password).isNotEmpty;
+  static bool match(String matcher, RegExp pattern) {
+    return pattern.allMatches(matcher).isNotEmpty;
   }
 }
