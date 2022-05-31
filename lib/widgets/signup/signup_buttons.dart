@@ -3,7 +3,7 @@ import "package:flutter/material.dart";
 import '../../main.dart';
 
 class SignUpButton extends StatelessWidget {
-  final Function onPressed;
+  final void Function() onPressed;
 
   const SignUpButton({Key? key, required this.onPressed}) : super(key: key);
 
@@ -18,6 +18,7 @@ class SignUpButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(9.0),
             ),
           ),
+          elevation: MaterialStateProperty.all(0),
           backgroundColor: MaterialStateProperty.all(App.primaryAccent),
         ),
         onPressed: () => onPressed(),
