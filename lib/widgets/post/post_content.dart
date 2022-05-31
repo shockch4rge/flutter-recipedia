@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/widgets/common/avatar.dart';
 import 'package:flutter_recipedia/widgets/post/post_buttons.dart';
-import 'package:flutter_recipedia/widgets/post/post_options.dart';
+import 'package:flutter_recipedia/widgets/post/post_options_popup_menu.dart';
 
 import '../../models/recipe.dart';
 import '../../screens/view_recipe_screen.dart';
@@ -19,7 +19,8 @@ class PostHeader extends StatelessWidget {
           onPressed: () {},
           style: TextButton.styleFrom(padding: EdgeInsets.zero),
           icon: CachedNetworkImage(
-            imageUrl: "flutter-recipedia.appspot.com/lisapfp2.png",
+            imageUrl:
+                "https://firebasestorage.googleapis.com/v0/b/flutter-recipedia.appspot.com/o/lisapfp2.png?alt=media&token=ba5642dd-f3c4-4a04-b7b4-1911dd193634",
             imageBuilder: (context, imageProvider) =>
                 Avatar(size: 36, avatarUrl: recipe.imageUrl),
             placeholder: (context, url) => Container(
@@ -49,7 +50,7 @@ class PostHeaderMock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
+      height: 54,
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -61,12 +62,15 @@ class PostHeaderMock extends StatelessWidget {
                 splashFactory: NoSplash.splashFactory),
             icon: Avatar(
               size: 36,
-              avatarUrl: recipe.imageUrl,
+              avatarUrl: recipe.author.avatarUrl,
             ),
             label: Text(recipe.author.username,
-                style: Theme.of(context).textTheme.headline4),
+                style: Theme.of(context).textTheme.subtitle1),
           ),
-          const PostOptions(),
+          PostOptionsPopupMenu(
+            onSaveTapped: () {},
+            onShareTapped: () {},
+          ),
         ],
       ),
     );
@@ -181,7 +185,7 @@ class PostContent extends StatelessWidget {
         const SizedBox(height: 14),
         Text(
           "${recipe.author.username}:",
-          style: Theme.of(context).textTheme.headline4,
+          style: Theme.of(context).textTheme.subtitle2,
         ),
         const SizedBox(height: 8),
         Text(
