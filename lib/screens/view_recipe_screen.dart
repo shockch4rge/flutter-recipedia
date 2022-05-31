@@ -111,7 +111,9 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
           "Ingredients",
           style: Theme.of(context).textTheme.headline3,
         ),
-        Column(
+        const SizedBox(height: 6),
+        Wrap(
+          runSpacing: 4,
           children: recipe.ingredients
               .map((ingredient) => CheckBoxListItem(title: ingredient))
               .toList(),
@@ -145,17 +147,6 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
               .toList(),
         )
       ],
-    );
-  }
-
-  Card _buildCard(int index) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.only(left: 12, right: 12, top: 12),
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
-        child: Text("Item $index"),
-      ),
     );
   }
 
