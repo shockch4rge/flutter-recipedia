@@ -16,6 +16,9 @@ class _CheckBoxListItemState extends State<CheckBoxListItem> {
   @override
   Widget build(BuildContext context) {
     return CheckboxListTile(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
       value: checked,
       title: Text(
         widget.title,
