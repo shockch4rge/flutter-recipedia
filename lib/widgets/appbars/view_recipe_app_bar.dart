@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 
-class SnappingAppBar extends StatelessWidget {
+class ViewRecipeAppBar extends StatelessWidget {
   final double maxHeight;
   final double minHeight;
   final Recipe recipe;
 
-  const SnappingAppBar(
+  const ViewRecipeAppBar(
       {Key? key,
       required this.recipe,
       required this.maxHeight,
@@ -18,7 +18,7 @@ class SnappingAppBar extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       stretch: true,
-      flexibleSpace: SnappingAppBarSpacer(
+      flexibleSpace: ViewRecipeAppBarSpacer(
         recipe: recipe,
         maxHeight: maxHeight,
         minHeight: minHeight,
@@ -28,12 +28,12 @@ class SnappingAppBar extends StatelessWidget {
   }
 }
 
-class SnappingAppBarSpacer extends StatelessWidget {
+class ViewRecipeAppBarSpacer extends StatelessWidget {
   final double maxHeight;
   final double minHeight;
   final Recipe recipe;
 
-  const SnappingAppBarSpacer(
+  const ViewRecipeAppBarSpacer(
       {Key? key,
       required this.recipe,
       required this.maxHeight,

@@ -2,10 +2,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
+import 'package:flutter_recipedia/widgets/appbars/view_recipe_app_bar.dart';
 import 'package:flutter_recipedia/widgets/common/avatar.dart';
 import 'package:flutter_recipedia/widgets/common/checkbox_list_item.dart';
 import 'package:flutter_recipedia/widgets/post/post_buttons.dart';
-import 'package:flutter_recipedia/widgets/view_recipe/snapping_app_bar.dart';
 
 class ViewRecipeScreen extends StatefulWidget {
   static const String routeName = "/view-recipe";
@@ -35,7 +35,7 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
           physics: const BouncingScrollPhysics(),
           controller: _controller,
           slivers: [
-            SnappingAppBar(
+            ViewRecipeAppBar(
                 recipe: recipe, maxHeight: maxHeight, minHeight: minHeight),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
