@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/main.dart';
 import 'package:flutter_recipedia/models/user.dart';
-import 'package:flutter_recipedia/screens/app_settings_screen.dart';
 
 class PersonalProfileAppBar extends StatelessWidget
     implements PreferredSizeWidget {
@@ -19,20 +17,6 @@ class PersonalProfileAppBar extends StatelessWidget
       backgroundColor: Colors.white,
       centerTitle: true,
       title: title,
-      actions: [
-        IconButton(
-          onPressed: () {
-            Navigator.pushNamed(
-              context,
-              AppSettingsScreen.routeName,
-            );
-          },
-          icon: const Icon(
-            Icons.settings,
-            color: App.primaryAccent,
-          ),
-        )
-      ],
     );
   }
 
