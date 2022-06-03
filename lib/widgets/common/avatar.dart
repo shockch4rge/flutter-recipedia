@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 class Avatar extends StatelessWidget {
   final double size;
   final String avatarUrl;
-  const Avatar({Key? key, required this.size, required this.avatarUrl})
+  final bool contain;
+  const Avatar(
+      {Key? key,
+      required this.size,
+      required this.avatarUrl,
+      this.contain = false})
       : super(key: key);
 
   @override
@@ -16,7 +21,7 @@ class Avatar extends StatelessWidget {
         shape: BoxShape.circle,
         image: DecorationImage(
           image: AssetImage(avatarUrl),
-          fit: BoxFit.cover,
+          fit: contain ? BoxFit.contain : BoxFit.cover,
         ),
       ),
     );
