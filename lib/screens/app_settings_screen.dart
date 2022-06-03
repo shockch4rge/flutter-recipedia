@@ -12,6 +12,7 @@ class AppSettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: const AppSettingsAppBar(),
       body: ListView(
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           SwitchListItem(
             title: "Enable dark mode",

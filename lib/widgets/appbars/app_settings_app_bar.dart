@@ -9,11 +9,8 @@ class AppSettingsAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       elevation: 0,
+      leadingWidth: 10,
       backgroundColor: Colors.white,
-      leading: IconButton(
-        icon: const Icon(CupertinoIcons.arrow_left, color: App.primaryAccent),
-        onPressed: () => Navigator.pop(context),
-      ),
       title: const Text(
         "App Settings",
         style: TextStyle(color: App.primaryAccent),

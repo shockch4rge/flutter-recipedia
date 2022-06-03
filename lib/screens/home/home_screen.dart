@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_recipedia/screens/app_settings_screen.dart';
 import 'package:flutter_recipedia/screens/home/personal_profile/personal_profile_screen.dart';
 import 'package:flutter_recipedia/screens/home/post_feed_screen.dart';
-
-import '../../main.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = "/home";
@@ -22,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const PostFeedScreen(),
     const PostFeedScreen(),
     const PersonalProfileScreen(),
+    const AppSettingsScreen(),
   ];
 
   @override
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }),
         },
         unselectedItemColor: Colors.black,
-        selectedItemColor: App.primaryAccent,
+        selectedItemColor: Theme.of(context).primaryColorDark,
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -54,6 +54,10 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.user),
             label: "Profile",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(FeatherIcons.settings),
+            label: "Settings",
           ),
         ],
         currentIndex: _currentScreenIndex,
