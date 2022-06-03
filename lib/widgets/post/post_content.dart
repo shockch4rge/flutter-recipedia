@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/screens/user_profile_screen.dart';
 import 'package:flutter_recipedia/widgets/common/avatar.dart';
 import 'package:flutter_recipedia/widgets/post/post_buttons.dart';
 import 'package:flutter_recipedia/widgets/post/post_options_popup_menu.dart';
@@ -56,7 +57,11 @@ class PostHeaderMock extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () => Navigator.pushNamed(
+              context,
+              UserProfileScreen.routeName,
+              arguments: recipe.author,
+            ),
             style: TextButton.styleFrom(
                 padding: EdgeInsets.zero,
                 splashFactory: NoSplash.splashFactory),

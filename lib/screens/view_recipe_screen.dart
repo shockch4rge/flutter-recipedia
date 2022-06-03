@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
+import 'package:flutter_recipedia/screens/user_profile_screen.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:flutter_recipedia/widgets/appbars/view_recipe_app_bar.dart';
 import 'package:flutter_recipedia/widgets/common/avatar.dart';
@@ -59,28 +60,35 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            Avatar(
-              size: 40,
-              avatarUrl: recipe.author.avatarUrl,
-            ),
-            const SizedBox(width: 5),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  recipe.author.name,
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  "@${recipe.author.username}",
-                  style: Theme.of(context).textTheme.headline5,
-                )
-              ],
-            )
-          ],
+        GestureDetector(
+          onTap: () => Navigator.pushNamed(
+            context,
+            UserProfileScreen.routeName,
+            arguments: recipe.author,
+          ),
+          child: Row(
+            children: [
+              Avatar(
+                size: 40,
+                avatarUrl: recipe.author.avatarUrl,
+              ),
+              const SizedBox(width: 5),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    recipe.author.name,
+                    style: Theme.of(context).textTheme.subtitle1,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    "@${recipe.author.username}",
+                    style: Theme.of(context).textTheme.headline5,
+                  )
+                ],
+              )
+            ],
+          ),
         ),
         Row(
           children: [
