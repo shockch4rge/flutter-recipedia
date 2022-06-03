@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/main.dart';
+import 'package:flutter_recipedia/models/user.dart';
+import 'package:flutter_recipedia/screens/app_settings_screen.dart';
 
-class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
+class PersonalProfileAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   final Text title;
+  final User user;
 
-  const ProfileAppBar({Key? key, required this.title}) : super(key: key);
+  const PersonalProfileAppBar(
+      {Key? key, required this.title, required this.user})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +21,12 @@ class ProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: title,
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              AppSettingsScreen.routeName,
+            );
+          },
           icon: const Icon(
             Icons.settings,
             color: App.primaryAccent,
