@@ -14,11 +14,14 @@ class PostFeedScreen extends StatefulWidget {
 }
 
 class _PostFeedScreenState extends State<PostFeedScreen> {
+  final ScrollController _controller = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const PostFeedAppBar(),
+      appBar: PostFeedAppBar(controller: _controller),
       body: ListView.builder(
+        controller: _controller,
         physics: const BouncingScrollPhysics(),
         cacheExtent: 500,
         itemCount: 3,

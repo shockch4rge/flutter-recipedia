@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/main.dart';
 
 class PostFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const PostFeedAppBar({Key? key}) : super(key: key);
+  final ScrollController controller;
+
+  const PostFeedAppBar({Key? key, required this.controller}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -10,9 +12,25 @@ class PostFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       backgroundColor: Colors.white,
       centerTitle: true,
-      title: const Text(
-        "recipedia",
-        style: TextStyle(color: App.primaryColor),
+      title: TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+          splashFactory: NoSplash.splashFactory,
+        ),
+        onPressed: () {
+          controller.animateTo(
+            controller.position.minScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        },
+        child: const Text(
+          "recipedia",
+          style: TextStyle(
+            color: App.primaryColor,
+            fontSize: 20,
+          ),
+        ),
       ),
     );
   }
