@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/screens/app_settings_screen.dart';
+import 'package:flutter_recipedia/screens/home/home_screen.dart';
+import 'package:flutter_recipedia/screens/home/personal_profile/personal_profile_settings_screen.dart';
+import 'package:flutter_recipedia/screens/login_screen.dart';
+import 'package:flutter_recipedia/screens/view_recipe_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'screens/home_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/reset_password_screen.dart';
-import 'screens/signup_screen.dart';
-import 'screens/view_recipe_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,81 +41,86 @@ class App extends StatelessWidget {
     color: App.primaryAccent,
   );
 
-  // a list of screens for the bottom nav bar to access
-  static const screens = [HomeScreen()];
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        var currentFocus = FocusScope.of(context);
+        final currentFocus = FocusScope.of(context);
 
         if (!currentFocus.hasPrimaryFocus) {
           currentFocus.unfocus();
         }
       },
       child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'recipedia',
-          theme: ThemeData(
-            fontFamily: "WorkSans",
-            textTheme: const TextTheme(
-              headline1: TextStyle(
-                color: App.primaryAccent,
-                letterSpacing: 1.5,
-                fontSize: 44,
-                fontWeight: FontWeight.w900,
-              ),
-              headline2: TextStyle(
-                fontSize: 30,
-                color: App.primaryAccent,
-                fontWeight: FontWeight.bold,
-              ),
-              headline3: TextStyle(
-                fontSize: 26,
-                color: App.primaryAccent,
-                fontWeight: FontWeight.w600,
-              ),
-              headline4: TextStyle(
-                fontSize: 14,
-                color: App.primaryColor,
-                fontWeight: FontWeight.w600,
-              ),
-              subtitle1: TextStyle(
-                fontSize: 14,
-                color: App.primaryAccent,
-                fontWeight: FontWeight.w600,
-              ),
-              subtitle2: TextStyle(
-                fontSize: 12,
-                color: App.primaryColor,
-              ),
-              bodyText1: TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ),
-              bodyText2: TextStyle(
-                fontSize: 13,
-                color: Colors.black,
-                wordSpacing: 0.5,
-              ),
-              labelMedium: TextStyle(
-                fontSize: 14,
-                color: Colors.black,
-              ),
+        debugShowCheckedModeBanner: false,
+        title: 'recipedia',
+        theme: ThemeData(
+          primaryColor: const Color(0xFF795DFE),
+          primaryColorDark: const Color(0xFF4B23EA),
+          fontFamily: "WorkSans",
+          textTheme: const TextTheme(
+            headline1: TextStyle(
+              color: App.primaryAccent,
+              letterSpacing: 1.5,
+              fontSize: 44,
+              fontWeight: FontWeight.w900,
+            ),
+            headline2: TextStyle(
+              fontSize: 30,
+              color: App.primaryAccent,
+              fontWeight: FontWeight.bold,
+            ),
+            headline3: TextStyle(
+              fontSize: 26,
+              color: App.primaryAccent,
+              fontWeight: FontWeight.w600,
+            ),
+            headline4: TextStyle(
+              fontSize: 20,
+              color: App.primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
+            headline5: TextStyle(
+              fontSize: 14,
+              color: App.primaryColor,
+              fontWeight: FontWeight.w400,
+            ),
+            subtitle1: TextStyle(
+              fontSize: 16,
+              color: App.primaryAccent,
+              fontWeight: FontWeight.w600,
+            ),
+            subtitle2: TextStyle(
+              fontSize: 16,
+              color: App.primaryColor,
+            ),
+            bodyText1: TextStyle(
+              fontSize: 16,
+              color: Colors.black,
+              fontWeight: FontWeight.w400,
+            ),
+            bodyText2: TextStyle(
+              fontSize: 15,
+              color: Colors.black,
+              wordSpacing: 0.5,
+            ),
+            labelMedium: TextStyle(
+              fontSize: 16,
+              color: Colors.black,
             ),
           ),
-          // TODO: Use a ternary to check sign-in status and replace routes accordingly
-          initialRoute: "/",
-          routes: {
-            LoginScreen.routeName: (context) => const LoginScreen(),
-            SignUpScreen.routeName: (context) => const SignUpScreen(),
-            ResetPasswordScreen.routeName: (context) =>
-                const ResetPasswordScreen(),
-            HomeScreen.routeName: (context) => const HomeScreen(),
-            ViewRecipeScreen.routeName: (context) => const ViewRecipeScreen(),
-          }),
+        ),
+        // TODO: Use a ternary to check sign-in status and replace routes accordingly
+        home: const LoginScreen(),
+        routes: {
+          HomeScreen.routeName: (context) => const HomeScreen(),
+          PersonalProfileSettingsScreen.routeName: (context) =>
+              const PersonalProfileSettingsScreen(),
+          ViewRecipeScreen.routeName: (_) => const ViewRecipeScreen(),
+          AppSettingsScreen.routeName: (_) => const AppSettingsScreen(),
+        },
+      ),
     );
   }
 }
