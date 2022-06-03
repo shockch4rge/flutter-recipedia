@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/main.dart';
 
 class Snack {
-  Snack.bad(BuildContext context, String content, [SnackBarAction? action]) {
+  static bad(BuildContext context, String content, [SnackBarAction? action]) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(content),
@@ -14,13 +14,14 @@ class Snack {
     );
   }
 
-  Snack.good(BuildContext context, String content, SnackBarAction? action) {
+  static good(BuildContext context, String content, SnackBarAction? action) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           content,
           style: const TextStyle(fontFamily: "WorkSans"),
         ),
+        duration: const Duration(seconds: 2),
         action: action,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
