@@ -1,38 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/screens/view_recipe_screen.dart';
+import 'package:flutter_recipedia/utils/mock_data.dart';
 
-class ExpandableContainer extends StatefulWidget {
-  final double width;
-  final double height;
+import '../../models/recipe.dart';
 
-  const ExpandableContainer(
-      {Key? key, required this.width, required this.height})
-      : super(key: key);
+class PostPreview extends StatefulWidget {
+  final Recipe recipe;
+
+  const PostPreview({Key? key, required this.recipe}) : super(key: key);
 
   @override
-  State<ExpandableContainer> createState() => _ExpandableContainerState();
+  State<PostPreview> createState() => _PostPreviewState();
 }
 
-class _ExpandableContainerState extends State<ExpandableContainer> {
+class _PostPreviewState extends State<PostPreview> {
   bool isPressed = false;
-  final expandFactor = 1.2;
-
-  double get expandedWidth => widget.width * expandFactor;
-  double get expandedHeight => widget.height * expandFactor;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (details) {
-        print("Hello tap down $expandedHeight $expandedWidth");
         setState(() {
           isPressed = true;
         });
       },
       onTapUp: (details) {
-        print("Hello tap up $expandedHeight $expandedWidth");
         setState(() {
           isPressed = false;
         });
+      },
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          ViewRecipeScreen.routeName,
+          arguments: mockRecipe,
+        );
       },
       child: AnimatedPhysicalModel(
         color: Colors.black,
