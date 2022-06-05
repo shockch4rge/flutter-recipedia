@@ -16,6 +16,7 @@ class PersonalProfileSettingsAppBar extends StatelessWidget
           CupertinoIcons.arrow_left,
           color: App.primaryAccent,
         ),
+        splashRadius: 20,
         onPressed: () => Navigator.pop(context),
       ),
       title: const Text(
