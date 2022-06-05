@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class SwitchListItem extends StatefulWidget {
   final String title;
+  final String? subtitle;
   final void Function(bool checked) onSwitch;
   final bool checked;
 
   const SwitchListItem(
       {Key? key,
       required this.title,
+      this.subtitle,
       required this.onSwitch,
       required this.checked})
       : super(key: key);
@@ -25,6 +27,10 @@ class _SwitchListItemState extends State<SwitchListItem> {
         widget.onSwitch(value);
       }),
       title: Text(widget.title),
+      subtitle: widget.subtitle == null ? null : Text(widget.subtitle!),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 24),
       activeColor: Theme.of(context).primaryColorDark,
     );
