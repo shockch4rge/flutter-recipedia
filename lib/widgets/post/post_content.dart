@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/screens/post_comments_screen.dart';
 import 'package:flutter_recipedia/screens/user_profile_screen.dart';
 import 'package:flutter_recipedia/widgets/common/avatar.dart';
 import 'package:flutter_recipedia/widgets/post/post_buttons.dart';
@@ -155,7 +156,13 @@ class PostContent extends StatelessWidget {
                           onPressed: () {},
                         ),
                         CommentButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              PostCommentsScreen.routeName,
+                              arguments: recipe.comments,
+                            );
+                          },
                         ),
                         ShareButton(
                           onPressed: () {},
