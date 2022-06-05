@@ -18,6 +18,13 @@ class ViewRecipeAppBar extends StatelessWidget {
     return SliverAppBar(
       pinned: true,
       stretch: true,
+      automaticallyImplyLeading: false,
+      leading: IconButton(
+        splashRadius: 20,
+        icon: const Icon(Icons.arrow_back),
+        tooltip: "Back",
+        onPressed: () => Navigator.pop(context),
+      ),
       flexibleSpace: ViewRecipeAppBarSpacer(
         recipe: recipe,
         maxHeight: maxHeight,
