@@ -15,10 +15,7 @@ class PostCommentsScreen extends StatefulWidget {
   State<PostCommentsScreen> createState() => _PostCommentsScreenState();
 }
 
-enum CommentMode { reply, comment }
-
 class _PostCommentsScreenState extends State<PostCommentsScreen> {
-  CommentMode _commentMode = CommentMode.comment;
   final FocusNode _commentInputFocus = FocusNode();
 
   @override
@@ -34,11 +31,9 @@ class _PostCommentsScreenState extends State<PostCommentsScreen> {
             itemBuilder: ((context, index) {
               return PostComment(
                 comment: comments[0],
-                onReplyTap: (commentAuthor) {
-                  setState(() {
-                    _commentMode = CommentMode.reply;
-                  });
+                onReplyTap: (commentAuthor) async {
                   context.read<CommentProvider>().setReplyTarget(commentAuthor);
+                  await Future.delayed(const Duration(milliseconds: 200));
                   _commentInputFocus.requestFocus();
                 },
               );
@@ -48,14 +43,12 @@ class _PostCommentsScreenState extends State<PostCommentsScreen> {
             bottom: 0,
             child: Column(
               children: [
-                if (_commentMode == CommentMode.reply)
+                if (context.watch<CommentProvider>().replyTarget != null)
                   Container(
                     height: 46,
                     width: MediaQuery.of(context).size.width,
                     alignment: Alignment.centerLeft,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                    ),
+                    decoration: BoxDecoration(color: Colors.grey.shade200),
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,12 +62,10 @@ class _PostCommentsScreenState extends State<PostCommentsScreen> {
                         ),
                         IconButton(
                           onPressed: () {
-                            setState(() {
-                              _commentMode = CommentMode.comment;
-                            });
                             context
                                 .read<CommentProvider>()
                                 .setReplyTarget(null);
+                            _commentInputFocus.unfocus();
                           },
                           icon: Icon(
                             Icons.close,
@@ -115,7 +106,7 @@ class _PostCommentsScreenState extends State<PostCommentsScreen> {
                             fontWeight: FontWeight.w400,
                             color: Colors.grey.withOpacity(0.5),
                           ),
-                          constraints: BoxConstraints(maxWidth: 290),
+                          constraints: const BoxConstraints(maxWidth: 290),
                           filled: true,
                           fillColor: Colors.black.withOpacity(0.05),
                           border: OutlineInputBorder(
@@ -127,8 +118,6 @@ class _PostCommentsScreenState extends State<PostCommentsScreen> {
                       TextButton(
                         onPressed: () {
                           // send TextField content
-                          if (_commentMode == CommentMode.comment) {
-                          } else {}
                         },
                         child: Text(
                           "Send",
