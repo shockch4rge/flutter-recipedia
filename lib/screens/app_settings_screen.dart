@@ -12,16 +12,18 @@ class AppSettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: const AppSettingsAppBar(),
       body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         physics: const NeverScrollableScrollPhysics(),
         children: [
           SwitchListItem(
             title: "Enable dark mode",
-            onSwitch: (value) async {},
+            onSwitch: (checked) async {},
             checked: false,
           ),
+          const SizedBox(height: 6),
           SwitchListItem(
             title: "Enable push notifications",
-            onSwitch: (value) {},
+            onSwitch: (checked) {},
             checked: false,
           ),
         ],
