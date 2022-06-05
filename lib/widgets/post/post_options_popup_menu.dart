@@ -15,9 +15,9 @@ class PostOptionsPopupMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton<PostOption>(
+    return PopupMenuButton<PostOption>(      
         tooltip: "More Options",
-        offset: Offset.fromDirection(90, 40),
+        offset: const Offset(-30, 40),
         icon: const Icon(
           Icons.more_horiz,
           size: 24,
