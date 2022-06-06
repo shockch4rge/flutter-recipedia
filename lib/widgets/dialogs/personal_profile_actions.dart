@@ -18,7 +18,7 @@ class PersonalProfileActions extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 3),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
-              color: Colors.grey.shade300,
+              color: Colors.grey.shade400.withOpacity(0.7),
             ),
           ),
           Column(
@@ -34,7 +34,10 @@ class PersonalProfileActions extends StatelessWidget {
                     Icon(Icons.settings),
                     Text(
                       "Edit Profile",
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -48,11 +51,14 @@ class PersonalProfileActions extends StatelessWidget {
                 title: Wrap(
                   spacing: 12,
                   crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
+                  children: const [
                     Icon(Icons.favorite),
                     Text(
                       "View Liked Recipes",
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -70,7 +76,10 @@ class PersonalProfileActions extends StatelessWidget {
                     Icon(Icons.bookmark),
                     Text(
                       "View Saved Recipes",
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
