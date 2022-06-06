@@ -6,6 +6,8 @@ import 'package:flutter_recipedia/widgets/appbars/post_comments_app_bar.dart';
 import 'package:flutter_recipedia/widgets/post/post_comment.dart';
 import 'package:provider/provider.dart';
 
+import '../main.dart';
+
 class PostCommentsScreen extends StatefulWidget {
   static const routeName = "/recipe/comments";
 
@@ -15,13 +17,13 @@ class PostCommentsScreen extends StatefulWidget {
   State<PostCommentsScreen> createState() => _PostCommentsScreenState();
 }
 
-class _PostCommentsScreenState extends State<PostCommentsScreen> {
+class _PostCommentsScreenState extends State<PostCommentsScreen>
+    with RouteAware {
   final FocusNode _commentInputFocus = FocusNode();
+  get comments => getArgs<List<RecipeComment>>(context);
 
   @override
   Widget build(BuildContext context) {
-    final comments = getArgs<List<RecipeComment>>(context);
-
     return Scaffold(
       appBar: const PostCommentsAppBar(),
       body: Stack(
@@ -33,6 +35,9 @@ class _PostCommentsScreenState extends State<PostCommentsScreen> {
                 comment: comments[0],
                 onReplyTap: (commentAuthor) async {
                   context.read<CommentProvider>().setReplyTarget(commentAuthor);
+                  // un-focus in case we focused it before
+                  _commentInputFocus.unfocus();
+                  // allow time for widget to re-render
                   await Future.delayed(const Duration(milliseconds: 200));
                   _commentInputFocus.requestFocus();
                 },
@@ -141,5 +146,23 @@ class _PostCommentsScreenState extends State<PostCommentsScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    _commentInputFocus.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didPop() {
+    context.read<CommentProvider>().setReplyTarget(null);
   }
 }
