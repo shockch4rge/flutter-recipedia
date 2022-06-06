@@ -33,7 +33,7 @@ class _PostCommentsScreenState extends State<PostCommentsScreen>
             itemBuilder: ((context, index) {
               return PostComment(
                 comment: comments[0],
-                onReplyTap: (commentAuthor) async {
+                onReply: (commentAuthor) async {
                   context.read<CommentProvider>().setReplyTarget(commentAuthor);
                   // un-focus in case we focused it before
                   _commentInputFocus.unfocus();
