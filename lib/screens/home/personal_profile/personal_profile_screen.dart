@@ -4,6 +4,7 @@ import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/screens/home/personal_profile/personal_profile_settings_screen.dart';
 import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:flutter_recipedia/widgets/common/avatar.dart';
+import 'package:flutter_recipedia/widgets/dialogs/personal_profile_actions.dart';
 import 'package:flutter_recipedia/widgets/post/post_preview.dart';
 
 import '../../../widgets/appbars/personal_profile_app_bar.dart';
@@ -24,26 +25,33 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PersonalProfileAppBar(
-        title: Text(
-          mockMeUser.username,
-          style: const TextStyle(
-            color: App.primaryAccent,
-            fontSize: 16,
-          ),
-        ),
         user: mockMeUser,
+        onMoreSettingsPressed: () {
+          showModalBottomSheet(
+            context: context,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8),
+                topRight: Radius.circular(8),
+              ),
+            ),
+            builder: (_) => const PersonalProfileActions(),
+          );
+        },
       ),
       body: Padding(
         padding: const EdgeInsets.only(
           left: 20,
           right: 20,
-          top: 20,
         ),
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            SliverToBoxAdapter(
-              child: _buildUserDescription(),
+            SliverPadding(
+              padding: const EdgeInsets.only(top: 20.0),
+              sliver: SliverToBoxAdapter(
+                child: _buildUserDescription(),
+              ),
             ),
             const SliverToBoxAdapter(
               child: SizedBox(height: 30),
@@ -126,7 +134,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
                   ],
                 ),
               ],
-            )
+            ),
           ],
         ),
         const SizedBox(height: 14),
