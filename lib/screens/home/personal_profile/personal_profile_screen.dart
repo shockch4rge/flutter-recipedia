@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/main.dart';
 import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/screens/home/personal_profile/personal_profile_settings_screen.dart';
+import 'package:flutter_recipedia/screens/user_followers_screen.dart';
+import 'package:flutter_recipedia/screens/user_following_screen.dart';
 import 'package:flutter_recipedia/utils/mock_data.dart';
+import 'package:flutter_recipedia/widgets/bottom_sheets/personal_profile_actions.dart';
 import 'package:flutter_recipedia/widgets/common/avatar.dart';
-import 'package:flutter_recipedia/widgets/dialogs/personal_profile_actions.dart';
 import 'package:flutter_recipedia/widgets/post/post_preview.dart';
 
 import '../../../widgets/appbars/personal_profile_app_bar.dart';
@@ -50,7 +52,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
             SliverPadding(
               padding: const EdgeInsets.only(top: 20.0),
               sliver: SliverToBoxAdapter(
-                child: _buildUserDescription(),
+                child: _UserDescription(user: user),
               ),
             ),
             const SliverToBoxAdapter(
@@ -80,8 +82,15 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
       ),
     );
   }
+}
 
-  _buildUserDescription() {
+class _UserDescription extends StatelessWidget {
+  final User user;
+
+  const _UserDescription({Key? key, required this.user}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     const countTextStyle = TextStyle(
       color: App.primaryAccent,
       fontSize: 18,
@@ -109,29 +118,41 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
                     ),
                   ],
                 ),
-                Column(
-                  children: [
-                    Text(
-                      "${user.followers.length}",
-                      style: countTextStyle,
-                    ),
-                    Text(
-                      "Followers",
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                  ],
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pushNamed(
+                    UserFollowersScreen.routeName,
+                    arguments: user,
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        "${user.followers.length}",
+                        style: countTextStyle,
+                      ),
+                      Text(
+                        "Followers",
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                    ],
+                  ),
                 ),
-                Column(
-                  children: [
-                    Text(
-                      "${user.following.length}",
-                      style: countTextStyle,
-                    ),
-                    Text(
-                      "Following",
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                  ],
+                GestureDetector(
+                  onTap: () => Navigator.of(context).pushNamed(
+                    UserFollowingScreen.routeName,
+                    arguments: user,
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        "${user.following.length}",
+                        style: countTextStyle,
+                      ),
+                      Text(
+                        "Following",
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
