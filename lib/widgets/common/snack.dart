@@ -14,7 +14,7 @@ class Snack {
     );
   }
 
-  static good(BuildContext context, String content, SnackBarAction? action) {
+  static good(BuildContext context, String content, [SnackBarAction? action]) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
