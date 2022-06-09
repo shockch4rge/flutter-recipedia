@@ -21,7 +21,7 @@ class ConfirmRemoveFollowerDialog extends StatelessWidget {
             const TextSpan(text: "Are you sure you want to remove"),
             TextSpan(
               text: " ${user.username} ",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const TextSpan(text: "from your followers?")
           ],

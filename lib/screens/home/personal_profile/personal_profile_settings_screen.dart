@@ -4,6 +4,7 @@ import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:flutter_recipedia/widgets/appbars/personal_profile_settings_app_bar.dart';
 import 'package:flutter_recipedia/widgets/common/avatar.dart';
+import 'package:flutter_recipedia/widgets/dialogs/confirm_delete_profile_dialog.dart';
 
 class PersonalProfileSettingsScreen extends StatefulWidget {
   static const routeName = "/home/profile/me/settings";
@@ -22,6 +23,7 @@ class _PersonalProfileSettingsScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: const PersonalProfileSettingsAppBar(),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -43,6 +45,25 @@ class _PersonalProfileSettingsScreenState
             ),
             const SizedBox(height: 10),
             PersonalProfileSettingsForm(user: user),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ElevatedButton(
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (_) => ConfirmDeleteProfileDialog(
+                    user: user,
+                    onConfirm: () {},
+                  ),
+                ),
+                child: Text("DELETE PROFILE"),
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  primary: Colors.white,
+                  onPrimary: Colors.red,
+                  side: BorderSide(color: Colors.red),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -107,7 +128,7 @@ class _PersonalProfileSettingsFormState
               style: ElevatedButton.styleFrom(
                 primary: App.primaryAccent,
               ),
-              child: Text("Save Changes"),
+              child: Text("SAVE CHANGES"),
             ),
           )
         ],
