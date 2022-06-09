@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class UserFollowingAppBar extends StatelessWidget
@@ -11,8 +12,10 @@ class UserFollowingAppBar extends StatelessWidget
       automaticallyImplyLeading: false,
       leading: IconButton(
         splashRadius: 20,
-        icon: const Icon(Icons.arrow_back_ios),
-        tooltip: "Back",
+        icon: Icon(
+          CupertinoIcons.arrow_left,
+          color: Theme.of(context).primaryColorDark,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
       title: Text(

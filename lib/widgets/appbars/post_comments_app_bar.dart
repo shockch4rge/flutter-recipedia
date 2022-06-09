@@ -10,6 +10,7 @@ class PostCommentsAppBar extends StatelessWidget
     return AppBar(
       elevation: 0,
       leading: IconButton(
+        splashRadius: 20,
         icon: Icon(
           CupertinoIcons.arrow_left,
           color: Theme.of(context).primaryColorDark,
