@@ -3,6 +3,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_recipedia/screens/app_settings_screen.dart';
 import 'package:flutter_recipedia/screens/home/personal_profile/personal_profile_screen.dart';
 import 'package:flutter_recipedia/screens/home/post_feed_screen.dart';
+import 'package:flutter_recipedia/screens/home/search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = "/home";
@@ -18,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const PostFeedScreen(),
-    const PostFeedScreen(),
+    const SearchScreen(),
     const PostFeedScreen(),
     const PersonalProfileScreen(),
     const AppSettingsScreen(),
@@ -28,11 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) => {
-          setState(() {
-            _currentScreenIndex = index;
-          }),
-        },
+        onTap: (index) => setState(() => _currentScreenIndex = index),
         unselectedItemColor: Colors.black,
         selectedItemColor: Theme.of(context).primaryColorDark,
         type: BottomNavigationBarType.fixed,
