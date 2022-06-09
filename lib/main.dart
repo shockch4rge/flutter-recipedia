@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
-import 'package:flutter_recipedia/providers/user_provider.dart';
 import 'package:flutter_recipedia/screens/app_settings_screen.dart';
 import 'package:flutter_recipedia/screens/home/home_screen.dart';
 import 'package:flutter_recipedia/screens/home/personal_profile/personal_profile_settings_screen.dart';
@@ -14,13 +16,20 @@ import 'package:flutter_recipedia/screens/view_recipe_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+import 'firebase.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => CommentProvider()),
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(firebase_auth.FirebaseAuth.instance),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CommentProvider(),
+        ),
       ],
       child: const App(),
     ),
@@ -128,7 +137,10 @@ class App extends StatelessWidget {
         ),
       ),
       // TODO: Use a ternary to check sign-in status and replace routes accordingly
-      home: const LoginScreen(),
+      home: StreamBuilder(
+        stream: context.watch<AuthProvider>().authStateChanges,
+        builder: (_, snap) => snap.data == null ? LoginScreen() : HomeScreen(),
+      ),
       routes: {
         HomeScreen.routeName: (context) => const HomeScreen(),
         PostCommentsScreen.routeName: (context) => const PostCommentsScreen(),

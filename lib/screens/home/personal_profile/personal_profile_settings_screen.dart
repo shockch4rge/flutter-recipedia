@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/main.dart';
 import 'package:flutter_recipedia/models/user.dart';
+import 'package:flutter_recipedia/providers/auth_provider.dart';
+import 'package:flutter_recipedia/screens/login_screen.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:flutter_recipedia/widgets/appbars/personal_profile_settings_app_bar.dart';
 import 'package:flutter_recipedia/widgets/common/avatar.dart';
 import 'package:flutter_recipedia/widgets/dialogs/confirm_delete_profile_dialog.dart';
+import 'package:provider/provider.dart';
 
 class PersonalProfileSettingsScreen extends StatefulWidget {
   static const routeName = "/home/profile/me/settings";
@@ -45,6 +48,24 @@ class _PersonalProfileSettingsScreenState
             ),
             const SizedBox(height: 10),
             PersonalProfileSettingsForm(user: user),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ElevatedButton(
+                onPressed: () async {
+                  await context.read<AuthProvider>().signOut();
+                  Navigator.of(context).pushReplacementNamed(
+                    LoginScreen.routeName,
+                  );
+                },
+                child: Text("SIGN OUT"),
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  primary: Colors.white,
+                  onPrimary: Theme.of(context).primaryColor,
+                  side: BorderSide(color: Theme.of(context).primaryColor),
+                ),
+              ),
+            ),
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: ElevatedButton(
@@ -122,7 +143,7 @@ class _PersonalProfileSettingsFormState
           ),
           const SizedBox(height: 40),
           SizedBox(
-            width: Size.infinite.width,
+            width: MediaQuery.of(context).size.width,
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
