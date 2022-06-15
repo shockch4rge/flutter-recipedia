@@ -1,18 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/features/authentication/ui/login/login_screen.dart';
+import 'package:flutter_recipedia/features/misc/home_screen.dart';
+import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comments_screen.dart';
+import 'package:flutter_recipedia/features/recipes/ui/view_recipe/view_recipe_screen.dart';
+import 'package:flutter_recipedia/features/search/ui/search_screen.dart';
+import 'package:flutter_recipedia/features/settings/ui/app_settings_screen.dart';
+import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/personal_profile_settings_screen.dart';
+import 'package:flutter_recipedia/features/users/ui/user_followers/user_followers_screen.dart';
+import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
+import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
-import 'package:flutter_recipedia/screens/app_settings_screen.dart';
-import 'package:flutter_recipedia/screens/home/home_screen.dart';
-import 'package:flutter_recipedia/screens/home/personal_profile/personal_profile_settings_screen.dart';
-import 'package:flutter_recipedia/screens/home/search_screen.dart';
-import 'package:flutter_recipedia/screens/login_screen.dart';
-import 'package:flutter_recipedia/screens/post_comments_screen.dart';
-import 'package:flutter_recipedia/screens/user_followers_screen.dart';
-import 'package:flutter_recipedia/screens/user_following_screen.dart';
-import 'package:flutter_recipedia/screens/user_profile_screen.dart';
-import 'package:flutter_recipedia/screens/view_recipe_screen.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
@@ -41,32 +41,32 @@ final routeObserver = RouteObserver<PageRoute>();
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
-  static const primaryColor = Color(0xFF795DFE);
-  static const primaryAccent = Color(0xFF4B23EA);
+  static const _primaryColor = Color(0xFF795DFE);
+  static const _primaryAccent = Color(0xFF4B23EA);
 
   static final heartOutlinedIcon = SvgPicture.asset(
     "assets/heart_outlined.svg",
     width: 20,
     height: 20,
-    color: App.primaryAccent,
+    color: App._primaryAccent,
   );
   static final heartFilledIcon = SvgPicture.asset(
     "assets/heart_filled.svg",
     width: 20,
     height: 20,
-    color: App.primaryAccent,
+    color: App._primaryAccent,
   );
   static final chatBubbleIcon = SvgPicture.asset(
     "assets/chat_bubble.svg",
     width: 20,
     height: 20,
-    color: App.primaryAccent,
+    color: App._primaryAccent,
   );
   static final shareIcon = SvgPicture.asset(
     "assets/share.svg",
     width: 20,
     height: 20,
-    color: App.primaryAccent,
+    color: App._primaryAccent,
   );
 
   // This widget is the root of your application.
@@ -82,39 +82,39 @@ class App extends StatelessWidget {
         fontFamily: "WorkSans",
         textTheme: const TextTheme(
           headline1: TextStyle(
-            color: App.primaryAccent,
+            color: App._primaryAccent,
             letterSpacing: 1.5,
             fontSize: 44,
             fontWeight: FontWeight.w900,
           ),
           headline2: TextStyle(
             fontSize: 30,
-            color: App.primaryAccent,
+            color: App._primaryAccent,
             fontWeight: FontWeight.bold,
           ),
           headline3: TextStyle(
             fontSize: 26,
-            color: App.primaryAccent,
+            color: App._primaryAccent,
             fontWeight: FontWeight.w600,
           ),
           headline4: TextStyle(
             fontSize: 20,
-            color: App.primaryColor,
+            color: App._primaryColor,
             fontWeight: FontWeight.w600,
           ),
           headline5: TextStyle(
             fontSize: 14,
-            color: App.primaryColor,
+            color: App._primaryColor,
             fontWeight: FontWeight.w400,
           ),
           subtitle1: TextStyle(
             fontSize: 16,
-            color: App.primaryAccent,
+            color: App._primaryAccent,
             fontWeight: FontWeight.w600,
           ),
           subtitle2: TextStyle(
             fontSize: 16,
-            color: App.primaryColor,
+            color: App._primaryColor,
           ),
           bodyText1: TextStyle(
             fontSize: 16,
@@ -139,11 +139,13 @@ class App extends StatelessWidget {
       // TODO: Use a ternary to check sign-in status and replace routes accordingly
       home: StreamBuilder(
         stream: context.watch<AuthProvider>().authStateChanges,
-        builder: (_, snap) => snap.data == null ? LoginScreen() : HomeScreen(),
+        builder: (_, snap) =>
+            snap.data == null ? const LoginScreen() : const HomeScreen(),
       ),
       routes: {
         HomeScreen.routeName: (context) => const HomeScreen(),
-        PostCommentsScreen.routeName: (context) => const PostCommentsScreen(),
+        RecipeCommentsScreen.routeName: (context) =>
+            const RecipeCommentsScreen(),
         SearchScreen.routeName: (_) => const SearchScreen(),
         PersonalProfileSettingsScreen.routeName: (context) =>
             const PersonalProfileSettingsScreen(),
