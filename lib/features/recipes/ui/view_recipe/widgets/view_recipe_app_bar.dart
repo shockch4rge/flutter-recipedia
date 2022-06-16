@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 
@@ -141,9 +142,18 @@ class _AppBarImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      imageUrl,
-      fit: BoxFit.cover,
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      imageBuilder: (context, imageProvider) {
+        return Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: imageProvider,
+              fit: BoxFit.cover,
+            ),
+          ),
+        );
+      },
     );
   }
 }

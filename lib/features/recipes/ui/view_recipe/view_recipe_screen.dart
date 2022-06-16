@@ -169,27 +169,25 @@ class _RecipeDirections extends StatelessWidget {
           style: Theme.of(context).textTheme.headline3,
         ),
         Column(
-          children: recipe.steps
-              .mapIndexed(
-                (index, step) => Container(
-                  margin: const EdgeInsets.symmetric(vertical: 12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Step ${index + 1}:",
-                        style: Theme.of(context).textTheme.headline4,
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        step,
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    ],
+          children: recipe.steps.mapIndexed((index, step) {
+            return Container(
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Step ${index + 1}:",
+                    style: Theme.of(context).textTheme.headline4,
                   ),
-                ),
-              )
-              .toList(),
+                  const SizedBox(height: 5),
+                  Text(
+                    step,
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
         )
       ],
     );
