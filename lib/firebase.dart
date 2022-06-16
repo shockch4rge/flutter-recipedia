@@ -5,7 +5,6 @@ import 'package:firebase_core/firebase_core.dart'
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/screens/home_screen.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -61,22 +60,22 @@ class DefaultFirebaseOptions {
     iosBundleId: 'favteo.com.flutterRecipedia',
   );
 }
-
-Widget firebase() {
-  final Future<FirebaseApp> firebaseApp =
-      Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  return FutureBuilder(
-    future: firebaseApp,
-    builder: (context, snapshot) {
-      if (snapshot.hasError) {
-        print("You have an error! ${snapshot.error.toString()}");
-        return const Text("Something went wrong!");
-      } else if (snapshot.hasData) {
-        return const HomeScreen();
-      } else {
-        return const Center(child: CircularProgressIndicator());
-      }
-    },
-  );
-}
+//
+// Widget firebase() {
+//   final Future<FirebaseApp> firebaseApp =
+//       Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+//
+//   return FutureBuilder(
+//     future: firebaseApp,
+//     builder: (context, snapshot) {
+//       if (snapshot.hasError) {
+//         print("You have an error! ${snapshot.error.toString()}");
+//         return const Text("Something went wrong!");
+//       } else if (snapshot.hasData) {
+//         return const PostFeedScreen();
+//       } else {
+//         return const Center(child: CircularProgressIndicator());
+//       }
+//     },
+//   );
+// }
