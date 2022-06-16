@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class RecipeFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final ScrollController controller;
+  final void Function() onTitleTapped;
 
-  const RecipeFeedAppBar({Key? key, required this.controller})
+  const RecipeFeedAppBar({Key? key, required this.onTitleTapped})
       : super(key: key);
 
   @override
@@ -18,13 +18,7 @@ class RecipeFeedAppBar extends StatelessWidget implements PreferredSizeWidget {
           padding: EdgeInsets.zero,
           splashFactory: NoSplash.splashFactory,
         ),
-        onPressed: () {
-          controller.animateTo(
-            controller.position.minScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
-        },
+        onPressed: onTitleTapped,
         child: Text(
           "recipedia",
           style: TextStyle(

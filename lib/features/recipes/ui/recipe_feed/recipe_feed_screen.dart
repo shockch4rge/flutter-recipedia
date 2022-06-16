@@ -14,14 +14,20 @@ class RecipeFeedScreen extends StatefulWidget {
 }
 
 class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
-  final ScrollController _controller = ScrollController();
+  final _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: RecipeFeedAppBar(controller: _controller),
+      appBar: RecipeFeedAppBar(
+        onTitleTapped: () => _scrollController.animateTo(
+          _scrollController.position.minScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        ),
+      ),
       body: ListView.builder(
-        controller: _controller,
+        controller: _scrollController,
         physics: const BouncingScrollPhysics(),
         cacheExtent: 500,
         itemCount: 3,

@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 
 class RecipeCommentsAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-  const RecipeCommentsAppBar({Key? key}) : super(key: key);
+  final void Function() onTitleTapped;
+
+  const RecipeCommentsAppBar({Key? key, required this.onTitleTapped})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +20,16 @@ class RecipeCommentsAppBar extends StatelessWidget
         ),
         onPressed: () => Navigator.pop(context),
       ),
-      title: Text(
-        "Comments",
-        style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),
+      title: TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+          splashFactory: NoSplash.splashFactory,
+        ),
+        onPressed: onTitleTapped,
+        child: Text(
+          "Comments",
+          style: TextStyle(fontSize: 16, color: Theme.of(context).primaryColor),
+        ),
       ),
       centerTitle: true,
       backgroundColor: Colors.white,

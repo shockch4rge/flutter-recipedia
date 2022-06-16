@@ -3,8 +3,9 @@ import 'package:flutter_recipedia/providers/comment_provider.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:provider/provider.dart';
 
-import './widgets/recipe_comment.dart';
+import './widgets/recipe_comment.dart' as widgets;
 import '../../../../main.dart';
+import '../../../../models/recipe.dart';
 import 'widgets/recipe_comments_app_bar.dart';
 
 class RecipeCommentsScreen extends StatefulWidget {
@@ -18,19 +19,27 @@ class RecipeCommentsScreen extends StatefulWidget {
 
 class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
     with RouteAware {
+  final _scrollController = ScrollController();
   final FocusNode _commentInputFocus = FocusNode();
-  get comments => getArgs<List<RecipeComment>>(context);
+  List<RecipeComment> get comments => getArgs<List<RecipeComment>>(context);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const RecipeCommentsAppBar(),
+      appBar: RecipeCommentsAppBar(
+        onTitleTapped: () => _scrollController.animateTo(
+          _scrollController.position.minScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        ),
+      ),
       body: Stack(
         children: [
           ListView.builder(
+            controller: _scrollController,
             physics: const BouncingScrollPhysics(),
             itemBuilder: ((context, index) {
-              return RecipeComment(
+              return widgets.RecipeComment(
                 comment: comments[0],
                 onReply: (commentAuthor) async {
                   context.read<CommentProvider>().setReplyTarget(commentAuthor);
