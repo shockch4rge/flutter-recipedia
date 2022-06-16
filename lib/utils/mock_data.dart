@@ -5,7 +5,8 @@ final mockUser = User(
   id: "d12ifdh2itjwid219jsf07a",
   name: "Lisa Hannigan",
   username: "lisahannigan",
-  avatarUrl: "assets/images/avatar_placeholder.png",
+  avatarUrl:
+      "https://firebasestorage.googleapis.com/v0/b/flutter-recipedia.appspot.com/o/lisapfp2.png?alt=media&token=ba5642dd-f3c4-4a04-b7b4-1911dd193634",
   bio: "Hey! I'm Lisa Hannigan. I love making music and cooking!",
   followers: [],
   following: [],
@@ -15,7 +16,8 @@ final mockMeUser = User(
   id: "2e29eu2idjsiud9121duud821",
   name: "John Doe",
   username: "johndoe123",
-  avatarUrl: "assets/images/avatar_placeholder.png",
+  avatarUrl:
+      "https://firebasestorage.googleapis.com/v0/b/flutter-recipedia.appspot.com/o/nerd.jpg?alt=media&token=df113971-b024-4b25-baed-12211cc83286",
   bio:
       "Hello I am John Doe I like to doe and john because my name is john doe!",
   followers: [],
@@ -27,7 +29,8 @@ final mockRecipe = Recipe(
   title: "Truffle Spaghetti",
   description:
       "I was planning to make a beef stew for tonight, but I got lazy midway and decided to whip up this quick carbonara instead! Quick and easy recipe (with no dumb cream)!",
-  imageUrl: "assets/images/post_placeholder.jpg",
+  imageUrl:
+      "https://firebasestorage.googleapis.com/v0/b/flutter-recipedia.appspot.com/o/post_placeholder.jpg?alt=media&token=620d1f8c-eb50-42a9-b407-5abbf17fc8b4",
   likes: [],
   comments: [
     RecipeComment(content: "Hello wor", userId: "2e29eu2idjsiud9121duud821")

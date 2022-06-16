@@ -16,43 +16,6 @@ class _RecipeContentHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        TextButton.icon(
-          onPressed: () {},
-          style: TextButton.styleFrom(padding: EdgeInsets.zero),
-          icon: CachedNetworkImage(
-            imageUrl:
-                "https://firebasestorage.googleapis.com/v0/b/flutter-recipedia.appspot.com/o/lisapfp2.png?alt=media&token=ba5642dd-f3c4-4a04-b7b4-1911dd193634",
-            imageBuilder: (context, imageProvider) =>
-                Avatar(size: 36, avatarUrl: recipe.imageUrl),
-            placeholder: (context, url) => Container(
-              width: 20,
-              height: 20,
-              margin: const EdgeInsets.only(right: 15),
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                backgroundColor: Colors.grey.shade200,
-                color: Colors.grey.shade300,
-              ),
-            ),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
-          ),
-          label: Text(recipe.author.username,
-              style: Theme.of(context).textTheme.headline4),
-        )
-      ],
-    );
-  }
-}
-
-class _RecipeContentHeaderMock extends StatelessWidget {
-  final Recipe recipe;
-  const _RecipeContentHeaderMock({Key? key, required this.recipe})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
     return Container(
       height: 54,
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -66,14 +29,20 @@ class _RecipeContentHeaderMock extends StatelessWidget {
               arguments: recipe.author,
             ),
             style: TextButton.styleFrom(
-                padding: EdgeInsets.zero,
-                splashFactory: NoSplash.splashFactory),
-            icon: Avatar(
-              size: 36,
-              avatarUrl: recipe.author.avatarUrl,
+              padding: EdgeInsets.zero,
+              splashFactory: NoSplash.splashFactory,
             ),
-            label: Text(recipe.author.username,
-                style: Theme.of(context).textTheme.subtitle1),
+            icon: Padding(
+              padding: const EdgeInsets.only(right: 5.0),
+              child: Avatar(
+                size: 36,
+                avatarUrl: recipe.author.avatarUrl,
+              ),
+            ),
+            label: Text(
+              recipe.author.username,
+              style: Theme.of(context).textTheme.subtitle1,
+            ),
           ),
           RecipeOptionsMenu(
             onSaveTapped: () {},
@@ -105,12 +74,15 @@ class _RecipeContentHeroImageMock extends StatelessWidget {
 }
 
 class _RecipeContentHeroImage extends StatelessWidget {
-  const _RecipeContentHeroImage({Key? key}) : super(key: key);
+  final String imageUrl;
+
+  const _RecipeContentHeroImage({Key? key, required this.imageUrl})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return CachedNetworkImage(
-      imageUrl: "flutter-recipedia.appspot.com/post_placeholder.jpg",
+      imageUrl: imageUrl,
       imageBuilder: (context, imageProvider) => Container(
         height: 400,
         decoration: BoxDecoration(
@@ -130,6 +102,8 @@ class _RecipeContentHeroImage extends StatelessWidget {
         ),
       ),
     );
+    // return Hero(
+    //     tag: "test", child: Image.asset("assets/images/post_placeholder.jpg"));
   }
 }
 
@@ -142,8 +116,8 @@ class RecipeContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _RecipeContentHeaderMock(recipe: recipe),
-        _RecipeContentHeroImageMock(imageUrl: recipe.imageUrl),
+        _RecipeContentHeader(recipe: recipe),
+        _RecipeContentHeroImage(imageUrl: recipe.imageUrl),
         Container(
           padding: const EdgeInsets.only(left: 22, right: 22, bottom: 30),
           child: Column(

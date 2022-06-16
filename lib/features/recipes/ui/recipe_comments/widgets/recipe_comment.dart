@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
+import 'package:flutter_recipedia/models/recipe.dart' as model;
 import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -9,7 +10,7 @@ import '../../../../../models/user.dart';
 
 class RecipeComment extends StatelessWidget {
   final void Function(User user) onReply;
-  final RecipeComment comment;
+  final model.RecipeComment comment;
 
   const RecipeComment({Key? key, required this.onReply, required this.comment})
       : super(key: key);
@@ -48,7 +49,8 @@ class RecipeComment extends StatelessWidget {
             const Expanded(
               child: Avatar(
                 size: 40,
-                avatarUrl: "assets/images/avatar_placeholder.png",
+                avatarUrl:
+                    "https://firebasestorage.googleapis.com/v0/b/flutter-recipedia.appspot.com/o/lisapfp2.png?alt=media&token=ba5642dd-f3c4-4a04-b7b4-1911dd193634",
               ),
             ),
             Expanded(
