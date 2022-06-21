@@ -1,59 +1,39 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/utils/mock_data.dart';
 
 import '../../../../models/recipe.dart';
 import '../view_recipe/view_recipe_screen.dart';
 
-class RecipePreview extends StatefulWidget {
+class RecipePreview extends StatelessWidget {
   final Recipe recipe;
 
   const RecipePreview({Key? key, required this.recipe}) : super(key: key);
 
   @override
-  State<RecipePreview> createState() => _RecipePreviewState();
-}
-
-class _RecipePreviewState extends State<RecipePreview> {
-  bool isPressed = false;
-
-  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (details) {
-        setState(() {
-          isPressed = true;
-        });
-      },
-      onTapUp: (details) {
-        setState(() {
-          isPressed = false;
-        });
-      },
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          ViewRecipeScreen.routeName,
-          arguments: mockRecipe,
-        );
-      },
-      child: AnimatedPhysicalModel(
-        color: Colors.black,
-        shadowColor: Colors.black,
-        shape: BoxShape.rectangle,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.fastOutSlowIn,
-        elevation: isPressed ? 8.0 : 0,
-        borderRadius: BorderRadius.circular(6),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.fastOutSlowIn,
-          decoration: BoxDecoration(
-            image: const DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage("assets/images/post_placeholder.jpg"),
+      onTap: () => Navigator.of(context).pushNamed(
+        ViewRecipeScreen.routeName,
+        arguments: recipe,
+      ),
+      child: CachedNetworkImage(
+        imageUrl: recipe.imageUrl,
+        imageBuilder: (context, provider) {
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(image: provider, fit: BoxFit.cover),
+              borderRadius: BorderRadius.circular(6),
             ),
-            borderRadius: BorderRadius.circular(6),
+          );
+        },
+        placeholder: (context, imageUrl) => Center(
+          child: CircularProgressIndicator(
+            backgroundColor: Colors.grey.shade200,
+            color: Colors.grey.shade300,
           ),
+        ),
+        errorWidget: (context, imageUrl, error) => Container(
+          child: Icon(Icons.error),
         ),
       ),
     );
