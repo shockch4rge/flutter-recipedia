@@ -174,8 +174,7 @@ class _UserDescription extends StatelessWidget {
         SizedBox(
           width: Size.infinite.width,
           child: ElevatedButton(
-            onPressed: () => Navigator.pushNamed(
-              context,
+            onPressed: () => Navigator.of(context).pushNamed(
               PersonalProfileSettingsScreen.routeName,
               arguments: user,
             ),
