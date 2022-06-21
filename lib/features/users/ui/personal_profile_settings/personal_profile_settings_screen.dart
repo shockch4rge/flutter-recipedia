@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
-import 'package:flutter_recipedia/features/authentication/ui/login/login_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/widgets/confirm_delete_profile_dialog.dart';
 import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
@@ -44,7 +43,9 @@ class _PersonalProfileSettingsScreenState
               child: Text(
                 "Change profile photo",
                 style: TextStyle(
-                    fontSize: 14, color: Theme.of(context).primaryColorDark),
+                  fontSize: 14,
+                  color: Theme.of(context).primaryColorDark,
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -54,9 +55,7 @@ class _PersonalProfileSettingsScreenState
               child: ElevatedButton(
                 onPressed: () async {
                   await context.read<AuthProvider>().signOut();
-                  Navigator.of(context).pushReplacementNamed(
-                    LoginScreen.routeName,
-                  );
+                  Navigator.of(context).pop();
                 },
                 child: const Text("SIGN OUT"),
                 style: ElevatedButton.styleFrom(
