@@ -18,6 +18,12 @@ class User {
   final List<DocumentReference> following;
 
   static final idField = FieldPath(const ["id"]);
+  static final usernameField = FieldPath(const ["username"]);
+  static final nameField = FieldPath(const ["name"]);
+  static final avatarUrlField = FieldPath(const ["avatarUrl"]);
+  static final bioField = FieldPath(const ["bio"]);
+  static final followersField = FieldPath(const ["followers"]);
+  static final followingField = FieldPath(const ["following"]);
 
   const User({
     required this.id,
@@ -30,15 +36,6 @@ class User {
   });
 
   factory User.fromFirestore(DocumentSnapshot snap, dynamic _) {
-    // return User(
-    //   id: snap.reference,
-    //   name: snap.get("name"),
-    //   username: snap.get("username"),
-    //   bio: snap.get("bio"),
-    //   avatarUrl: snap.get("avatarUrl"),
-    //   followers: snap.get("followers"),
-    //   following: snap.get("following"),
-    // );
     final json = snap.data()! as JsonResponse;
     json["id"] = snap.reference;
 

@@ -19,6 +19,12 @@ class Recipe {
 
   static final idField = FieldPath(const ["id"]);
   static final authorIdField = FieldPath(const ["authorId"]);
+  static final titleField = FieldPath(const ["title"]);
+  static final descriptionField = FieldPath(const ["description"]);
+  static final imageUrlField = FieldPath(const ["imageUrl"]);
+  static final likesField = FieldPath(const ["likes"]);
+  static final ingredientsField = FieldPath(const ["ingredients"]);
+  static final stepsField = FieldPath(const ["steps"]);
 
   const Recipe({
     required this.id,
@@ -53,10 +59,10 @@ class RecipeComment {
   final DocumentReference recipeId;
   final String content;
 
-  static final idField = FieldPath(["id"]);
-  static final userIdField = FieldPath(["userId"]);
-  static final recipeIdField = FieldPath(["recipeId"]);
-  static final contentField = FieldPath(["content"]);
+  static final idField = FieldPath(const ["id"]);
+  static final userIdField = FieldPath(const ["userId"]);
+  static final recipeIdField = FieldPath(const ["recipeId"]);
+  static final contentField = FieldPath(const ["content"]);
 
   const RecipeComment({
     required this.id,
@@ -66,13 +72,6 @@ class RecipeComment {
   });
 
   factory RecipeComment.fromFirestore(DocumentSnapshot snap, dynamic _) {
-    // return RecipeComment(
-    //   id: snap.reference,
-    //   userId: USERS.doc(snap.get("user")),
-    //   recipeId: RECIPES.doc(snap.get("recipe")),
-    //   content: snap.get("content"),
-    // );
-
     final json = snap.data()! as JsonResponse;
     json["id"] = snap.reference;
     return RecipeComment.fromJson(json);
@@ -96,6 +95,12 @@ class RecipeCommentReply {
   final DocumentReference recipeId;
   final String content;
 
+  static final idField = FieldPath(const ["id"]);
+  static final userIdField = FieldPath(const ["userId"]);
+  static final commentIdField = FieldPath(const ["commentId"]);
+  static final recipeIdField = FieldPath(const ["recipeIdField"]);
+  static final contentField = FieldPath(const ["content"]);
+
   const RecipeCommentReply({
     required this.id,
     required this.userId,
@@ -105,13 +110,6 @@ class RecipeCommentReply {
   });
 
   factory RecipeCommentReply.fromFirestore(DocumentSnapshot snap, dynamic _) {
-    // return RecipeCommentReply(
-    //   id: RECIPE_COMMENT_REPLIES.doc(snap.id),
-    //   userId: USERS.doc(snap.get("user")),
-    //   commentId: RECIPE_COMMENTS.doc(snap.get("comment")),
-    //   recipeId: RECIPES.doc(snap.get("recipe")),
-    //   content: snap.get("content"),
-    // );
     final json = snap.data()! as JsonResponse;
     json["id"] = snap.reference;
     return RecipeCommentReply.fromJson(json);
