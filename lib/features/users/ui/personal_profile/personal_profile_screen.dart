@@ -4,8 +4,11 @@ import 'package:flutter_recipedia/features/recipes/ui/common/recipe_preview.dart
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/personal_profile_settings_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_followers/user_followers_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
+import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
+import 'package:flutter_recipedia/repositories/recipe_repository.dart';
 import 'package:flutter_recipedia/utils/mock_data.dart';
+import 'package:provider/provider.dart';
 
 import 'widgets/personal_profile_actions.dart';
 import 'widgets/personal_profile_app_bar.dart';
@@ -64,18 +67,27 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 10)),
-            SliverGrid(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return RecipePreview(recipe: mockRecipe);
-                },
-              ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 6,
-                mainAxisSpacing: 6,
-              ),
-            ),
+            FutureBuilder(
+                future:
+                    context.read<RecipeRepository>().getUserRecipes(user.id),
+                builder: (context, snap) {
+                  final recipes = snap.data as List<Recipe>;
+
+                  return SliverGrid(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return RecipePreview(recipe: recipes[index]);
+                      },
+                      childCount: recipes.length,
+                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 6,
+                      mainAxisSpacing: 6,
+                    ),
+                  );
+                }),
           ],
         ),
       ),

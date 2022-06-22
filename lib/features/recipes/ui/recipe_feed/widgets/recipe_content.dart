@@ -1,17 +1,25 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
+import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/app/recipe_comment_repository.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comments_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_feed/widgets/recipe_options_menu.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
+import 'package:flutter_recipedia/models/user.dart';
+import 'package:flutter_recipedia/repositories/user_repository.dart';
+import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
+import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../common/recipe_buttons.dart';
 import '../../view_recipe/view_recipe_screen.dart';
 
 class _RecipeContentHeader extends StatelessWidget {
   final Recipe recipe;
-  const _RecipeContentHeader({Key? key, required this.recipe})
+  final User author;
+  const _RecipeContentHeader(
+      {Key? key, required this.recipe, required this.author})
       : super(key: key);
 
   @override
@@ -26,7 +34,7 @@ class _RecipeContentHeader extends StatelessWidget {
             onPressed: () => Navigator.pushNamed(
               context,
               UserProfileScreen.routeName,
-              arguments: recipe.author,
+              arguments: author,
             ),
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
@@ -36,11 +44,11 @@ class _RecipeContentHeader extends StatelessWidget {
               padding: const EdgeInsets.only(right: 5.0),
               child: Avatar(
                 size: 36,
-                avatarUrl: recipe.author.avatarUrl,
+                avatarUrl: author.avatarUrl,
               ),
             ),
             label: Text(
-              recipe.author.username,
+              author.username,
               style: Theme.of(context).textTheme.subtitle1,
             ),
           ),
@@ -49,25 +57,6 @@ class _RecipeContentHeader extends StatelessWidget {
             onShareTapped: () {},
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _RecipeContentHeroImageMock extends StatelessWidget {
-  final String imageUrl;
-  const _RecipeContentHeroImageMock({Key? key, required this.imageUrl})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 400,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
       ),
     );
   }
@@ -84,7 +73,7 @@ class _RecipeContentHeroImage extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: imageUrl,
       imageBuilder: (context, imageProvider) => Container(
-        height: 400,
+        height: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: imageProvider,
@@ -102,8 +91,6 @@ class _RecipeContentHeroImage extends StatelessWidget {
         ),
       ),
     );
-    // return Hero(
-    //     tag: "test", child: Image.asset("assets/images/post_placeholder.jpg"));
   }
 }
 
@@ -114,29 +101,44 @@ class RecipeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _RecipeContentHeader(recipe: recipe),
-        _RecipeContentHeroImage(imageUrl: recipe.imageUrl),
-        Container(
-          padding: const EdgeInsets.only(left: 22, right: 22, bottom: 30),
-          child: Column(
-            children: [
-              _RecipeContentActions(recipe: recipe),
-              _RecipeContentDescription(recipe: recipe),
-            ],
-          ),
-        ),
-      ],
+    return FutureBuilder(
+      future: context.read<UserRepository>().getUserById(recipe.authorId),
+      builder: (context, snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return Container();
+        }
+
+        final author = snap.data as User;
+
+        return Column(
+          children: [
+            _RecipeContentHeader(recipe: recipe, author: author),
+            _RecipeContentHeroImage(imageUrl: recipe.imageUrl),
+            Container(
+              padding: const EdgeInsets.only(left: 22, right: 22, bottom: 30),
+              child: Column(
+                children: [
+                  _RecipeContentActions(recipe: recipe, author: author),
+                  _RecipeContentDescription(recipe: recipe, author: author),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
 class _RecipeContentActions extends StatelessWidget {
   final Recipe recipe;
+  final User author;
 
-  const _RecipeContentActions({Key? key, required this.recipe})
-      : super(key: key);
+  const _RecipeContentActions({
+    Key? key,
+    required this.recipe,
+    required this.author,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -148,14 +150,26 @@ class _RecipeContentActions extends StatelessWidget {
           Row(
             children: [
               LikeButton(
+                likes: recipe.likes,
                 onPressed: () {},
               ),
-              CommentButton(
-                onPressed: () => Navigator.of(context).pushNamed(
-                  RecipeCommentsScreen.routeName,
-                  arguments: recipe.comments,
-                ),
-              ),
+              FutureBuilder(
+                  future: context
+                      .read<RecipeCommentRepository>()
+                      .getAllByRecipeId(recipe.id),
+                  builder: (context, snap) {
+                    if (snap.waiting) {
+                      return Container();
+                    }
+
+                    final comments = snap.data as List<RecipeComment>;
+                    return CommentButton(
+                      comments: comments,
+                      onPressed: () => Navigator.of(context).pushNamed(
+                        RecipeCommentsScreen.routeName,
+                      ),
+                    );
+                  }),
               ShareButton(
                 onPressed: () {},
               )
@@ -164,7 +178,7 @@ class _RecipeContentActions extends StatelessWidget {
           ViewRecipeButton(
             onPressed: () => Navigator.of(context).pushNamed(
               ViewRecipeScreen.routeName,
-              arguments: recipe,
+              arguments: Tuple2(recipe, author),
             ),
           ),
         ],
@@ -175,8 +189,10 @@ class _RecipeContentActions extends StatelessWidget {
 
 class _RecipeContentDescription extends StatelessWidget {
   final Recipe recipe;
+  final User author;
 
-  const _RecipeContentDescription({Key? key, required this.recipe})
+  const _RecipeContentDescription(
+      {Key? key, required this.recipe, required this.author})
       : super(key: key);
 
   @override
@@ -190,7 +206,7 @@ class _RecipeContentDescription extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         Text(
-          "${recipe.author.username}:",
+          "${author.username}:",
           style: Theme.of(context).textTheme.subtitle2,
         ),
         const SizedBox(height: 8),
@@ -198,6 +214,49 @@ class _RecipeContentDescription extends StatelessWidget {
           recipe.description,
           style: Theme.of(context).textTheme.bodyText2,
         ),
+      ],
+    );
+  }
+}
+
+class RecipeContentPlaceholder extends StatelessWidget {
+  const RecipeContentPlaceholder({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                margin: const EdgeInsets.only(right: 14),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey,
+                ),
+              ),
+              Container(
+                width: 180,
+                height: 14,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: Colors.grey,
+                ),
+              )
+            ],
+          ),
+        ),
+        Container(
+          height: MediaQuery.of(context).size.width,
+          width: MediaQuery.of(context).size.width,
+          margin: const EdgeInsets.only(bottom: 40),
+          color: Colors.grey,
+        )
       ],
     );
   }

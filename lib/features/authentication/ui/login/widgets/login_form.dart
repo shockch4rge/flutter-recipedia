@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/snack.dart';
 import 'package:flutter_recipedia/features/authentication/ui/reset_password/reset_password_screen.dart';
 import 'package:flutter_recipedia/features/authentication/ui/signup/signup_screen.dart';
 import 'package:flutter_recipedia/features/misc/home_screen.dart';
+import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -38,9 +40,9 @@ class _LoginFormState extends State<LoginForm> {
             },
             decoration: InputDecoration(
               hoverColor: Theme.of(context).primaryColorDark,
-              border: const OutlineInputBorder(
+              border: OutlineInputBorder(
                 borderSide: BorderSide.none,
-                borderRadius: BorderRadius.all(Radius.circular(7)),
+                borderRadius: BorderRadius.circular(7),
               ),
               filled: true,
               fillColor: Colors.grey.shade200,
@@ -66,9 +68,7 @@ class _LoginFormState extends State<LoginForm> {
                 decoration: InputDecoration(
                   suffixIcon: IconButton(
                     onPressed: () {
-                      setState(() {
-                        _showPassword = !_showPassword;
-                      });
+                      setState(() => _showPassword = !_showPassword);
                     },
                     color: Colors.black45,
                     icon: const Icon(Icons.lock),
@@ -115,32 +115,26 @@ class _LoginFormState extends State<LoginForm> {
                 children: [
                   SignInButton(
                     onPressed: () async {
-                      String result = await context.read<AuthProvider>().signIn(
-                            email: _emailController.text,
-                            password: _passwordController.text,
-                          );
+                      final auth.UserCredential credentials;
+                      final User user;
 
-                      if (result != "signed in") {
+                      try {
+                        credentials = await context.read<AuthProvider>().signIn(
+                              email: _emailController.text,
+                              password: _passwordController.text,
+                            );
+                      } catch (e) {
                         Snack.bad(
                           context,
                           "Incorrect email or password",
                           SnackBarAction(
                             label: "Dismiss",
+                            textColor: Colors.white,
                             onPressed: () {},
                           ),
                         );
                         return;
                       }
-
-                      Snack.good(
-                        context,
-                        "Welcome back, ${context.read<AuthProvider>().user.username}!",
-                        SnackBarAction(
-                          label: "Dismiss",
-                          onPressed: () {},
-                          textColor: Colors.white,
-                        ),
-                      );
 
                       Navigator.of(context).pushReplacementNamed(
                         HomeScreen.routeName,

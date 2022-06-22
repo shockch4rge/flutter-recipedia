@@ -1,29 +1,32 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/models/recipe.dart';
 
 import '../../../../main.dart';
 
 class CommentButton extends StatelessWidget {
+  final List<RecipeComment> comments;
   final void Function() onPressed;
 
-  const CommentButton({Key? key, required this.onPressed}) : super(key: key);
+  const CommentButton(
+      {Key? key, required this.comments, required this.onPressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 50,
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          alignment: Alignment.centerLeft,
-          elevation: 0,
-          primary: Colors.transparent,
-          padding: EdgeInsets.zero,
-        ),
-        onPressed: onPressed,
-        icon: App.chatBubbleIcon,
-        label: Text(
-          // TODO: comment count
-          "3",
-          style: TextStyle(color: Theme.of(context).primaryColorDark),
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        alignment: Alignment.centerLeft,
+        elevation: 0,
+        primary: Colors.transparent,
+        padding: EdgeInsets.zero,
+      ),
+      onPressed: onPressed,
+      icon: App.chatBubbleIcon,
+      label: Text(
+        comments.length.toString(),
+        style: TextStyle(
+          color: Theme.of(context).primaryColorDark,
         ),
       ),
     );
@@ -31,9 +34,11 @@ class CommentButton extends StatelessWidget {
 }
 
 class LikeButton extends StatelessWidget {
+  final List<DocumentReference> likes;
   final void Function() onPressed;
 
-  const LikeButton({Key? key, required this.onPressed}) : super(key: key);
+  const LikeButton({Key? key, required this.likes, required this.onPressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +52,10 @@ class LikeButton extends StatelessWidget {
       onPressed: onPressed,
       icon: App.heartOutlinedIcon,
       label: Text(
-        // TODO: like count
-        "14",
-        style: TextStyle(color: Theme.of(context).primaryColorDark),
+        likes.length.toString(),
+        style: TextStyle(
+          color: Theme.of(context).primaryColorDark,
+        ),
       ),
     );
   }
