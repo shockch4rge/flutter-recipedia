@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/utils/mock_data.dart';
+import 'package:flutter_recipedia/features/recipes/ui/recipe_feed/widgets/recipe_content.dart';
+import 'package:flutter_recipedia/models/recipe.dart';
+import 'package:flutter_recipedia/repositories/recipe_repository.dart';
+import 'package:flutter_recipedia/utils/constants/firestore_collections.dart';
+import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
+import 'package:provider/provider.dart';
 
-import 'widgets/recipe_content.dart';
 import 'widgets/recipe_feed_app_bar.dart';
 
 class RecipeFeedScreen extends StatefulWidget {
@@ -26,13 +30,54 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
           curve: Curves.easeInOut,
         ),
       ),
-      body: ListView.builder(
-        controller: _scrollController,
-        physics: const BouncingScrollPhysics(),
-        cacheExtent: 500,
-        itemCount: 3,
-        itemBuilder: (BuildContext context, int index) {
-          return RecipeContent(recipe: mockRecipe);
+      body: FutureBuilder(
+        future: context
+            .read<RecipeRepository>()
+            .getUserRecipes(USERS.doc("tZBXtDjmwKjyAzXQwpfn")),
+        builder: (context, snap) {
+          if (snap.hasError) {
+            print(snap.error);
+            print(snap.stackTrace);
+            return Center(
+              child: Text("There was an error. Try again later."),
+            );
+          }
+
+          if (snap.waiting) {
+            return ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              cacheExtent: 500,
+              itemCount: 4,
+              itemBuilder: (context, index) {
+                return const RecipeContentPlaceholder();
+              },
+            );
+          }
+
+          final recipes = snap.data as List<Recipe>;
+
+          if (recipes.isEmpty) {
+            return Center(
+              child: Column(
+                children: [
+                  Text("Hmmm, its a little lonely in here..."),
+                  Text(
+                    "Create a recipe or follow someone to populate your feed!",
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return ListView.builder(
+            controller: _scrollController,
+            physics: const BouncingScrollPhysics(),
+            cacheExtent: 500,
+            itemCount: recipes.length,
+            itemBuilder: (context, index) {
+              return RecipeContent(recipe: recipes[index]);
+            },
+          );
         },
       ),
     );

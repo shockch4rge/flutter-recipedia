@@ -4,7 +4,12 @@ class Snack {
   static bad(BuildContext context, String content, [SnackBarAction? action]) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(content),
+        content: Text(
+          content,
+          style: TextStyle(
+            fontFamily: Theme.of(context).textTheme.bodyText1?.fontFamily,
+          ),
+        ),
         action: action,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

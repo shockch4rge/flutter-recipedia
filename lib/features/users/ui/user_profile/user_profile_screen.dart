@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
 import 'package:flutter_recipedia/features/recipes/ui/common/recipe_preview.dart';
+import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
+import 'package:flutter_recipedia/repositories/recipe_repository.dart';
 import 'package:flutter_recipedia/utils/mock_data.dart';
+import 'package:provider/provider.dart';
 
 class UserProfileScreen extends StatefulWidget {
   static const routeName = "/home/profile/user";
@@ -15,7 +18,7 @@ class UserProfileScreen extends StatefulWidget {
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
   // User get user => getArgs<User>(context);
-  User get user => mockUser;
+  User get user => mockMeUser;
 
   @override
   Widget build(BuildContext context) {
@@ -41,20 +44,26 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          SliverGrid(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return RecipePreview(
-                  recipe: mockRecipe,
+          FutureBuilder(
+              future: context.read<RecipeRepository>().getUserRecipes(user.id),
+              builder: (context, snap) {
+                final recipes = snap.data as List<Recipe>;
+                return SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      return RecipePreview(
+                        recipe: recipes[index],
+                      );
+                    },
+                    childCount: recipes.length,
+                  ),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 6,
+                    mainAxisSpacing: 6,
+                  ),
                 );
-              },
-            ),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 6,
-              mainAxisSpacing: 6,
-            ),
-          ),
+              }),
         ],
       ),
     );

@@ -2,9 +2,13 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
 import 'package:flutter_recipedia/common/checkbox_list_item.dart';
+import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/app/recipe_comment_repository.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
+import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
+import 'package:provider/provider.dart';
+import 'package:tuple/tuple.dart';
 
 import '../common/recipe_buttons.dart';
 import 'widgets/view_recipe_app_bar.dart';
@@ -23,7 +27,8 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
 
   double get minHeight => kToolbarHeight + MediaQuery.of(context).padding.top;
   double get maxHeight => 200 + MediaQuery.of(context).padding.top;
-  Recipe get recipe => getArgs<Recipe>(context);
+  Recipe get recipe => getArgs<Tuple2>(context).item1;
+  User get user => getArgs<Tuple2>(context).item2;
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +43,16 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
           controller: _controller,
           slivers: [
             ViewRecipeAppBar(
-                recipe: recipe, maxHeight: maxHeight, minHeight: minHeight),
+              recipe: recipe,
+              maxHeight: maxHeight,
+              minHeight: minHeight,
+            ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               sliver: SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    _RecipeActions(recipe: recipe),
+                    _RecipeActions(recipe: recipe, user: user),
                     _RecipeDescription(recipe: recipe),
                     _RecipeDirections(recipe: recipe),
                   ],
@@ -65,9 +73,11 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
           _controller.offset / scrollDistance > 0.5 ? scrollDistance : 0;
 
       Future.microtask(
-        () => _controller.animateTo(snapOffset,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOutCubicEmphasized),
+        () => _controller.animateTo(
+          snapOffset,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOutCubicEmphasized,
+        ),
       );
     }
   }
@@ -92,8 +102,10 @@ class _RecipeDescription extends StatelessWidget {
 
 class _RecipeActions extends StatelessWidget {
   final Recipe recipe;
+  final User user;
 
-  const _RecipeActions({Key? key, required this.recipe}) : super(key: key);
+  const _RecipeActions({Key? key, required this.recipe, required this.user})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -104,25 +116,25 @@ class _RecipeActions extends StatelessWidget {
           onTap: () => Navigator.pushNamed(
             context,
             UserProfileScreen.routeName,
-            arguments: recipe.author,
+            arguments: recipe.authorId,
           ),
           child: Row(
             children: [
               Avatar(
                 size: 40,
-                avatarUrl: recipe.author.avatarUrl,
+                avatarUrl: user.avatarUrl,
               ),
               const SizedBox(width: 5),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    recipe.author.name,
+                    user.name,
                     style: Theme.of(context).textTheme.subtitle1,
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    "@${recipe.author.username}",
+                    "@${user.username}",
                     style: Theme.of(context).textTheme.headline5,
                   )
                 ],
@@ -132,8 +144,18 @@ class _RecipeActions extends StatelessWidget {
         ),
         Row(
           children: [
-            LikeButton(onPressed: () {}),
-            CommentButton(onPressed: () {}),
+            LikeButton(
+              likes: recipe.likes,
+              onPressed: () {},
+            ),
+            FutureBuilder(
+                future: context
+                    .read<RecipeCommentRepository>()
+                    .getAllByRecipeId(recipe.id),
+                builder: (context, snap) {
+                  final comments = snap.data as List<RecipeComment>;
+                  return CommentButton(comments: comments, onPressed: () {});
+                }),
             ShareButton(onPressed: () {}),
           ],
         )

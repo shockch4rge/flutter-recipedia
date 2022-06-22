@@ -40,11 +40,11 @@ class _FollowingListItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: Row(
         children: [
-          const Padding(
-            padding: EdgeInsets.only(right: 8.0),
+          Padding(
+            padding: const EdgeInsets.only(right: 14),
             child: Avatar(
               size: 40,
-              avatarUrl: "assets/images/avatar_placeholder.png",
+              avatarUrl: user.avatarUrl,
             ),
           ),
           Expanded(

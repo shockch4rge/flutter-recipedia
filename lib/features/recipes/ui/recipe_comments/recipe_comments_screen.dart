@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/app/recipe_comment_repository.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +23,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
     with RouteAware {
   final _scrollController = ScrollController();
   final FocusNode _commentInputFocus = FocusNode();
-  List<RecipeComment> get comments => getArgs<List<RecipeComment>>(context);
+  DocumentReference get recipeId => getArgs<DocumentReference>(context);
 
   @override
   Widget build(BuildContext context) {
@@ -35,22 +37,33 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
       ),
       body: Stack(
         children: [
-          ListView.builder(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: ((context, index) {
-              return widgets.RecipeComment(
-                comment: comments[0],
-                onReply: (commentAuthor) async {
-                  context.read<CommentProvider>().setReplyTarget(commentAuthor);
-                  // un-focus in case we focused it before
-                  _commentInputFocus.unfocus();
-                  // allow time for widget to re-render
-                  await Future.delayed(const Duration(milliseconds: 200));
-                  _commentInputFocus.requestFocus();
-                },
+          FutureBuilder(
+            future: context
+                .read<RecipeCommentRepository>()
+                .getAllByRecipeId(recipeId),
+            builder: (context, snap) {
+              final comments = snap.data as List<RecipeComment>;
+              return ListView.builder(
+                controller: _scrollController,
+                physics: const BouncingScrollPhysics(),
+                itemCount: comments.length,
+                itemBuilder: ((context, index) {
+                  return widgets.RecipeComment(
+                    comment: comments[index],
+                    onReply: (commentAuthor) async {
+                      context
+                          .read<CommentProvider>()
+                          .setReplyTarget(commentAuthor);
+                      // un-focus in case we focused it before
+                      _commentInputFocus.unfocus();
+                      // allow time for widget to re-render
+                      await Future.delayed(const Duration(milliseconds: 200));
+                      _commentInputFocus.requestFocus();
+                    },
+                  );
+                }),
               );
-            }),
+            },
           ),
           Positioned(
             bottom: 0,
