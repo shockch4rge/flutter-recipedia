@@ -33,28 +33,28 @@ class _HomeScreenState extends State<HomeScreen> {
         unselectedItemColor: Colors.black,
         selectedItemColor: Theme.of(context).primaryColorDark,
         type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
+        showSelectedLabels: true,
         showUnselectedLabels: false,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.home, size: 26),
-            label: "Home",
+            icon: Icon(FeatherIcons.home),
+            label: "•",
           ),
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.search),
-            label: "Search",
+            label: "•",
           ),
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.plusSquare),
-            label: "Create",
+            label: "•",
           ),
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.user),
-            label: "Profile",
+            label: "•",
           ),
           BottomNavigationBarItem(
             icon: Icon(FeatherIcons.settings),
-            label: "Settings",
+            label: "•",
           ),
         ],
         currentIndex: _currentScreenIndex,
