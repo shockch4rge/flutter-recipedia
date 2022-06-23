@@ -7,6 +7,7 @@ import 'package:flutter_recipedia/features/users/ui/user_following/user_followin
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
+import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +30,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PersonalProfileAppBar(
-        user: mockMeUser,
+        user: user,
         onMoreSettingsPressed: () {
           showModalBottomSheet(
             context: context,
@@ -43,51 +44,47 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
           );
         },
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(
-          left: 20,
-          right: 20,
-        ),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.only(top: 20.0),
-              sliver: SliverToBoxAdapter(
+            SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsets.only(top: 20),
                 child: _UserDescription(user: user),
               ),
             ),
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 30),
-            ),
             SliverToBoxAdapter(
-              child: Text(
-                "${user.username}'s posts",
-                textAlign: TextAlign.center,
+              child: Container(
+                margin: const EdgeInsets.only(top: 20, bottom: 10),
+                child: Text(
+                  "${user.username}'s recipes",
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
-            const SliverToBoxAdapter(child: SizedBox(height: 10)),
             FutureBuilder(
-                future:
-                    context.read<RecipeRepository>().getUserRecipes(user.id),
-                builder: (context, snap) {
-                  final recipes = snap.data as List<Recipe>;
+              future: context.read<RecipeRepository>().getUserRecipes(user.id),
+              builder: (context, snap) {
+                if (snap.waiting) {
+                  return const _RecipePreviewPlaceholderGrid();
+                }
 
-                  return SliverGrid(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        return RecipePreview(recipe: recipes[index]);
-                      },
-                      childCount: recipes.length,
+                final recipes = snap.data as List<Recipe>;
+
+                if (recipes.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(
+                      child: Text("You don't have any recipes posted!"),
                     ),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 6,
-                      mainAxisSpacing: 6,
-                    ),
+                    hasScrollBody: false,
                   );
-                }),
+                }
+
+                return _RecipePreviewGrid(recipes: recipes);
+              },
+            ),
           ],
         ),
       ),
@@ -192,7 +189,8 @@ class _UserDescription extends StatelessWidget {
             ),
             child: Text(
               "EDIT PROFILE",
-              style: TextStyle(color: Theme.of(context).primaryColorDark),
+              style: TextStyle(
+                  fontSize: 14, color: Theme.of(context).primaryColorDark),
             ),
             style: ElevatedButton.styleFrom(
               elevation: 0,
@@ -206,6 +204,52 @@ class _UserDescription extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _RecipePreviewGrid extends StatelessWidget {
+  final List<Recipe> recipes;
+
+  const _RecipePreviewGrid({Key? key, required this.recipes}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      itemBuilder: (context, index) => RecipePreview(recipe: recipes[index]),
+      itemCount: recipes.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 6,
+        mainAxisSpacing: 6,
+      ),
+    );
+  }
+}
+
+class _RecipePreviewPlaceholderGrid extends StatelessWidget {
+  const _RecipePreviewPlaceholderGrid({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 6,
+        mainAxisSpacing: 6,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              color: Colors.grey,
+            ),
+          );
+        },
+        childCount: 12,
+      ),
     );
   }
 }
