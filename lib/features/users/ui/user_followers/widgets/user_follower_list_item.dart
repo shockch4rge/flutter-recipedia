@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
 import 'package:flutter_recipedia/models/user.dart';
 
-import 'confirm_remove_follower_dialog.dart';
+import 'remove_follower_dialog.dart';
 
 class UserFollowerListItem extends StatelessWidget {
   final User follower;
@@ -44,7 +44,7 @@ class UserFollowerListItem extends StatelessWidget {
             onPressed: () => showDialog(
               context: context,
               builder: (_) {
-                return ConfirmRemoveFollowerDialog(
+                return RemoveFollowerDialog(
                   follower: follower,
                   onConfirm: () {
                     print("onConfirm remove");

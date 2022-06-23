@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/snack.dart';
 import 'package:flutter_recipedia/models/user.dart';
 
-class ConfirmRemoveFollowerDialog extends StatelessWidget {
+class RemoveFollowerDialog extends StatelessWidget {
   final User follower;
   final void Function() onConfirm;
 
-  const ConfirmRemoveFollowerDialog(
+  const RemoveFollowerDialog(
       {Key? key, required this.follower, required this.onConfirm})
       : super(key: key);
 
