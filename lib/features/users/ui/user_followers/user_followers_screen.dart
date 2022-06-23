@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/common/avatar.dart';
+import 'package:flutter_recipedia/features/users/ui/user_followers/widgets/user_follower_list_item.dart';
+import 'package:flutter_recipedia/repositories/user_repository.dart';
+import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../models/user.dart';
 import '../../../../utils/get_args.dart';
-import 'widgets/confirm_remove_follower_dialog.dart';
 import 'widgets/user_followers_app_bar.dart';
 
 class UserFollowersScreen extends StatefulWidget {
@@ -16,90 +18,62 @@ class UserFollowersScreen extends StatefulWidget {
 }
 
 class _UserFollowersScreenState extends State<UserFollowersScreen> {
-  get user => getArgs<User>(context);
+  User get user => getArgs<User>(context);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const UserFollowersAppBar(),
-      body: ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemBuilder: (context, index) {
-          return _FollowerListItem(user: user);
+      body: FutureBuilder(
+        future: context.read<UserRepository>().getUserFollowers(user.id),
+        builder: (context, snap) {
+          if (snap.waiting) {
+            return const UserFollowerPlaceholderList();
+          }
+
+          final followers = snap.data as List<User>;
+
+          if (followers.isEmpty) {
+            return const Center(
+              child: Text("You don't have any followers!"),
+            );
+          }
+
+          return UserFollowerList(followers: followers);
         },
       ),
     );
   }
 }
 
-class _FollowerListItem extends StatelessWidget {
-  final User user;
-
-  const _FollowerListItem({Key? key, required this.user}) : super(key: key);
+class UserFollowerPlaceholderList extends StatelessWidget {
+  const UserFollowerPlaceholderList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 14.0),
-            child: Avatar(
-              size: 40,
-              avatarUrl: user.avatarUrl,
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user.username,
-                  style: Theme.of(context).textTheme.subtitle1,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  user.name,
-                  style: Theme.of(context).textTheme.headline5,
-                ),
-              ],
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () => showDialog(
-              context: context,
-              builder: (_) {
-                return ConfirmRemoveFollowerDialog(
-                  user: user,
-                  onConfirm: () {
-                    print("onConfirm remove");
-                  },
-                );
-              },
-            ),
-            child: const Text(
-              "Remove",
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              primary: Colors.white,
-              onPrimary: Theme.of(context).primaryColor,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(
-                  color: Theme.of(context).primaryColorDark,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+    return ListView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        return const UserFollowerPlaceholderListItem();
+      },
+      itemCount: 12,
+    );
+  }
+}
+
+class UserFollowerList extends StatelessWidget {
+  final List<User> followers;
+
+  const UserFollowerList({Key? key, required this.followers}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      physics: const BouncingScrollPhysics(),
+      itemBuilder: (context, index) {
+        return UserFollowerListItem(follower: followers[index]);
+      },
+      itemCount: followers.length,
     );
   }
 }

@@ -3,24 +3,24 @@ import 'package:flutter_recipedia/common/snack.dart';
 import 'package:flutter_recipedia/models/user.dart';
 
 class ConfirmRemoveFollowerDialog extends StatelessWidget {
-  final User user;
+  final User follower;
   final void Function() onConfirm;
 
   const ConfirmRemoveFollowerDialog(
-      {Key? key, required this.user, required this.onConfirm})
+      {Key? key, required this.follower, required this.onConfirm})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Remove ${user.username}"),
+      title: Text("Remove ${follower.username}"),
       content: Text.rich(
         TextSpan(
           style: Theme.of(context).textTheme.bodyText1,
           children: [
             const TextSpan(text: "Are you sure you want to remove"),
             TextSpan(
-              text: " ${user.username} ",
+              text: " ${follower.username} ",
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
             const TextSpan(text: "from your followers?")
@@ -40,7 +40,7 @@ class ConfirmRemoveFollowerDialog extends StatelessWidget {
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
-            Snack.good(context, "Removed ${user.username}");
+            Snack.good(context, "Removed ${follower.username}");
             onConfirm();
           },
           child: const Text("Remove"),
