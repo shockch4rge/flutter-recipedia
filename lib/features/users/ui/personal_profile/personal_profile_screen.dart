@@ -57,7 +57,7 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
             ),
             SliverToBoxAdapter(
               child: Container(
-                margin: const EdgeInsets.only(top: 20, bottom: 10),
+                margin: const EdgeInsets.only(top: 30, bottom: 20),
                 child: Text(
                   "${user.username}'s recipes",
                   textAlign: TextAlign.center,
@@ -215,10 +215,11 @@ class _RecipePreviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      itemBuilder: (context, index) => RecipePreview(recipe: recipes[index]),
-      itemCount: recipes.length,
+    return SliverGrid(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) => RecipePreview(recipe: recipes[index]),
+        childCount: recipes.length,
+      ),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 6,
