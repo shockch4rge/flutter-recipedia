@@ -6,18 +6,17 @@ import 'package:json_annotation/json_annotation.dart';
 part 'user.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-@DocumentSerializer()
+@UserSerializer()
 class User {
-  @JsonKey(required: true)
-  final DocumentReference id;
+  final DocumentReference<User> id;
   final String username;
   final String name;
   final String avatarUrl;
   final String bio;
-  final List<DocumentReference> followers;
-  final List<DocumentReference> following;
+  final List<DocumentReference<User>> followers;
+  final List<DocumentReference<User>> following;
 
-  static final idField = FieldPath(const ["id"]);
+  static final idField = FieldPath.documentId;
   static final usernameField = FieldPath(const ["username"]);
   static final nameField = FieldPath(const ["name"]);
   static final avatarUrlField = FieldPath(const ["avatarUrl"]);

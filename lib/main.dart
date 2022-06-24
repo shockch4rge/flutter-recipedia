@@ -15,6 +15,8 @@ import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/pe
 import 'package:flutter_recipedia/features/users/ui/user_followers/user_followers_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
+import 'package:flutter_recipedia/models/recipe.dart';
+import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
@@ -38,22 +40,40 @@ void main() async {
         ),
         Provider(
           create: (_) => UserRepository(
-            FirebaseFirestore.instance.collection("users"),
+            FirebaseFirestore.instance.collection("users").withConverter<User>(
+                  fromFirestore: User.fromFirestore,
+                  toFirestore: User.toFirestore,
+                ),
           ),
         ),
         Provider(
           create: (_) => RecipeRepository(
-            FirebaseFirestore.instance.collection("recipes"),
+            FirebaseFirestore.instance
+                .collection("recipes")
+                .withConverter<Recipe>(
+                  fromFirestore: Recipe.fromFirestore,
+                  toFirestore: Recipe.toFirestore,
+                ),
           ),
         ),
         Provider(
           create: (_) => RecipeCommentRepository(
-            FirebaseFirestore.instance.collection("replies"),
+            FirebaseFirestore.instance
+                .collection("comments")
+                .withConverter<RecipeComment>(
+                  fromFirestore: RecipeComment.fromFirestore,
+                  toFirestore: RecipeComment.toFirestore,
+                ),
           ),
         ),
         Provider(
           create: (_) => RecipeCommentReplyRepository(
-            FirebaseFirestore.instance.collection("replies"),
+            FirebaseFirestore.instance
+                .collection("replies")
+                .withConverter<RecipeCommentReply>(
+                  fromFirestore: RecipeCommentReply.fromFirestore,
+                  toFirestore: RecipeCommentReply.toFirestore,
+                ),
           ),
         ),
       ],

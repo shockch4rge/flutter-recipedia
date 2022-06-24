@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/utils/document_serializer.dart';
 import 'package:flutter_recipedia/utils/types.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -6,14 +7,15 @@ import 'package:json_annotation/json_annotation.dart';
 part 'recipe.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-@DocumentSerializer()
+@RecipeSerializer()
+@UserSerializer()
 class Recipe {
-  final DocumentReference id;
-  final DocumentReference authorId;
+  final DocumentReference<Recipe> id;
+  final DocumentReference<User> authorId;
   final String title;
   final String description;
   final String imageUrl;
-  final List<DocumentReference> likes;
+  final List<DocumentReference<User>> likes;
   final List<String> ingredients;
   final List<String> steps;
 
@@ -52,21 +54,23 @@ class Recipe {
 }
 
 @JsonSerializable(explicitToJson: true)
-@DocumentSerializer()
+@RecipeCommentSerializer()
+@UserSerializer()
+@RecipeSerializer()
 class RecipeComment {
-  final DocumentReference id;
-  final DocumentReference userId;
-  final DocumentReference recipeId;
+  final DocumentReference<RecipeComment> id;
+  final DocumentReference<User> authorId;
+  final DocumentReference<Recipe> recipeId;
   final String content;
 
   static final idField = FieldPath(const ["id"]);
-  static final userIdField = FieldPath(const ["userId"]);
+  static final authorIdField = FieldPath(const ["authorId"]);
   static final recipeIdField = FieldPath(const ["recipeId"]);
   static final contentField = FieldPath(const ["content"]);
 
   const RecipeComment({
     required this.id,
-    required this.userId,
+    required this.authorId,
     required this.recipeId,
     required this.content,
   });
@@ -87,23 +91,26 @@ class RecipeComment {
 }
 
 @JsonSerializable(explicitToJson: true)
-@DocumentSerializer()
+@RecipeCommentReplySerializer()
+@UserSerializer()
+@RecipeCommentSerializer()
+@RecipeSerializer()
 class RecipeCommentReply {
-  final DocumentReference id;
-  final DocumentReference userId;
-  final DocumentReference commentId;
-  final DocumentReference recipeId;
+  final DocumentReference<RecipeCommentReply> id;
+  final DocumentReference<User> authorId;
+  final DocumentReference<RecipeComment> commentId;
+  final DocumentReference<Recipe> recipeId;
   final String content;
 
   static final idField = FieldPath(const ["id"]);
-  static final userIdField = FieldPath(const ["userId"]);
+  static final authorIdField = FieldPath(const ["authorId"]);
   static final commentIdField = FieldPath(const ["commentId"]);
   static final recipeIdField = FieldPath(const ["recipeIdField"]);
   static final contentField = FieldPath(const ["content"]);
 
   const RecipeCommentReply({
     required this.id,
-    required this.userId,
+    required this.authorId,
     required this.commentId,
     required this.recipeId,
     required this.content,
