@@ -33,6 +33,7 @@ dependencies:
   json_annotation: ^4.5.0
   expandable: ^5.0.1
   tuple: ^2.0.0
+  image_picker: ^0.8.5+3
 
 dev_dependencies:
   flutter_test:
