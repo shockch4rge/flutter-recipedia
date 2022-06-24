@@ -1,9 +1,14 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/common/avatar.dart';
-import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/widgets/confirm_delete_profile_dialog.dart';
+import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/widgets/delete_profile_dialog.dart';
+import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/widgets/update_avatar_actions.dart';
 import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/personal_profile_settings_app_bar.dart';
@@ -31,23 +36,7 @@ class _PersonalProfileSettingsScreenState
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           children: [
-            Avatar(
-              size: 84,
-              avatarUrl: user.avatarUrl,
-            ),
-            TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                splashFactory: NoSplash.splashFactory,
-              ),
-              child: Text(
-                "Change profile photo",
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(context).primaryColorDark,
-                ),
-              ),
-            ),
+            _AvatarImage(avatarUrl: user.avatarUrl),
             const SizedBox(height: 10),
             PersonalProfileSettingsForm(user: user),
             SizedBox(
@@ -71,7 +60,7 @@ class _PersonalProfileSettingsScreenState
               child: ElevatedButton(
                 onPressed: () => showDialog(
                   context: context,
-                  builder: (_) => ConfirmDeleteProfileDialog(
+                  builder: (_) => DeleteProfileDialog(
                     user: user,
                     onConfirm: () {},
                   ),
@@ -89,6 +78,99 @@ class _PersonalProfileSettingsScreenState
         ),
       ),
     );
+  }
+}
+
+class _AvatarImage extends StatefulWidget {
+  final String avatarUrl;
+
+  const _AvatarImage({Key? key, required this.avatarUrl}) : super(key: key);
+
+  @override
+  State<_AvatarImage> createState() => _AvatarImageState();
+}
+
+class _AvatarImageState extends State<_AvatarImage> {
+  final ImagePicker _imagePicker = ImagePicker();
+  final ImageCropper _imageCropper = ImageCropper();
+  File? _uploadedAvatar;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        CachedNetworkImage(
+          imageUrl: widget.avatarUrl,
+          imageBuilder: (context, image) {
+            return ClipOval(
+              child: Material(
+                child: Ink.image(
+                  width: 84,
+                  height: 84,
+                  image: _uploadedAvatar != null
+                      ? FileImage(_uploadedAvatar!)
+                      : image,
+                  child: InkWell(
+                    splashColor: Colors.white.withOpacity(0.1),
+                    onTap: () => showModalBottomSheet(
+                      context: context,
+                      shape: UpdateAvatarActions.shape,
+                      builder: (_) => UpdateAvatarActions(
+                        onCameraOptionPressed: () =>
+                            _pickAvatar(ImageSource.camera),
+                        onGalleryOptionPressed: () =>
+                            _pickAvatar(ImageSource.gallery),
+                      ),
+                    ),
+                  ),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            );
+          },
+          placeholder: (context, url) {
+            return Center(
+              child: Text("Wtf"),
+            );
+          },
+        ),
+        Positioned(
+          bottom: -3,
+          right: 0,
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: const Border.fromBorderSide(
+                BorderSide(
+                  color: Colors.white,
+                  width: 3,
+                ),
+              ),
+              color: Theme.of(context).primaryColor,
+            ),
+            child: const Icon(
+              Icons.edit,
+              color: Colors.white,
+              size: 16,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _pickAvatar(ImageSource source) async {
+    final initial = await _imagePicker.pickImage(source: source);
+    if (initial == null) return;
+
+    final cropped = await _imageCropper.cropImage(
+      sourcePath: File(initial.path).absolute.path,
+      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+    );
+    if (cropped == null) return;
+
+    setState(() => _uploadedAvatar = File(cropped.path));
   }
 }
 
@@ -113,34 +195,9 @@ class _PersonalProfileSettingsFormState
       key: _formKey,
       child: Column(
         children: [
-          TextFormField(
-            validator: (value) {
-              if (value! == widget.user.username) {
-                return "You can't have the same username as the previous one.";
-              }
-
-              return null;
-            },
-            initialValue: widget.user.username,
-            decoration: const InputDecoration(
-              label: Text("Username"),
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-            ),
-          ),
-          TextFormField(
-            validator: (value) {
-              if (value! == widget.user.name) {
-                return "You can't have the same name as the previous one.";
-              }
-
-              return null;
-            },
-            initialValue: widget.user.name,
-            decoration: const InputDecoration(
-              label: Text("Name"),
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-            ),
-          ),
+          _UsernameFormField(username: widget.user.username),
+          _NameFormField(name: widget.user.name),
+          _BioFormField(bio: widget.user.bio),
           const SizedBox(height: 40),
           SizedBox(
             width: MediaQuery.of(context).size.width,
@@ -153,6 +210,96 @@ class _PersonalProfileSettingsFormState
             ),
           )
         ],
+      ),
+    );
+  }
+}
+
+class _UsernameFormField extends StatelessWidget {
+  final String username;
+
+  const _UsernameFormField({Key? key, required this.username})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        validator: (value) {
+          if (value! == username) {
+            return "You can't have the same username as the previous one.";
+          }
+
+          return null;
+        },
+        initialValue: username,
+        decoration: const InputDecoration(
+          label: Text("Username"),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+        ),
+      ),
+    );
+  }
+}
+
+class _NameFormField extends StatelessWidget {
+  final String name;
+
+  const _NameFormField({Key? key, required this.name}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        validator: (value) {
+          if (value! == name) {
+            return "You can't have the same name as your previous one.";
+          }
+
+          return null;
+        },
+        initialValue: name,
+        decoration: const InputDecoration(
+          label: Text("Name"),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+        ),
+      ),
+    );
+  }
+}
+
+class _BioFormField extends StatelessWidget {
+  final String bio;
+
+  const _BioFormField({Key? key, required this.bio}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(top: 26, bottom: 8),
+      child: TextFormField(
+        validator: (value) {
+          if (value! == bio) {
+            return "You can't have the same biography as your previous one.";
+          }
+          return null;
+        },
+        initialValue: bio,
+        decoration: const InputDecoration(
+          label: Text("Bio"),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              width: 2,
+              color: Colors.grey,
+            ),
+          ),
+          // contentPadding: EdgeInsets.symmetric(vertical: 1, horizontal: 3),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+        ),
+        minLines: 2,
+        maxLines: 5,
       ),
     );
   }
