@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/models/user.dart';
 
-class ConfirmDeleteProfileDialog extends StatefulWidget {
+class DeleteProfileDialog extends StatefulWidget {
   final User user;
   final void Function() onConfirm;
 
-  const ConfirmDeleteProfileDialog(
+  const DeleteProfileDialog(
       {Key? key, required this.user, required this.onConfirm})
       : super(key: key);
 
   @override
-  State<ConfirmDeleteProfileDialog> createState() =>
-      _ConfirmDeleteProfileDialogState();
+  State<DeleteProfileDialog> createState() => _DeleteProfileDialogState();
 }
 
-class _ConfirmDeleteProfileDialogState
-    extends State<ConfirmDeleteProfileDialog> {
+class _DeleteProfileDialogState extends State<DeleteProfileDialog> {
   bool _isExactUsername = false;
   final _formKey = GlobalKey<FormState>();
 
