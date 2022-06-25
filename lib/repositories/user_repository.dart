@@ -22,11 +22,6 @@ class UserRepository {
     required String bio,
     required String avatarUrl,
   }) async {
-    print("Name $name");
-    print("Username $username");
-    print("Bio $bio");
-    print("AvatarUrl $avatarUrl");
-
     // re-use the user's particulars if they stay the same
     await user.id.update({
       User.nameField.components[0]: user.name == name ? user.name : name,

@@ -244,13 +244,15 @@ class _PersonalProfileSettingsFormState
                       );
                 }
 
-                context.read<UserRepository>().updateUser(
+                await context.read<UserRepository>().updateUser(
                       user: widget.user,
                       username: _usernameController.text,
                       name: _nameController.text,
                       bio: _bioController.text,
                       avatarUrl: newAvatarUrl ?? avatarUrl,
                     );
+
+                Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
                 primary: Theme.of(context).primaryColorDark,
