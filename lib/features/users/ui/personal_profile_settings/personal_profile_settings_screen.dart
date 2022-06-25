@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/app/avatar_repository.dart';
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/widgets/delete_profile_dialog.dart';
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/widgets/update_avatar_actions.dart';
 import 'package:flutter_recipedia/models/user.dart';
@@ -36,7 +37,7 @@ class _PersonalProfileSettingsScreenState
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           children: [
-            _AvatarImage(avatarUrl: user.avatarUrl),
+            _AvatarImage(user: user),
             const SizedBox(height: 10),
             PersonalProfileSettingsForm(user: user),
             SizedBox(
@@ -82,9 +83,9 @@ class _PersonalProfileSettingsScreenState
 }
 
 class _AvatarImage extends StatefulWidget {
-  final String avatarUrl;
+  final User user;
 
-  const _AvatarImage({Key? key, required this.avatarUrl}) : super(key: key);
+  const _AvatarImage({Key? key, required this.user}) : super(key: key);
 
   @override
   State<_AvatarImage> createState() => _AvatarImageState();
@@ -100,7 +101,7 @@ class _AvatarImageState extends State<_AvatarImage> {
     return Stack(
       children: [
         CachedNetworkImage(
-          imageUrl: widget.avatarUrl,
+          imageUrl: widget.user.avatarUrl,
           imageBuilder: (context, image) {
             return ClipOval(
               child: Material(
@@ -116,10 +117,26 @@ class _AvatarImageState extends State<_AvatarImage> {
                       context: context,
                       shape: UpdateAvatarActions.shape,
                       builder: (_) => UpdateAvatarActions(
-                        onCameraOptionPressed: () =>
-                            _pickAvatar(ImageSource.camera),
-                        onGalleryOptionPressed: () =>
-                            _pickAvatar(ImageSource.gallery),
+                        onCameraOptionPressed: () async {
+                          await _pickAvatar(ImageSource.camera);
+
+                          if (_uploadedAvatar != null) {
+                            context.read<AvatarRepository>().updateAvatar(
+                                  userId: widget.user.id,
+                                  file: _uploadedAvatar!,
+                                );
+                          }
+                        },
+                        onGalleryOptionPressed: () async {
+                          await _pickAvatar(ImageSource.gallery);
+
+                          if (_uploadedAvatar != null) {
+                            context.read<AvatarRepository>().updateAvatar(
+                                  userId: widget.user.id,
+                                  file: _uploadedAvatar!,
+                                );
+                          }
+                        },
                       ),
                     ),
                   ),
@@ -129,8 +146,8 @@ class _AvatarImageState extends State<_AvatarImage> {
             );
           },
           placeholder: (context, url) {
-            return Center(
-              child: Text("Wtf"),
+            return const Center(
+              child: CircularProgressIndicator(),
             );
           },
         ),
@@ -167,6 +184,13 @@ class _AvatarImageState extends State<_AvatarImage> {
     final cropped = await _imageCropper.cropImage(
       sourcePath: File(initial.path).absolute.path,
       aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
+      uiSettings: [
+        AndroidUiSettings(
+          activeControlsWidgetColor: Theme.of(context).primaryColor,
+          toolbarWidgetColor: Theme.of(context).primaryColorDark,
+          toolbarTitle: "Crop Avatar",
+        )
+      ],
     );
     if (cropped == null) return;
 
