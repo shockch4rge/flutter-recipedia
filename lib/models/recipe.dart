@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/utils/document_serializer.dart';
 import 'package:flutter_recipedia/utils/types.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -7,18 +6,18 @@ import 'package:json_annotation/json_annotation.dart';
 part 'recipe.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-@RecipeSerializer()
-@UserSerializer()
+@DocumentSerializer()
 class Recipe {
-  final DocumentReference<Recipe> id;
-  final DocumentReference<User> authorId;
+  final DocumentReference id;
+  final DocumentReference authorId;
   final String title;
   final String description;
   final String imageUrl;
-  final List<DocumentReference<User>> likes;
+  final List<DocumentReference> likes;
   final List<String> ingredients;
   final List<String> steps;
 
+  static const collectionName = "recipes";
   static final idField = FieldPath(const ["id"]);
   static final authorIdField = FieldPath(const ["authorId"]);
   static final titleField = FieldPath(const ["title"]);
@@ -48,21 +47,23 @@ class Recipe {
 
   static JsonResponse toFirestore(Recipe recipe, dynamic _) => recipe.toJson();
 
-  factory Recipe.fromJson(JsonResponse json) => _$RecipeFromJson(json);
+  factory Recipe.fromJson(JsonResponse json) {
+    print(json["id"].toString());
+    return _$RecipeFromJson(json);
+  }
 
   JsonResponse toJson() => _$RecipeToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
-@RecipeCommentSerializer()
-@UserSerializer()
-@RecipeSerializer()
+@DocumentSerializer()
 class RecipeComment {
-  final DocumentReference<RecipeComment> id;
-  final DocumentReference<User> authorId;
-  final DocumentReference<Recipe> recipeId;
+  final DocumentReference id;
+  final DocumentReference authorId;
+  final DocumentReference recipeId;
   final String content;
 
+  static const collectionName = "comments";
   static final idField = FieldPath(const ["id"]);
   static final authorIdField = FieldPath(const ["authorId"]);
   static final recipeIdField = FieldPath(const ["recipeId"]);
@@ -91,17 +92,15 @@ class RecipeComment {
 }
 
 @JsonSerializable(explicitToJson: true)
-@RecipeCommentReplySerializer()
-@UserSerializer()
-@RecipeCommentSerializer()
-@RecipeSerializer()
+@DocumentSerializer()
 class RecipeCommentReply {
-  final DocumentReference<RecipeCommentReply> id;
-  final DocumentReference<User> authorId;
-  final DocumentReference<RecipeComment> commentId;
-  final DocumentReference<Recipe> recipeId;
+  final DocumentReference id;
+  final DocumentReference authorId;
+  final DocumentReference commentId;
+  final DocumentReference recipeId;
   final String content;
 
+  static const collectionName = "replies";
   static final idField = FieldPath(const ["id"]);
   static final authorIdField = FieldPath(const ["authorId"]);
   static final commentIdField = FieldPath(const ["commentId"]);

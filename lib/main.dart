@@ -16,7 +16,6 @@ import 'package:flutter_recipedia/features/users/ui/user_followers/user_follower
 import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
-import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
@@ -39,32 +38,16 @@ void main() async {
           create: (_) => CommentProvider(),
         ),
         Provider(
-          create: (_) => UserRepository(
-            FirebaseFirestore.instance.collection("users").withConverter<User>(
-                  fromFirestore: User.fromFirestore,
-                  toFirestore: User.toFirestore,
-                ),
-          ),
+          create: (_) =>
+              UserRepository(FirebaseFirestore.instance.collection("users")),
         ),
         Provider(
           create: (_) => RecipeRepository(
-            FirebaseFirestore.instance
-                .collection("recipes")
-                .withConverter<Recipe>(
-                  fromFirestore: Recipe.fromFirestore,
-                  toFirestore: Recipe.toFirestore,
-                ),
-          ),
+              FirebaseFirestore.instance.collection("recipes")),
         ),
         Provider(
           create: (_) => RecipeCommentRepository(
-            FirebaseFirestore.instance
-                .collection("comments")
-                .withConverter<RecipeComment>(
-                  fromFirestore: RecipeComment.fromFirestore,
-                  toFirestore: RecipeComment.toFirestore,
-                ),
-          ),
+              FirebaseFirestore.instance.collection("comments")),
         ),
         Provider(
           create: (_) => RecipeCommentReplyRepository(

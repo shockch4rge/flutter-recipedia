@@ -6,16 +6,17 @@ import 'package:json_annotation/json_annotation.dart';
 part 'user.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-@UserSerializer()
+@DocumentSerializer()
 class User {
-  final DocumentReference<User> id;
+  final DocumentReference id;
   final String username;
   final String name;
   final String avatarUrl;
   final String bio;
-  final List<DocumentReference<User>> followers;
-  final List<DocumentReference<User>> following;
+  final List<DocumentReference> followers;
+  final List<DocumentReference> following;
 
+  static const collectionName = "users";
   static final idField = FieldPath.documentId;
   static final usernameField = FieldPath(const ["username"]);
   static final nameField = FieldPath(const ["name"]);
@@ -41,8 +42,7 @@ class User {
     return User.fromJson(json);
   }
 
-  static Map<String, dynamic> toFirestore(User user, dynamic _) =>
-      user.toJson();
+  static JsonResponse toFirestore(User user, dynamic _) => user.toJson();
 
   factory User.fromJson(JsonResponse json) => _$UserFromJson(json);
 

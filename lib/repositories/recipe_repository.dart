@@ -3,13 +3,20 @@ import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
 
 class RecipeRepository {
-  final CollectionReference<Recipe> _recipes;
+  final CollectionReference _recipes;
 
   const RecipeRepository(this._recipes);
 
   Future<List<Recipe>> getUserRecipes(DocumentReference userId) async {
-    final snap =
-        await _recipes.where(Recipe.authorIdField, isEqualTo: userId).get();
+    final snap = await _recipes
+        .where(
+          Recipe.authorIdField,
+          isEqualTo: userId,
+        )
+        .withConverter(
+            fromFirestore: Recipe.fromFirestore,
+            toFirestore: Recipe.toFirestore)
+        .get();
 
     final recipes = snap.docs.map((doc) => doc.data()).toList();
     return recipes;
@@ -28,6 +35,9 @@ class RecipeRepository {
             Recipe.authorIdField,
             isEqualTo: authorId,
           )
+          .withConverter(
+              fromFirestore: Recipe.fromFirestore,
+              toFirestore: Recipe.toFirestore)
           .get();
       recipes.addAll(snap.docs.map((doc) => doc.data()));
     }
