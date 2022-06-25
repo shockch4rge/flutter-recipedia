@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/features/authentication/ui/login/login_screen.dart';
 import 'package:flutter_recipedia/features/misc/home_screen.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_recipedia/features/recipes/ui/view_recipe/view_recipe_sc
 import 'package:flutter_recipedia/features/search/ui/search_screen.dart';
 import 'package:flutter_recipedia/features/settings/ui/app_settings_screen.dart';
 import 'package:flutter_recipedia/features/testing/test_screen.dart';
+import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/app/avatar_repository.dart';
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/personal_profile_settings_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_followers/user_followers_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
@@ -23,6 +25,7 @@ import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import 'features/users/ui/personal_profile_settings/app/avatar_provider.dart';
 import 'firebase.dart';
 
 void main() async {
@@ -31,23 +34,30 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        /* ChangeNotifierProviders */
         ChangeNotifierProvider(
           create: (_) => AuthProvider(firebase_auth.FirebaseAuth.instance),
         ),
         ChangeNotifierProvider(
           create: (_) => CommentProvider(),
         ),
+        ChangeNotifierProvider(create: (_) => AvatarProvider()),
+
+        /* Repositories */
         Provider(
-          create: (_) =>
-              UserRepository(FirebaseFirestore.instance.collection("users")),
+          create: (_) => UserRepository(
+            FirebaseFirestore.instance.collection("users"),
+          ),
         ),
         Provider(
           create: (_) => RecipeRepository(
-              FirebaseFirestore.instance.collection("recipes")),
+            FirebaseFirestore.instance.collection("recipes"),
+          ),
         ),
         Provider(
           create: (_) => RecipeCommentRepository(
-              FirebaseFirestore.instance.collection("comments")),
+            FirebaseFirestore.instance.collection("comments"),
+          ),
         ),
         Provider(
           create: (_) => RecipeCommentReplyRepository(
@@ -57,6 +67,11 @@ void main() async {
                   fromFirestore: RecipeCommentReply.fromFirestore,
                   toFirestore: RecipeCommentReply.toFirestore,
                 ),
+          ),
+        ),
+        Provider(
+          create: (_) => AvatarRepository(
+            FirebaseStorage.instance.ref().child("avatars"),
           ),
         ),
       ],

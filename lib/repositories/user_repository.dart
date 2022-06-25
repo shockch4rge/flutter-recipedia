@@ -15,6 +15,29 @@ class UserRepository {
     return snap.data()!;
   }
 
+  Future<void> updateUser({
+    required User user,
+    required String name,
+    required String username,
+    required String bio,
+    required String avatarUrl,
+  }) async {
+    print("Name $name");
+    print("Username $username");
+    print("Bio $bio");
+    print("AvatarUrl $avatarUrl");
+
+    // re-use the user's particulars if they stay the same
+    await user.id.update({
+      User.nameField.components[0]: user.name == name ? user.name : name,
+      User.usernameField.components[0]:
+          user.username == username ? user.username : username,
+      User.bioField.components[0]: user.bio == bio ? user.bio : bio,
+      User.avatarUrlField.components[0]:
+          user.avatarUrl == avatarUrl ? user.avatarUrl : avatarUrl,
+    });
+  }
+
   Future<User> createUser({
     required String name,
     required String username,

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
 import 'package:flutter_recipedia/features/recipes/ui/common/recipe_preview.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_recipedia/features/users/ui/user_following/user_followin
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
+import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:provider/provider.dart';
@@ -24,71 +26,83 @@ class PersonalProfileScreen extends StatefulWidget {
 }
 
 class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
-  User get user => mockMeUser;
+  DocumentReference get userId => mockMeId;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: PersonalProfileAppBar(
-        user: user,
-        onMoreSettingsPressed: () {
-          showModalBottomSheet(
-            context: context,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-              ),
-            ),
-            builder: (_) => const PersonalProfileActions(),
-          );
-        },
-      ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(
-              child: Container(
-                padding: const EdgeInsets.only(top: 20),
-                child: _UserDescription(user: user),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                margin: const EdgeInsets.only(top: 30, bottom: 20),
-                child: Text(
-                  "${user.username}'s recipes",
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-            FutureBuilder(
-              future: context.read<RecipeRepository>().getUserRecipes(user.id),
-              builder: (context, snap) {
-                if (snap.waiting) {
-                  return const _RecipePreviewPlaceholderGrid();
-                }
+    return FutureBuilder(
+        future: context.read<UserRepository>().getUserById(userId),
+        builder: (context, snap) {
+          if (snap.waiting) {
+            return Container();
+          }
 
-                final recipes = snap.data as List<Recipe>;
+          final user = snap.data as User;
 
-                if (recipes.isEmpty) {
-                  return const SliverFillRemaining(
-                    child: Center(
-                      child: Text("You don't have any recipes posted!"),
+          return Scaffold(
+            appBar: PersonalProfileAppBar(
+              user: user,
+              onMoreSettingsPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
                     ),
-                    hasScrollBody: false,
-                  );
-                }
-
-                return _RecipePreviewGrid(recipes: recipes);
+                  ),
+                  builder: (_) => const PersonalProfileActions(),
+                );
               },
             ),
-          ],
-        ),
-      ),
-    );
+            body: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: CustomScrollView(
+                physics: const BouncingScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: _UserDescription(user: user),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 20, bottom: 20),
+                      child: const Text(
+                        "Your Recipes",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  FutureBuilder(
+                    future: context
+                        .read<RecipeRepository>()
+                        .getUserRecipes(user.id),
+                    builder: (context, snap) {
+                      if (snap.waiting) {
+                        return const _RecipePreviewPlaceholderSliverGrid();
+                      }
+
+                      final recipes = snap.data as List<Recipe>;
+
+                      if (recipes.isEmpty) {
+                        return const SliverFillRemaining(
+                          child: Center(
+                            child: Text("You don't have any recipes posted!"),
+                          ),
+                          hasScrollBody: false,
+                        );
+                      }
+
+                      return _RecipePreviewSliverGrid(recipes: recipes);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 }
 
@@ -167,17 +181,20 @@ class _UserDescription extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 14),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              user.name,
-              textAlign: TextAlign.left,
-              style: Theme.of(context).textTheme.subtitle2,
-            ),
-            const SizedBox(height: 10),
-            Text(user.bio, style: Theme.of(context).textTheme.bodyText2),
-          ],
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                user.name,
+                textAlign: TextAlign.left,
+                style: Theme.of(context).textTheme.subtitle2,
+              ),
+              const SizedBox(height: 10),
+              Text(user.bio, style: Theme.of(context).textTheme.bodyText2),
+            ],
+          ),
         ),
         const SizedBox(height: 16),
         SizedBox(
@@ -208,10 +225,11 @@ class _UserDescription extends StatelessWidget {
   }
 }
 
-class _RecipePreviewGrid extends StatelessWidget {
+class _RecipePreviewSliverGrid extends StatelessWidget {
   final List<Recipe> recipes;
 
-  const _RecipePreviewGrid({Key? key, required this.recipes}) : super(key: key);
+  const _RecipePreviewSliverGrid({Key? key, required this.recipes})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -229,8 +247,8 @@ class _RecipePreviewGrid extends StatelessWidget {
   }
 }
 
-class _RecipePreviewPlaceholderGrid extends StatelessWidget {
-  const _RecipePreviewPlaceholderGrid({Key? key}) : super(key: key);
+class _RecipePreviewPlaceholderSliverGrid extends StatelessWidget {
+  const _RecipePreviewPlaceholderSliverGrid({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
