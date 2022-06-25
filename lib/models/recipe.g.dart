@@ -7,71 +7,71 @@ part of 'recipe.dart';
 // **************************************************************************
 
 Recipe _$RecipeFromJson(Map<String, dynamic> json) => Recipe(
-      id: const RecipeSerializer()
-          .fromJson(json['id'] as DocumentReference<Recipe>),
+      id: const DocumentSerializer()
+          .fromJson(json['id'] as DocumentReference<Object?>),
       title: json['title'] as String,
       description: json['description'] as String,
       imageUrl: json['imageUrl'] as String,
-      authorId: const UserSerializer()
-          .fromJson(json['authorId'] as DocumentReference<User>),
+      authorId: const DocumentSerializer()
+          .fromJson(json['authorId'] as DocumentReference<Object?>),
       ingredients: (json['ingredients'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
       steps: (json['steps'] as List<dynamic>).map((e) => e as String).toList(),
       likes: (json['likes'] as List<dynamic>)
-          .map((e) =>
-              const UserSerializer().fromJson(e as DocumentReference<User>))
+          .map((e) => const DocumentSerializer()
+              .fromJson(e as DocumentReference<Object?>))
           .toList(),
     );
 
 Map<String, dynamic> _$RecipeToJson(Recipe instance) => <String, dynamic>{
-      'id': const RecipeSerializer().toJson(instance.id),
-      'authorId': const UserSerializer().toJson(instance.authorId),
+      'id': const DocumentSerializer().toJson(instance.id),
+      'authorId': const DocumentSerializer().toJson(instance.authorId),
       'title': instance.title,
       'description': instance.description,
       'imageUrl': instance.imageUrl,
-      'likes': instance.likes.map(const UserSerializer().toJson).toList(),
+      'likes': instance.likes.map(const DocumentSerializer().toJson).toList(),
       'ingredients': instance.ingredients,
       'steps': instance.steps,
     };
 
 RecipeComment _$RecipeCommentFromJson(Map<String, dynamic> json) =>
     RecipeComment(
-      id: const RecipeCommentSerializer()
-          .fromJson(json['id'] as DocumentReference<RecipeComment>),
-      authorId: const UserSerializer()
-          .fromJson(json['authorId'] as DocumentReference<User>),
-      recipeId: const RecipeSerializer()
-          .fromJson(json['recipeId'] as DocumentReference<Recipe>),
+      id: const DocumentSerializer()
+          .fromJson(json['id'] as DocumentReference<Object?>),
+      authorId: const DocumentSerializer()
+          .fromJson(json['authorId'] as DocumentReference<Object?>),
+      recipeId: const DocumentSerializer()
+          .fromJson(json['recipeId'] as DocumentReference<Object?>),
       content: json['content'] as String,
     );
 
 Map<String, dynamic> _$RecipeCommentToJson(RecipeComment instance) =>
     <String, dynamic>{
-      'id': const RecipeCommentSerializer().toJson(instance.id),
-      'authorId': const UserSerializer().toJson(instance.authorId),
-      'recipeId': const RecipeSerializer().toJson(instance.recipeId),
+      'id': const DocumentSerializer().toJson(instance.id),
+      'authorId': const DocumentSerializer().toJson(instance.authorId),
+      'recipeId': const DocumentSerializer().toJson(instance.recipeId),
       'content': instance.content,
     };
 
 RecipeCommentReply _$RecipeCommentReplyFromJson(Map<String, dynamic> json) =>
     RecipeCommentReply(
-      id: const RecipeCommentReplySerializer()
-          .fromJson(json['id'] as DocumentReference<RecipeCommentReply>),
-      authorId: const UserSerializer()
-          .fromJson(json['authorId'] as DocumentReference<User>),
-      commentId: const RecipeCommentSerializer()
-          .fromJson(json['commentId'] as DocumentReference<RecipeComment>),
-      recipeId: const RecipeSerializer()
-          .fromJson(json['recipeId'] as DocumentReference<Recipe>),
+      id: const DocumentSerializer()
+          .fromJson(json['id'] as DocumentReference<Object?>),
+      authorId: const DocumentSerializer()
+          .fromJson(json['authorId'] as DocumentReference<Object?>),
+      commentId: const DocumentSerializer()
+          .fromJson(json['commentId'] as DocumentReference<Object?>),
+      recipeId: const DocumentSerializer()
+          .fromJson(json['recipeId'] as DocumentReference<Object?>),
       content: json['content'] as String,
     );
 
 Map<String, dynamic> _$RecipeCommentReplyToJson(RecipeCommentReply instance) =>
     <String, dynamic>{
-      'id': const RecipeCommentReplySerializer().toJson(instance.id),
-      'authorId': const UserSerializer().toJson(instance.authorId),
-      'commentId': const RecipeCommentSerializer().toJson(instance.commentId),
-      'recipeId': const RecipeSerializer().toJson(instance.recipeId),
+      'id': const DocumentSerializer().toJson(instance.id),
+      'authorId': const DocumentSerializer().toJson(instance.authorId),
+      'commentId': const DocumentSerializer().toJson(instance.commentId),
+      'recipeId': const DocumentSerializer().toJson(instance.recipeId),
       'content': instance.content,
     };
