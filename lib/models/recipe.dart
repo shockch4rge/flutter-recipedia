@@ -48,7 +48,6 @@ class Recipe {
   static JsonResponse toFirestore(Recipe recipe, dynamic _) => recipe.toJson();
 
   factory Recipe.fromJson(JsonResponse json) {
-    print(json["id"].toString());
     return _$RecipeFromJson(json);
   }
 

@@ -3,15 +3,15 @@ import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-class DocumentSerializer<T>
-    implements JsonConverter<DocumentReference<T>, DocumentReference<T>> {
+class DocumentSerializer
+    implements JsonConverter<DocumentReference, DocumentReference> {
   const DocumentSerializer();
 
   @override
-  DocumentReference<T> fromJson(DocumentReference<T> docRef) => docRef;
+  DocumentReference fromJson(DocumentReference docRef) => docRef;
 
   @override
-  DocumentReference<T> toJson(DocumentReference<T> docRef) => docRef;
+  DocumentReference toJson(DocumentReference docRef) => docRef;
 }
 
 class RecipeSerializer
