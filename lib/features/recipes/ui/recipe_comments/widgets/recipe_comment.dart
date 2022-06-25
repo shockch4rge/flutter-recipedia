@@ -19,9 +19,9 @@ class RecipeComment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: context.read<UserRepository>().getUserById(comment.userId),
+      future: context.read<UserRepository>().getUserById(comment.authorId),
       builder: (context, snap) {
-        final user = snap.data! as User;
+        final user = snap.data as User;
 
         return Slidable(
           endActionPane: ActionPane(
@@ -121,6 +121,52 @@ class RecipeComment extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class RecipeCommentPlaceholder extends StatelessWidget {
+  const RecipeCommentPlaceholder({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        children: [
+          Container(
+            margin: const EdgeInsets.only(right: 12),
+            height: 44,
+            width: 44,
+            decoration: const BoxDecoration(
+              color: Colors.grey,
+              shape: BoxShape.circle,
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 12,
+                width: 200,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                height: 10,
+                width: 280,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
