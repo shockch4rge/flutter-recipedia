@@ -4,7 +4,7 @@ import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:provider/provider.dart';
-art';
+
 import 'widgets/personal_profile_settings_app_bar.dart';
 import 'widgets/personal_profile_settings_form.dart';
 
