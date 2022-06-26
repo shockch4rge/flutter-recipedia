@@ -124,7 +124,7 @@ class _UserDescription extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Avatar(size: 64, avatarUrl: user.avatarUrl),
+            Avatar(size: 80, avatarUrl: user.avatarUrl),
             Wrap(
               spacing: 14,
               children: [
