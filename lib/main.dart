@@ -5,14 +5,14 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/features/authentication/ui/login/login_screen.dart';
 import 'package:flutter_recipedia/features/misc/home_screen.dart';
-import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/app/recipe_comment_reply_repository.dart';
-import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/app/recipe_comment_repository.dart';
+import 'package:flutter_recipedia/features/recipes/app/create_recipe_provider.dart';
+import 'package:flutter_recipedia/features/recipes/app/recipe_image_repository.dart';
+import 'package:flutter_recipedia/features/recipes/ui/create_recipe/create_recipe_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comments_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/view_recipe/view_recipe_screen.dart';
 import 'package:flutter_recipedia/features/search/ui/search_screen.dart';
 import 'package:flutter_recipedia/features/settings/ui/app_settings_screen.dart';
 import 'package:flutter_recipedia/features/testing/test_screen.dart';
-import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/app/avatar_repository.dart';
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/personal_profile_settings_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_followers/user_followers_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
@@ -23,9 +23,13 @@ import 'package:flutter_recipedia/providers/comment_provider.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
 import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:provider/provider.dart';
 
-import 'features/users/ui/personal_profile_settings/app/avatar_provider.dart';
+import 'features/recipes/app/recipe_comment_reply_repository.dart';
+import 'features/recipes/app/recipe_comment_repository.dart';
+import 'features/users/app/avatar_provider.dart';
+import 'features/users/app/avatar_repository.dart';
 import 'firebase.dart';
 
 void main() async {
@@ -41,7 +45,12 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => CommentProvider(),
         ),
-        ChangeNotifierProvider(create: (_) => AvatarProvider()),
+        ChangeNotifierProvider(
+          create: (_) => AvatarProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CreateRecipeProvider(),
+        ),
 
         /* Repositories */
         Provider(
@@ -52,6 +61,9 @@ void main() async {
         Provider(
           create: (_) => RecipeRepository(
             FirebaseFirestore.instance.collection("recipes"),
+            RecipeImageRepository(
+              FirebaseStorage.instance.ref().child("recipe_images"),
+            ),
           ),
         ),
         Provider(
@@ -118,6 +130,10 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: const [
+        FormBuilderLocalizations.delegate,
+      ],
+      supportedLocales: FormBuilderLocalizations.delegate.supportedLocales,
       navigatorObservers: [routeObserver],
       title: 'recipedia',
       theme: ThemeData(
@@ -191,6 +207,7 @@ class App extends StatelessWidget {
         RecipeCommentsScreen.routeName: (context) =>
             const RecipeCommentsScreen(),
         SearchScreen.routeName: (_) => const SearchScreen(),
+        CreateRecipeScreen.routeName: (_) => const CreateRecipeScreen(),
         PersonalProfileSettingsScreen.routeName: (context) =>
             const PersonalProfileSettingsScreen(),
         UserProfileScreen.routeName: (context) => const UserProfileScreen(),
