@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_recipedia/features/recipes/ui/create_recipe/create_recipe_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_feed/recipe_feed_screen.dart';
 import 'package:flutter_recipedia/features/search/ui/search_screen.dart';
 import 'package:flutter_recipedia/features/settings/ui/app_settings_screen.dart';
@@ -20,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     const RecipeFeedScreen(),
     const SearchScreen(),
-    const RecipeFeedScreen(),
+    const CreateRecipeScreen(),
     const PersonalProfileScreen(),
     const AppSettingsScreen(),
   ];
