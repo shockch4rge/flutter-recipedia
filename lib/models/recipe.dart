@@ -18,14 +18,13 @@ class Recipe {
   final List<String> steps;
 
   static const collectionName = "recipes";
-  static final idField = FieldPath(const ["id"]);
-  static final authorIdField = FieldPath(const ["authorId"]);
-  static final titleField = FieldPath(const ["title"]);
-  static final descriptionField = FieldPath(const ["description"]);
-  static final imageUrlField = FieldPath(const ["imageUrl"]);
-  static final likesField = FieldPath(const ["likes"]);
-  static final ingredientsField = FieldPath(const ["ingredients"]);
-  static final stepsField = FieldPath(const ["steps"]);
+  static const authorIdField = "authorId";
+  static const titleField = "title";
+  static const descriptionField = "description";
+  static const imageUrlField = "imageUrl";
+  static const likesField = "likes";
+  static const ingredientsField = "ingredients";
+  static const stepsField = "steps";
 
   const Recipe({
     required this.id,
@@ -63,10 +62,9 @@ class RecipeComment {
   final String content;
 
   static const collectionName = "comments";
-  static final idField = FieldPath(const ["id"]);
-  static final authorIdField = FieldPath(const ["authorId"]);
-  static final recipeIdField = FieldPath(const ["recipeId"]);
-  static final contentField = FieldPath(const ["content"]);
+  static const authorIdField = "authorId";
+  static const recipeIdField = "recipeId";
+  static const contentField = "content";
 
   const RecipeComment({
     required this.id,
@@ -100,11 +98,10 @@ class RecipeCommentReply {
   final String content;
 
   static const collectionName = "replies";
-  static final idField = FieldPath(const ["id"]);
-  static final authorIdField = FieldPath(const ["authorId"]);
-  static final commentIdField = FieldPath(const ["commentId"]);
-  static final recipeIdField = FieldPath(const ["recipeIdField"]);
-  static final contentField = FieldPath(const ["content"]);
+  static const authorIdField = "authorId";
+  static const commentIdField = "commentId";
+  static const recipeIdField = "recipeIdField";
+  static const contentField = "content";
 
   const RecipeCommentReply({
     required this.id,

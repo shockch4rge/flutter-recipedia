@@ -9,7 +9,9 @@ class UserRepository {
   Future<User> getUserById(DocumentReference userId) async {
     final snap = await userId
         .withConverter(
-            fromFirestore: User.fromFirestore, toFirestore: User.toFirestore)
+          fromFirestore: User.fromFirestore,
+          toFirestore: User.toFirestore,
+        )
         .get();
 
     return snap.data()!;
@@ -24,11 +26,10 @@ class UserRepository {
   }) async {
     // re-use the user's particulars if they stay the same
     await user.id.update({
-      User.nameField.components[0]: user.name == name ? user.name : name,
-      User.usernameField.components[0]:
-          user.username == username ? user.username : username,
-      User.bioField.components[0]: user.bio == bio ? user.bio : bio,
-      User.avatarUrlField.components[0]:
+      User.nameField: user.name == name ? user.name : name,
+      User.usernameField: user.username == username ? user.username : username,
+      User.bioField: user.bio == bio ? user.bio : bio,
+      User.avatarUrlField:
           user.avatarUrl == avatarUrl ? user.avatarUrl : avatarUrl,
     });
   }
@@ -87,7 +88,7 @@ class UserRepository {
     DocumentReference followerId,
   ) async {
     await userId.update({
-      User.followersField.components[0]: FieldValue.arrayUnion([followerId]),
+      User.followersField: FieldValue.arrayUnion([followerId]),
     });
   }
 
@@ -96,7 +97,7 @@ class UserRepository {
     DocumentReference followerId,
   ) async {
     await userId.update({
-      User.followersField.components[0]: FieldValue.arrayRemove([followerId]),
+      User.followersField: FieldValue.arrayRemove([followerId]),
     });
   }
 
@@ -105,7 +106,7 @@ class UserRepository {
     DocumentReference followingId,
   ) async {
     await userId.update({
-      User.followingField.components[0]: FieldValue.arrayUnion([followingId]),
+      User.followingField: FieldValue.arrayUnion([followingId]),
     });
   }
 
@@ -114,7 +115,7 @@ class UserRepository {
     DocumentReference followingId,
   ) async {
     await userId.update({
-      User.followingField.components[0]: FieldValue.arrayRemove([followingId]),
+      User.followingField: FieldValue.arrayRemove([followingId]),
     });
   }
 }

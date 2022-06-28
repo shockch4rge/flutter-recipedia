@@ -4,8 +4,10 @@ import 'package:flutter_recipedia/models/user.dart';
 
 class RecipeRepository {
   final CollectionReference _recipes;
+  Query<Recipe>? batchQuery;
+  DocumentSnapshot<Recipe>? lastFetched;
 
-  const RecipeRepository(this._recipes);
+  RecipeRepository(this._recipes);
 
   Future<List<Recipe>> getUserRecipes(DocumentReference userId) async {
     final snap = await _recipes
@@ -23,11 +25,15 @@ class RecipeRepository {
   }
 
   Future<List<Recipe>> getFollowedRecipes(DocumentReference userId) async {
-    final user = await userId.get();
-    final authorIds =
-        await user.get(User.followingField) as List<DocumentReference<User>>;
+    final user = await userId
+        .withConverter<User>(
+          fromFirestore: User.fromFirestore,
+          toFirestore: User.toFirestore,
+        )
+        .get();
+    final authorIds = user.get(User.followingField);
 
-    final List<Recipe> recipes = [];
+    final List<Recipe> followedRecipes = [];
 
     for (final authorId in authorIds) {
       final snap = await _recipes
@@ -35,13 +41,63 @@ class RecipeRepository {
             Recipe.authorIdField,
             isEqualTo: authorId,
           )
-          .withConverter(
+          .withConverter<Recipe>(
               fromFirestore: Recipe.fromFirestore,
               toFirestore: Recipe.toFirestore)
           .get();
-      recipes.addAll(snap.docs.map((doc) => doc.data()));
+
+      final authorRecipes = snap.docs.map((doc) => doc.data());
+      followedRecipes.addAll(authorRecipes);
     }
 
-    return recipes;
+    return followedRecipes;
+  }
+
+  // this probably does not work
+  Stream<List<Recipe>> getBatchedFollowedRecipes(
+    DocumentReference userId,
+  ) async* {
+    // get the current user and their followers
+    final user = await userId.get();
+    final authorIds = user.get(User.followingField) as List<DocumentReference>;
+
+    // map over each follower
+    for (final authorId in authorIds) {
+      // check if we've made a previous query before
+      // and if it returned the last doc
+      if (batchQuery != null && lastFetched != null) {
+        // reassign the query to start after the last fetched doc
+        batchQuery = batchQuery!.startAfterDocument(lastFetched!).limit(1);
+      }
+
+      // if we've not made a query before, create one where we only fetch the
+      // first few results
+      batchQuery ??= _recipes
+          .withConverter<Recipe>(
+            fromFirestore: Recipe.fromFirestore,
+            toFirestore: Recipe.toFirestore,
+          )
+          .where(Recipe.authorIdField, isEqualTo: authorId)
+          // TODO: test with 1 first
+          .limit(1);
+
+      final currentBatch = await batchQuery!.get();
+
+      // save the last doc in the batch
+      lastFetched = currentBatch.docs.last;
+      yield currentBatch.docs.map((doc) => doc.data()).toList();
+    }
+  }
+
+  Future<void> addRecipe({
+    required DocumentReference authorId,
+    required String title,
+    required String description,
+  }) async {
+    await _recipes.doc().set({
+      Recipe.authorIdField: authorId,
+      Recipe.titleField: title,
+      Recipe.descriptionField: description,
+    });
   }
 }

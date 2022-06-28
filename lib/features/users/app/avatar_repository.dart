@@ -18,7 +18,7 @@ class AvatarRepository {
 
     final avatarUrl = await snap.ref.getDownloadURL();
     await userId.update({
-      User.avatarUrlField.components[0]: avatarUrl,
+      User.avatarUrlField: avatarUrl,
     });
     return avatarUrl;
   }

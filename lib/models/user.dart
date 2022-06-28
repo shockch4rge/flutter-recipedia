@@ -18,12 +18,12 @@ class User {
 
   static const collectionName = "users";
   static final idField = FieldPath.documentId;
-  static final usernameField = FieldPath(const ["username"]);
-  static final nameField = FieldPath(const ["name"]);
-  static final avatarUrlField = FieldPath(const ["avatarUrl"]);
-  static final bioField = FieldPath(const ["bio"]);
-  static final followersField = FieldPath(const ["followers"]);
-  static final followingField = FieldPath(const ["following"]);
+  static const usernameField = "username";
+  static const nameField = "nameField";
+  static const avatarUrlField = "avatarUrl";
+  static const bioField = "bio";
+  static const followersField = "followers";
+  static const followingField = "following";
 
   const User({
     required this.id,
