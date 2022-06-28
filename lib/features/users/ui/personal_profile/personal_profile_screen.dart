@@ -60,12 +60,25 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
-                  SliverToBoxAdapter(
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: _UserDescription(user: user),
-                    ),
-                  ),
+                  FutureBuilder(
+                      future: context
+                          .read<RecipeRepository>()
+                          .getUserRecipes(user.id),
+                      builder: (context, snap) {
+                        if (snap.waiting) return SliverToBoxAdapter();
+
+                        final recipes = snap.data as List<Recipe>;
+
+                        return SliverToBoxAdapter(
+                          child: Container(
+                            padding: const EdgeInsets.only(top: 20),
+                            child: _UserDescription(
+                              user: user,
+                              recipesCount: recipes.length,
+                            ),
+                          ),
+                        );
+                      }),
                   SliverToBoxAdapter(
                     child: Container(
                       margin: const EdgeInsets.only(top: 20, bottom: 20),
@@ -108,8 +121,11 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
 
 class _UserDescription extends StatelessWidget {
   final User user;
+  final int recipesCount;
 
-  const _UserDescription({Key? key, required this.user}) : super(key: key);
+  const _UserDescription(
+      {Key? key, required this.user, required this.recipesCount})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +147,7 @@ class _UserDescription extends StatelessWidget {
                 Column(
                   children: [
                     Text(
-                      "${0}",
+                      "$recipesCount",
                       style: countTextStyle,
                     ),
                     Text(
