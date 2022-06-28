@@ -16,6 +16,7 @@ class Recipe {
   final List<DocumentReference> likes;
   final List<String> ingredients;
   final List<String> steps;
+  final String notes;
 
   static const collectionName = "recipes";
   static const authorIdField = "authorId";
@@ -25,6 +26,7 @@ class Recipe {
   static const likesField = "likes";
   static const ingredientsField = "ingredients";
   static const stepsField = "steps";
+  static const notesField = "notes";
 
   const Recipe({
     required this.id,
@@ -35,6 +37,7 @@ class Recipe {
     required this.ingredients,
     required this.steps,
     required this.likes,
+    required this.notes,
   });
 
   factory Recipe.fromFirestore(DocumentSnapshot snap, dynamic _) {
@@ -59,18 +62,21 @@ class RecipeComment {
   final DocumentReference id;
   final DocumentReference authorId;
   final DocumentReference recipeId;
+  final List<DocumentReference> likes;
   final String content;
 
   static const collectionName = "comments";
   static const authorIdField = "authorId";
   static const recipeIdField = "recipeId";
   static const contentField = "content";
+  static const likesField = "likes";
 
   const RecipeComment({
     required this.id,
     required this.authorId,
     required this.recipeId,
     required this.content,
+    required this.likes,
   });
 
   factory RecipeComment.fromFirestore(DocumentSnapshot snap, dynamic _) {
@@ -95,6 +101,7 @@ class RecipeCommentReply {
   final DocumentReference authorId;
   final DocumentReference commentId;
   final DocumentReference recipeId;
+  final List<DocumentReference> likes;
   final String content;
 
   static const collectionName = "replies";
@@ -102,12 +109,14 @@ class RecipeCommentReply {
   static const commentIdField = "commentId";
   static const recipeIdField = "recipeIdField";
   static const contentField = "content";
+  static const likesField = "likes";
 
   const RecipeCommentReply({
     required this.id,
     required this.authorId,
     required this.commentId,
     required this.recipeId,
+    required this.likes,
     required this.content,
   });
 

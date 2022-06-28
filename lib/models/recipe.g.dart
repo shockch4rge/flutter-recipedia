@@ -22,6 +22,7 @@ Recipe _$RecipeFromJson(Map<String, dynamic> json) => Recipe(
           .map((e) => const DocumentSerializer()
               .fromJson(e as DocumentReference<Object?>))
           .toList(),
+      notes: json['notes'] as String,
     );
 
 Map<String, dynamic> _$RecipeToJson(Recipe instance) => <String, dynamic>{
@@ -33,6 +34,7 @@ Map<String, dynamic> _$RecipeToJson(Recipe instance) => <String, dynamic>{
       'likes': instance.likes.map(const DocumentSerializer().toJson).toList(),
       'ingredients': instance.ingredients,
       'steps': instance.steps,
+      'notes': instance.notes,
     };
 
 RecipeComment _$RecipeCommentFromJson(Map<String, dynamic> json) =>
@@ -44,6 +46,10 @@ RecipeComment _$RecipeCommentFromJson(Map<String, dynamic> json) =>
       recipeId: const DocumentSerializer()
           .fromJson(json['recipeId'] as DocumentReference<Object?>),
       content: json['content'] as String,
+      likes: (json['likes'] as List<dynamic>)
+          .map((e) => const DocumentSerializer()
+              .fromJson(e as DocumentReference<Object?>))
+          .toList(),
     );
 
 Map<String, dynamic> _$RecipeCommentToJson(RecipeComment instance) =>
@@ -51,6 +57,7 @@ Map<String, dynamic> _$RecipeCommentToJson(RecipeComment instance) =>
       'id': const DocumentSerializer().toJson(instance.id),
       'authorId': const DocumentSerializer().toJson(instance.authorId),
       'recipeId': const DocumentSerializer().toJson(instance.recipeId),
+      'likes': instance.likes.map(const DocumentSerializer().toJson).toList(),
       'content': instance.content,
     };
 
@@ -64,6 +71,10 @@ RecipeCommentReply _$RecipeCommentReplyFromJson(Map<String, dynamic> json) =>
           .fromJson(json['commentId'] as DocumentReference<Object?>),
       recipeId: const DocumentSerializer()
           .fromJson(json['recipeId'] as DocumentReference<Object?>),
+      likes: (json['likes'] as List<dynamic>)
+          .map((e) => const DocumentSerializer()
+              .fromJson(e as DocumentReference<Object?>))
+          .toList(),
       content: json['content'] as String,
     );
 
@@ -73,5 +84,6 @@ Map<String, dynamic> _$RecipeCommentReplyToJson(RecipeCommentReply instance) =>
       'authorId': const DocumentSerializer().toJson(instance.authorId),
       'commentId': const DocumentSerializer().toJson(instance.commentId),
       'recipeId': const DocumentSerializer().toJson(instance.recipeId),
+      'likes': instance.likes.map(const DocumentSerializer().toJson).toList(),
       'content': instance.content,
     };
