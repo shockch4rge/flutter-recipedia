@@ -1,11 +1,30 @@
 import 'dart:io';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class CreateRecipeProvider with ChangeNotifier {
   File? uploadedImage;
-  List<String> addedIngredients = [];
+  List<String> ingredients = [];
+  List<String> steps = [];
+
+  void addStep(String step) {
+    steps.add(step);
+    notifyListeners();
+  }
+
+  void removeStep(int index) {
+    steps.removeAt(index);
+    notifyListeners();
+  }
+
+  void reorderStep(int oldIndex, int newIndex) {
+    final step = steps.removeAt(oldIndex);
+    steps.insert(
+      newIndex < oldIndex ? newIndex : newIndex - 1,
+      step,
+    );
+    notifyListeners();
+  }
 
   void setUploadedImage(File? file) {
     uploadedImage = file;
@@ -13,22 +32,28 @@ class CreateRecipeProvider with ChangeNotifier {
   }
 
   void addIngredient(String ingredient) {
-    addedIngredients.add(ingredient);
+    ingredients.add(ingredient);
     notifyListeners();
   }
 
   void removeIngredient(int index) {
-    addedIngredients.removeAt(index);
+    ingredients.removeAt(index);
     notifyListeners();
   }
 
   void reorderIngredient(int oldIndex, int newIndex) {
-    addedIngredients.swap(oldIndex, newIndex);
+    final ingredient = ingredients.removeAt(oldIndex);
+    ingredients.insert(
+      newIndex < oldIndex ? newIndex : newIndex - 1,
+      ingredient,
+    );
     notifyListeners();
   }
 
   void reset() {
     setUploadedImage(null);
+    steps.clear();
+    ingredients.clear();
     uploadedImage?.delete();
   }
 }

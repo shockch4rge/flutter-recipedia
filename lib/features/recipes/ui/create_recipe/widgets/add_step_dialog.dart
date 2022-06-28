@@ -4,30 +4,37 @@ import 'package:flutter_recipedia/features/recipes/app/create_recipe_provider.da
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:provider/provider.dart';
 
-class AddIngredientDialog extends StatefulWidget {
-  const AddIngredientDialog({Key? key}) : super(key: key);
+class AddStepDialog extends StatefulWidget {
+  const AddStepDialog({Key? key}) : super(key: key);
 
   @override
-  State<AddIngredientDialog> createState() => _AddIngredientDialogState();
+  State<AddStepDialog> createState() => _AddStepDialogState();
 }
 
-class _AddIngredientDialogState extends State<AddIngredientDialog> {
-  final _ingredientController = TextEditingController();
+class _AddStepDialogState extends State<AddStepDialog> {
+  final _stepController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Add Ingredient"),
+      title: const Text("Add Step"),
       content: FormBuilderTextField(
-        name: "ingredient_name",
-        controller: _ingredientController,
+        name: "step_name",
+        controller: _stepController,
         decoration: InputDecoration(
           hintStyle: TextStyle(color: Colors.grey[400]),
-          hintText: "e.g. 1 tbsp olive oil",
+          hintText: "e.g. Add salt to soup",
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.black,
+            ),
+          ),
         ),
+        minLines: 2,
+        maxLines: 6,
         validator: FormBuilderValidators.compose([
           FormBuilderValidators.required(
-            errorText: "Ingredient cannot be empty.",
+            errorText: "Direction cannot be empty.",
           ),
         ]),
       ),
@@ -41,9 +48,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
         ),
         TextButton(
           onPressed: () async {
-            context
-                .read<CreateRecipeProvider>()
-                .addIngredient(_ingredientController.text);
+            context.read<CreateRecipeProvider>().addStep(_stepController.text);
             Navigator.of(context).pop();
           },
           child: const Text("Add"),
@@ -57,7 +62,7 @@ class _AddIngredientDialogState extends State<AddIngredientDialog> {
 
   @override
   void dispose() {
-    _ingredientController.dispose();
+    _stepController.dispose();
     super.dispose();
   }
 }

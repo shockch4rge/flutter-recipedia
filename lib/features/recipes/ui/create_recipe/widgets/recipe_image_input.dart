@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/features/recipes/app/create_recipe_provider.dart';
 import 'package:flutter_recipedia/features/recipes/ui/common/app_bottom_sheet.dart';
 import 'package:flutter_recipedia/features/recipes/ui/create_recipe/widgets/recipe_image_input_actions.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,7 @@ class RecipeImageInput extends StatefulWidget {
 class _RecipeImageInputState extends State<RecipeImageInput> {
   final _imagePicker = ImagePicker();
   final _imageCropper = ImageCropper();
-  double get horizontalPadding => 24;
+  double get horizontalPadding => 48;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class _RecipeImageInputState extends State<RecipeImageInput> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.width - horizontalPadding,
       decoration: BoxDecoration(
-        border: Border.all(),
+        border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(24),
         image: currentImage != null
             ? DecorationImage(image: FileImage(currentImage), fit: BoxFit.cover)
@@ -37,7 +38,7 @@ class _RecipeImageInputState extends State<RecipeImageInput> {
       ),
       alignment: Alignment.center,
       child: currentImage == null
-          ? ElevatedButton(
+          ? ElevatedButton.icon(
               onPressed: () => showModalBottomSheet(
                 context: context,
                 shape: AppBottomSheet.defaultShape,
@@ -52,9 +53,15 @@ class _RecipeImageInputState extends State<RecipeImageInput> {
                   },
                 ),
               ),
-              child: const Text("Select an image!"),
+              icon: const Icon(FontAwesomeIcons.plus),
+              label: const Text("Select an image!"),
               style: ElevatedButton.styleFrom(
-                primary: Theme.of(context).primaryColorDark,
+                elevation: 0,
+                primary: Colors.grey.shade200,
+                onPrimary: Colors.grey,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             )
           : null,

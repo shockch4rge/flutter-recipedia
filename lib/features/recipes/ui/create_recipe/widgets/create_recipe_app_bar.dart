@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 class CreateRecipeAppBar extends StatelessWidget
     implements PreferredSizeWidget {
-  const CreateRecipeAppBar({Key? key}) : super(key: key);
+  final VoidCallback onResetPressed;
+
+  const CreateRecipeAppBar({Key? key, required this.onResetPressed})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +19,15 @@ class CreateRecipeAppBar extends StatelessWidget
           fontSize: 20,
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: onResetPressed,
+          child: Text("Reset"),
+          style: TextButton.styleFrom(
+            primary: Theme.of(context).primaryColor,
+          ),
+        ),
+      ],
       centerTitle: true,
       backgroundColor: Colors.white,
     );
