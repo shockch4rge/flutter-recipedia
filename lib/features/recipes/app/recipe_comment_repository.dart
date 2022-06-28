@@ -29,4 +29,37 @@ class RecipeCommentRepository {
 
     return snap.docs.map((doc) => doc.data()).toList();
   }
+
+  Future<void> addComment({
+    required DocumentReference recipeId,
+    required DocumentReference authorId,
+    required String content,
+  }) async {
+    final comment = _comments.doc();
+
+    await comment.set({
+      RecipeComment.authorIdField: authorId,
+      RecipeComment.recipeIdField: recipeId,
+      RecipeComment.likesField: [],
+      RecipeComment.contentField: content,
+    });
+  }
+
+  Future<void> addLike({
+    required DocumentReference commentId,
+    required DocumentReference likerId,
+  }) async {
+    commentId.update({
+      RecipeComment.likesField: FieldValue.arrayUnion([likerId]),
+    });
+  }
+
+  Future<void> removeLike({
+    required DocumentReference commentId,
+    required DocumentReference likerId,
+  }) async {
+    commentId.update({
+      RecipeComment.likesField: FieldValue.arrayRemove([likerId]),
+    });
+  }
 }

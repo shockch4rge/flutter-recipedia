@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/keep_alive_stateful.dart';
+import 'package:flutter_recipedia/features/recipes/app/recipe_comment_reply_repository.dart';
 import 'package:flutter_recipedia/main.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
@@ -25,6 +26,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
     with RouteAware {
   final _scrollController = ScrollController();
   final FocusNode _commentInputFocus = FocusNode();
+  final _commentInputController = TextEditingController();
   DocumentReference get recipeId => getArgs<DocumentReference>(context);
 
   @override
@@ -132,6 +134,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                     children: [
                       TextField(
                         focusNode: _commentInputFocus,
+                        controller: _commentInputController,
                         cursorColor: Colors.grey,
                         style: const TextStyle(
                           fontSize: 14,
@@ -161,7 +164,11 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                       ),
                       TextButton(
                         onPressed: () {
-                          // send TextField content
+                          if (context.read<CommentProvider>().replyTarget != null) {
+                            // TODO
+                          }
+
+                          context.read<RecipeCommentReplyRepository>().addReply(recipeId: recipeId, commentId: commentId, authorId: authorId, content: content)
                         },
                         child: Text(
                           "Send",
@@ -201,6 +208,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
+    _commentInputController.dispose();
     _commentInputFocus.dispose();
     super.dispose();
   }

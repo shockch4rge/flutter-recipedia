@@ -7,17 +7,18 @@ class RecipeCommentReplyRepository {
   const RecipeCommentReplyRepository(this._replies);
 
   Future<List<RecipeCommentReply>> getAllByCommentId(
-    DocumentReference commentRef,
+    DocumentReference commentId,
   ) async {
     final snap = await _replies
         .withConverter<RecipeCommentReply>(
           fromFirestore: RecipeCommentReply.fromFirestore,
           toFirestore: RecipeCommentReply.toFirestore,
         )
-        .where("comment", isEqualTo: commentRef)
+        .where(RecipeCommentReply.commentIdField, isEqualTo: commentId)
         .get();
 
-    return snap.docs.map((doc) => doc.data()).toList();
+    final replies = snap.docs.map((doc) => doc.data()).toList();
+    return replies;
   }
 
   Future<RecipeCommentReply> getByCommentId(String commentId) async {
@@ -30,5 +31,49 @@ class RecipeCommentReplyRepository {
         .get();
 
     return snap.data()!;
+  }
+
+  Future<void> addToComment(
+    DocumentReference commentId,
+    RecipeCommentReply reply,
+  ) async {
+    final replyId = _replies.doc().withConverter<RecipeCommentReply>(
+          fromFirestore: RecipeCommentReply.fromFirestore,
+          toFirestore: RecipeCommentReply.toFirestore,
+        );
+    replyId.set(reply);
+  }
+
+  Future<void> addReply({
+    required recipeId,
+    required commentId,
+    required authorId,
+    required content,
+  }) async {
+    final reply = _replies.doc();
+    await reply.set({
+      RecipeCommentReply.authorIdField: authorId,
+      RecipeCommentReply.recipeIdField: recipeId,
+      RecipeCommentReply.contentField: content,
+      RecipeCommentReply.likesField: [],
+    });
+  }
+
+  Future<void> addLike({
+    required DocumentReference replyId,
+    required DocumentReference likerId,
+  }) async {
+    replyId.update({
+      RecipeCommentReply.likesField: FieldValue.arrayUnion([likerId]),
+    });
+  }
+
+  Future<void> removeLike({
+    required DocumentReference replyId,
+    required DocumentReference likerId,
+  }) async {
+    replyId.update({
+      RecipeCommentReply.likesField: FieldValue.arrayRemove([likerId]),
+    });
   }
 }

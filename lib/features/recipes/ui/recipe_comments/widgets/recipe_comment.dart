@@ -1,17 +1,22 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
+import 'package:flutter_recipedia/features/recipes/app/recipe_comment_repository.dart';
+import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/widgets/recipe_comment_reply_expandable.dart';
 import 'package:flutter_recipedia/models/recipe.dart' as model;
 import 'package:flutter_recipedia/repositories/user_repository.dart';
+import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
+import 'package:flutter_recipedia/utils/shorten_number.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../../models/user.dart';
 
 class RecipeComment extends StatelessWidget {
   final model.RecipeComment comment;
-  final void Function(User user) onReply;
+  final void Function(User author) onReply;
 
   const RecipeComment({Key? key, required this.onReply, required this.comment})
       : super(key: key);
@@ -21,19 +26,29 @@ class RecipeComment extends StatelessWidget {
     return FutureBuilder(
       future: context.read<UserRepository>().getUserById(comment.authorId),
       builder: (context, snap) {
-        final user = snap.data as User;
+        if (snap.waiting) {
+          return Container();
+        }
+
+        final author = snap.data as User;
 
         return Slidable(
           endActionPane: ActionPane(
-            motion: const ScrollMotion(),
+            motion: const StretchMotion(),
             closeThreshold: 0.1,
-            extentRatio: 0.3,
+            extentRatio: 0.45,
             children: [
               SlidableAction(
                 backgroundColor: Colors.grey,
                 foregroundColor: Colors.white,
-                onPressed: (_) => onReply(user),
+                onPressed: (_) => onReply(author),
                 icon: CupertinoIcons.arrow_turn_up_left,
+              ),
+              SlidableAction(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                onPressed: (_) => _toggleLike(context, author.id),
+                icon: FontAwesomeIcons.heart,
               ),
               SlidableAction(
                 backgroundColor: Colors.red,
@@ -54,7 +69,7 @@ class RecipeComment extends StatelessWidget {
                 Expanded(
                   child: Avatar(
                     size: 40,
-                    avatarUrl: user.avatarUrl,
+                    avatarUrl: author.avatarUrl,
                   ),
                 ),
                 Expanded(
@@ -63,7 +78,7 @@ class RecipeComment extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "johndoe123",
+                        author.username,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -71,27 +86,31 @@ class RecipeComment extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      const Text(
-                        "I love this recipe! Highly recommend it. Will make it again sometime!",
-                        style: TextStyle(
+                      Text(
+                        comment.content,
+                        style: const TextStyle(
                           fontSize: 13,
                           color: Colors.black,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
+                      RecipeCommentReplyExpandable(comment: comment),
+                      const SizedBox(height: 6),
                       Row(
                         children: [
                           GestureDetector(
                             onTap: () {},
-                            child: const Text(
-                              "1.2k likes",
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.grey),
+                            child: Text(
+                              "${shortenNumber(comment.likes.length)} likes",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 12),
                           GestureDetector(
-                            onTap: () => onReply(user),
+                            onTap: () => onReply(author),
                             child: const Text(
                               "Reply",
                               style: TextStyle(
@@ -108,11 +127,17 @@ class RecipeComment extends StatelessWidget {
                 ),
                 Expanded(
                   child: IconButton(
-                    onPressed: () {},
+                    visualDensity: VisualDensity.compact,
+                    onPressed: () => _toggleLike(context, author.id),
                     splashRadius: 18,
-                    icon: const Icon(
-                      FeatherIcons.heart,
+                    icon: Icon(
+                      comment.likes.contains(author.id)
+                          ? FontAwesomeIcons.solidHeart
+                          : FontAwesomeIcons.heart,
                       size: 18,
+                      color: comment.likes.contains(author.id)
+                          ? Theme.of(context).primaryColor
+                          : null,
                     ),
                   ),
                 )
@@ -122,6 +147,22 @@ class RecipeComment extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _toggleLike(
+      BuildContext context, DocumentReference userId) async {
+    if (comment.likes.contains(userId)) {
+      await context.read<RecipeCommentRepository>().removeLike(
+            commentId: comment.id,
+            likerId: userId,
+          );
+      return;
+    }
+
+    context.read<RecipeCommentRepository>().addLike(
+          commentId: comment.id,
+          likerId: userId,
+        );
   }
 }
 
