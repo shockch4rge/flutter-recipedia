@@ -1,16 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/app/recipe_comment_repository.dart';
+import 'package:flutter_recipedia/common/keep_alive_stateful.dart';
+import 'package:flutter_recipedia/main.dart';
+import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
+import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:provider/provider.dart';
 
 import './widgets/recipe_comment.dart' as widgets;
-import '../../../../main.dart';
-import '../../../../models/recipe.dart';
+import '../../app/recipe_comment_repository.dart';
 import 'widgets/recipe_comments_app_bar.dart';
 
-class RecipeCommentsScreen extends StatefulWidget {
+class RecipeCommentsScreen extends KeepAliveStateful {
   static const routeName = "/recipe/comments";
 
   const RecipeCommentsScreen({Key? key}) : super(key: key);
@@ -42,7 +44,23 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                 .read<RecipeCommentRepository>()
                 .getAllByRecipeId(recipeId),
             builder: (context, snap) {
+              if (snap.waiting) {
+                return ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 10,
+                  itemBuilder: (context, index) {
+                    return const widgets.RecipeCommentPlaceholder();
+                  },
+                );
+              }
               final comments = snap.data as List<RecipeComment>;
+
+              if (comments.isEmpty) {
+                return const Center(
+                  child: Text("Be the first to comment on this recipe!"),
+                );
+              }
+
               return ListView.builder(
                 controller: _scrollController,
                 physics: const BouncingScrollPhysics(),
@@ -170,10 +188,8 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
   }
 
   @override
-  void dispose() {
-    routeObserver.unsubscribe(this);
-    _commentInputFocus.dispose();
-    super.dispose();
+  void didPop() {
+    context.read<CommentProvider>().setReplyTarget(null);
   }
 
   @override
@@ -183,7 +199,9 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
   }
 
   @override
-  void didPop() {
-    context.read<CommentProvider>().setReplyTarget(null);
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    _commentInputFocus.dispose();
+    super.dispose();
   }
 }
