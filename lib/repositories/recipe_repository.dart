@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
 
+import '../features/recipes/app/recipe_image_repository.dart';
+
 class RecipeRepository {
   final CollectionReference _recipes;
+  final RecipeImageRepository _images;
   Query<Recipe>? batchQuery;
   DocumentSnapshot<Recipe>? lastFetched;
 
-  RecipeRepository(this._recipes);
+  RecipeRepository(this._recipes, this._images);
 
   Future<List<Recipe>> getUserRecipes(DocumentReference userId) async {
     final snap = await _recipes
@@ -16,8 +21,9 @@ class RecipeRepository {
           isEqualTo: userId,
         )
         .withConverter(
-            fromFirestore: Recipe.fromFirestore,
-            toFirestore: Recipe.toFirestore)
+          fromFirestore: Recipe.fromFirestore,
+          toFirestore: Recipe.toFirestore,
+        )
         .get();
 
     final recipes = snap.docs.map((doc) => doc.data()).toList();
@@ -93,11 +99,21 @@ class RecipeRepository {
     required DocumentReference authorId,
     required String title,
     required String description,
+    required List<String> ingredients,
+    required List<String> steps,
+    required File image,
   }) async {
-    await _recipes.doc().set({
+    final recipeId = _recipes.doc();
+    final imageUrl = await _images.uploadImage(recipeId: recipeId, file: image);
+
+    await recipeId.set({
       Recipe.authorIdField: authorId,
       Recipe.titleField: title,
       Recipe.descriptionField: description,
+      Recipe.ingredientsField: ingredients,
+      Recipe.stepsField: steps,
+      Recipe.imageUrlField: imageUrl,
+      Recipe.likesField: [],
     });
   }
 }
