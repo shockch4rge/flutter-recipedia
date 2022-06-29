@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
-import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/app/recipe_comment_repository.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comments_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_feed/widgets/recipe_options_menu.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
@@ -12,15 +11,18 @@ import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
+import '../../../app/recipe_comment_repository.dart';
 import '../../common/recipe_buttons.dart';
 import '../../view_recipe/view_recipe_screen.dart';
 
 class _RecipeContentHeader extends StatelessWidget {
   final Recipe recipe;
   final User author;
-  const _RecipeContentHeader(
-      {Key? key, required this.recipe, required this.author})
-      : super(key: key);
+  const _RecipeContentHeader({
+    Key? key,
+    required this.recipe,
+    required this.author,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +33,7 @@ class _RecipeContentHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           TextButton.icon(
-            onPressed: () => Navigator.pushNamed(
-              context,
+            onPressed: () => Navigator.of(context).pushNamed(
               UserProfileScreen.routeName,
               arguments: author,
             ),
@@ -104,7 +105,7 @@ class RecipeContent extends StatelessWidget {
     return FutureBuilder(
       future: context.read<UserRepository>().getUserById(recipe.authorId),
       builder: (context, snap) {
-        if (snap.connectionState == ConnectionState.waiting) {
+        if (snap.waiting) {
           return Container();
         }
 
@@ -147,13 +148,16 @@ class _RecipeContentActions extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              LikeButton(
-                likes: recipe.likes,
-                onPressed: () {},
-              ),
-              FutureBuilder(
+          Expanded(
+            flex: 3,
+            child: Row(
+              // mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                LikeButton(
+                  likes: recipe.likes,
+                  onPressed: () {},
+                ),
+                FutureBuilder(
                   future: context
                       .read<RecipeCommentRepository>()
                       .getAllByRecipeId(recipe.id),
@@ -167,18 +171,23 @@ class _RecipeContentActions extends StatelessWidget {
                       comments: comments,
                       onPressed: () => Navigator.of(context).pushNamed(
                         RecipeCommentsScreen.routeName,
+                        arguments: recipe.id,
                       ),
                     );
-                  }),
-              ShareButton(
-                onPressed: () {},
-              )
-            ],
+                  },
+                ),
+                ShareButton(
+                  onPressed: () {},
+                )
+              ],
+            ),
           ),
-          ViewRecipeButton(
-            onPressed: () => Navigator.of(context).pushNamed(
-              ViewRecipeScreen.routeName,
-              arguments: Tuple2(recipe, author),
+          Expanded(
+            child: ViewRecipeButton(
+              onPressed: () => Navigator.of(context).pushNamed(
+                ViewRecipeScreen.routeName,
+                arguments: Tuple2(recipe, author),
+              ),
             ),
           ),
         ],
@@ -191,30 +200,35 @@ class _RecipeContentDescription extends StatelessWidget {
   final Recipe recipe;
   final User author;
 
-  const _RecipeContentDescription(
-      {Key? key, required this.recipe, required this.author})
-      : super(key: key);
+  const _RecipeContentDescription({
+    Key? key,
+    required this.recipe,
+    required this.author,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          recipe.title,
-          style: Theme.of(context).textTheme.headline3,
-        ),
-        const SizedBox(height: 14),
-        Text(
-          "${author.username}:",
-          style: Theme.of(context).textTheme.subtitle2,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          recipe.description,
-          style: Theme.of(context).textTheme.bodyText2,
-        ),
-      ],
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            recipe.title,
+            style: Theme.of(context).textTheme.headline3,
+          ),
+          const SizedBox(height: 14),
+          Text(
+            "${author.username}:",
+            style: Theme.of(context).textTheme.subtitle2,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            recipe.description,
+            style: Theme.of(context).textTheme.bodyText2,
+          ),
+        ],
+      ),
     );
   }
 }

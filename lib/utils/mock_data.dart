@@ -12,8 +12,20 @@
 import '../models/user.dart';
 import 'constants/firestore_collections.dart';
 
+final mockMeId = USERS
+    .withConverter<User>(
+      fromFirestore: User.fromFirestore,
+      toFirestore: User.toFirestore,
+    )
+    .doc("sOCPIiDNpxC3qlW7tzEb");
+
 final mockMeUser = User(
-  id: USERS.doc("2e29eu2idjsiud9121duud821"),
+  id: USERS
+      .withConverter<User>(
+        fromFirestore: User.fromFirestore,
+        toFirestore: User.toFirestore,
+      )
+      .doc("sOCPIiDNpxC3qlW7tzEb"),
   name: "John Doe",
   username: "johndoe123",
   avatarUrl:

@@ -1,28 +1,44 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/features/recipes/ui/common/app_bottom_sheet.dart';
+import 'package:flutter_recipedia/features/recipes/ui/common/recipe_preview_actions.dart';
+import 'package:flutter_recipedia/models/user.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../../../models/recipe.dart';
 import '../view_recipe/view_recipe_screen.dart';
 
 class RecipePreview extends StatelessWidget {
   final Recipe recipe;
+  final User user;
 
-  const RecipePreview({Key? key, required this.recipe}) : super(key: key);
+  const RecipePreview({
+    Key? key,
+    required this.recipe,
+    required this.user,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => Navigator.of(context).pushNamed(
         ViewRecipeScreen.routeName,
-        arguments: recipe,
+        arguments: Tuple2<Recipe, User>(recipe, user),
+      ),
+      onLongPress: () => showModalBottomSheet(
+        context: context,
+        shape: AppBottomSheet.defaultShape,
+        builder: (_) => RecipePreviewActions(recipe: recipe),
       ),
       child: CachedNetworkImage(
         imageUrl: recipe.imageUrl,
         imageBuilder: (context, provider) {
-          return Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(image: provider, fit: BoxFit.cover),
-              borderRadius: BorderRadius.circular(6),
+          return InkWell(
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(image: provider, fit: BoxFit.cover),
+                borderRadius: BorderRadius.circular(6),
+              ),
             ),
           );
         },

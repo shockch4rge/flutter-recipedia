@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
 import 'package:flutter_recipedia/features/recipes/ui/common/recipe_preview.dart';
-import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/personal_profile_settings_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_followers/user_followers_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
-import 'package:flutter_recipedia/features/users/ui/user_profile/widgets/user_profile_actions.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
+import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:flutter_recipedia/utils/mock_data.dart';
@@ -16,7 +15,7 @@ import 'package:provider/provider.dart';
 import 'widgets/user_profile_app_bar.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  static const routeName = "/home/profile/me/settings";
+  static const routeName = "/home/profile/user/settings";
 
   const UserProfileScreen({Key? key}) : super(key: key);
 
@@ -32,18 +31,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     return Scaffold(
       appBar: UserProfileAppBar(
         user: user,
-        onMoreSettingsPressed: () {
-          showModalBottomSheet(
-            context: context,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8),
-                topRight: Radius.circular(8),
-              ),
-            ),
-            builder: (_) => const UserProfileActions(),
-          );
-        },
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -206,10 +193,16 @@ class _UserDescription extends StatelessWidget {
         SizedBox(
           width: Size.infinite.width,
           child: ElevatedButton(
-            onPressed: () => Navigator.of(context).pushNamed(
-              PersonalProfileSettingsScreen.routeName,
-              arguments: user,
-            ),
+            onPressed: () async {
+              if (user.followers.contains(mockMeId)) {
+                context
+                    .read<UserRepository>()
+                    .removeUserFollower(user.id, mockMeId);
+                return;
+              }
+
+              context.read<UserRepository>().addUserFollower(user.id, mockMeId);
+            },
             child: Text(
               user.followers.contains(mockMeId) ? "UNFOLLOW" : "FOLLOW",
               style: TextStyle(

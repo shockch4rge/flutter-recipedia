@@ -110,9 +110,8 @@ class ViewRecipeButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
           constraints: const BoxConstraints(
-            minWidth: 88.0,
+            minWidth: 90.0,
             minHeight: 36.0,
           ), // min sizes for Material buttons
           alignment: Alignment.center,

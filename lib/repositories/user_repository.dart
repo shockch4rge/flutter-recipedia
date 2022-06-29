@@ -17,6 +17,19 @@ class UserRepository {
     return snap.data()!;
   }
 
+  Future<List<User>> getUsers(List<DocumentReference> userIds) async {
+    final snaps = await Future.wait(
+      userIds.map((id) => id
+          .withConverter(
+            fromFirestore: User.fromFirestore,
+            toFirestore: User.toFirestore,
+          )
+          .get()),
+      eagerError: true,
+    );
+    return snaps.map((doc) => doc.data()!).toList();
+  }
+
   Future<void> updateUser({
     required User user,
     required String name,

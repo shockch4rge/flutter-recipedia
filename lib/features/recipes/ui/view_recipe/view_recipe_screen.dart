@@ -2,15 +2,18 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
 import 'package:flutter_recipedia/common/checkbox_list_item.dart';
-import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/app/recipe_comment_repository.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
+import 'package:flutter_recipedia/repositories/recipe_repository.dart';
+import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
+import '../../app/recipe_comment_repository.dart';
 import '../common/recipe_buttons.dart';
+import '../recipe_comments/recipe_comments_screen.dart';
 import 'widgets/view_recipe_app_bar.dart';
 
 class ViewRecipeScreen extends StatefulWidget {
@@ -51,6 +54,7 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               sliver: SliverToBoxAdapter(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _RecipeActions(recipe: recipe, user: user),
                     _RecipeDescription(recipe: recipe),
@@ -116,7 +120,7 @@ class _RecipeActions extends StatelessWidget {
           onTap: () => Navigator.pushNamed(
             context,
             UserProfileScreen.routeName,
-            arguments: recipe.authorId,
+            arguments: user,
           ),
           child: Row(
             children: [
@@ -124,18 +128,22 @@ class _RecipeActions extends StatelessWidget {
                 size: 40,
                 avatarUrl: user.avatarUrl,
               ),
-              const SizedBox(width: 5),
+              const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     user.name,
                     style: Theme.of(context).textTheme.subtitle1,
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
                   ),
                   const SizedBox(height: 3),
                   Text(
                     "@${user.username}",
                     style: Theme.of(context).textTheme.headline5,
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
                   )
                 ],
               )
@@ -146,16 +154,32 @@ class _RecipeActions extends StatelessWidget {
           children: [
             LikeButton(
               likes: recipe.likes,
-              onPressed: () {},
+              onPressed: () {
+                context.read<RecipeRepository>().addLike(
+                      recipeId: recipe.id,
+                      likerId: user.id,
+                    );
+              },
             ),
             FutureBuilder(
-                future: context
-                    .read<RecipeCommentRepository>()
-                    .getAllByRecipeId(recipe.id),
-                builder: (context, snap) {
-                  final comments = snap.data as List<RecipeComment>;
-                  return CommentButton(comments: comments, onPressed: () {});
-                }),
+              future: context
+                  .read<RecipeCommentRepository>()
+                  .getAllByRecipeId(recipe.id),
+              builder: (context, snap) {
+                if (snap.waiting) {
+                  return Container();
+                }
+
+                final comments = snap.data as List<RecipeComment>;
+                return CommentButton(
+                  comments: comments,
+                  onPressed: () => Navigator.of(context).pushNamed(
+                    RecipeCommentsScreen.routeName,
+                    arguments: recipe.id,
+                  ),
+                );
+              },
+            ),
             ShareButton(onPressed: () {}),
           ],
         )
@@ -191,6 +215,7 @@ class _RecipeDirections extends StatelessWidget {
           style: Theme.of(context).textTheme.headline3,
         ),
         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: recipe.steps.mapIndexed((index, step) {
             return Container(
               margin: const EdgeInsets.symmetric(vertical: 12),
@@ -210,7 +235,18 @@ class _RecipeDirections extends StatelessWidget {
               ),
             );
           }).toList(),
-        )
+        ),
+        const SizedBox(height: 20),
+        Text(
+          "Notes",
+          style: Theme.of(context).textTheme.headline3,
+        ),
+        const SizedBox(height: 6),
+        Text(
+          recipe.notes.isEmpty ? "No added notes." : recipe.notes,
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+        const SizedBox(height: 50),
       ],
     );
   }

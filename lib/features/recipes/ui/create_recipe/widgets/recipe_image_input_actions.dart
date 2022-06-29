@@ -17,12 +17,12 @@ class RecipeImageInputActions extends StatelessWidget {
     return AppBottomSheet(actions: [
       AppBottomSheetAction(
         onPressed: onCameraOptionPressed,
-        icon: Icon(FontAwesomeIcons.camera),
+        icon: const Icon(FontAwesomeIcons.camera),
         title: "Camera",
       ),
       AppBottomSheetAction(
         onPressed: onGalleryOptionPressed,
-        icon: Icon(FontAwesomeIcons.images),
+        icon: const Icon(FontAwesomeIcons.images),
         title: "Gallery",
       ),
     ]);

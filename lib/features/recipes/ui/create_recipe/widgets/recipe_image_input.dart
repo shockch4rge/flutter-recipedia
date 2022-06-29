@@ -30,10 +30,13 @@ class _RecipeImageInputState extends State<RecipeImageInput> {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.width - horizontalPadding,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
         borderRadius: BorderRadius.circular(24),
+        color: Colors.grey.shade200,
         image: currentImage != null
-            ? DecorationImage(image: FileImage(currentImage), fit: BoxFit.cover)
+            ? DecorationImage(
+                image: FileImage(currentImage),
+                fit: BoxFit.cover,
+              )
             : null,
       ),
       alignment: Alignment.center,
@@ -43,21 +46,15 @@ class _RecipeImageInputState extends State<RecipeImageInput> {
                 context: context,
                 shape: AppBottomSheet.defaultShape,
                 builder: (_) => RecipeImageInputActions(
-                  onCameraOptionPressed: () async {
-                    final file = await _pickImage(ImageSource.camera);
-                    context.read<CreateRecipeProvider>().setUploadedImage(file);
-                  },
-                  onGalleryOptionPressed: () async {
-                    final file = await _pickImage(ImageSource.gallery);
-                    context.read<CreateRecipeProvider>().setUploadedImage(file);
-                  },
+                  onCameraOptionPressed: () => _pickImage(ImageSource.camera),
+                  onGalleryOptionPressed: () => _pickImage(ImageSource.gallery),
                 ),
               ),
               icon: const Icon(FontAwesomeIcons.plus),
               label: const Text("Select an image!"),
               style: ElevatedButton.styleFrom(
                 elevation: 0,
-                primary: Colors.grey.shade200,
+                primary: Colors.white,
                 onPrimary: Colors.grey,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -68,13 +65,12 @@ class _RecipeImageInputState extends State<RecipeImageInput> {
     );
   }
 
-  Future<File?> _pickImage(ImageSource source) async {
+  Future<void> _pickImage(ImageSource source) async {
     final initial = await _imagePicker.pickImage(source: source);
-    if (initial == null) return null;
+    if (initial == null) return;
 
     final cropped = await _imageCropper.cropImage(
       sourcePath: File(initial.path).absolute.path,
-      aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
       uiSettings: [
         AndroidUiSettings(
           activeControlsWidgetColor: Theme.of(context).primaryColor,
@@ -83,8 +79,8 @@ class _RecipeImageInputState extends State<RecipeImageInput> {
         )
       ],
     );
-    if (cropped == null) return null;
 
-    return File(cropped.path);
+    if (cropped == null) return;
+    context.read<CreateRecipeProvider>().setUploadedImage(File(cropped.path));
   }
 }

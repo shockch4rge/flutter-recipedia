@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_feed/widgets/recipe_content.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
-import 'package:flutter_recipedia/utils/constants/firestore_collections.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
+import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/recipe_feed_app_bar.dart';
@@ -31,14 +31,10 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
         ),
       ),
       body: FutureBuilder(
-        future: context
-            .read<RecipeRepository>()
-            .getUserRecipes(USERS.doc("tZBXtDjmwKjyAzXQwpfn")),
+        future: context.read<RecipeRepository>().getFollowedRecipes(mockMeId),
         builder: (context, snap) {
           if (snap.hasError) {
-            print(snap.error);
-            print(snap.stackTrace);
-            return Center(
+            return const Center(
               child: Text("There was an error. Try again later."),
             );
           }
@@ -58,13 +54,21 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
 
           if (recipes.isEmpty) {
             return Center(
-              child: Column(
-                children: [
-                  Text("Hmmm, its a little lonely in here..."),
-                  Text(
-                    "Create a recipe or follow someone to populate your feed!",
-                  ),
-                ],
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  children: const [
+                    Text(
+                      "Hmm, its a little lonely in here...",
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      "Create a recipe or follow someone to populate your feed!",
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
             );
           }

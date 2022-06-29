@@ -8,15 +8,16 @@ import 'package:flutter_recipedia/features/misc/home_screen.dart';
 import 'package:flutter_recipedia/features/recipes/app/create_recipe_provider.dart';
 import 'package:flutter_recipedia/features/recipes/app/recipe_image_repository.dart';
 import 'package:flutter_recipedia/features/recipes/ui/create_recipe/create_recipe_screen.dart';
+import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comment_likes_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comments_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/view_recipe/view_recipe_screen.dart';
 import 'package:flutter_recipedia/features/search/ui/search_screen.dart';
 import 'package:flutter_recipedia/features/settings/ui/app_settings_screen.dart';
-import 'package:flutter_recipedia/features/testing/test_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/personal_profile_settings_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_followers/user_followers_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
+import 'package:flutter_recipedia/features/users/ui/view_liked_recipes/view_liked_recipes_screen.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
@@ -203,19 +204,20 @@ class App extends StatelessWidget {
             return snap.data == null ? const LoginScreen() : const HomeScreen();
           }),
       routes: {
-        HomeScreen.routeName: (context) => const HomeScreen(),
-        RecipeCommentsScreen.routeName: (context) =>
-            const RecipeCommentsScreen(),
+        HomeScreen.routeName: (_) => const HomeScreen(),
+        RecipeCommentsScreen.routeName: (_) => const RecipeCommentsScreen(),
+        RecipeCommentLikesScreen.routeName: (_) =>
+            const RecipeCommentLikesScreen(),
         SearchScreen.routeName: (_) => const SearchScreen(),
         CreateRecipeScreen.routeName: (_) => const CreateRecipeScreen(),
-        PersonalProfileSettingsScreen.routeName: (context) =>
+        PersonalProfileSettingsScreen.routeName: (_) =>
             const PersonalProfileSettingsScreen(),
-        UserProfileScreen.routeName: (context) => const UserProfileScreen(),
-        UserFollowersScreen.routeName: (context) => const UserFollowersScreen(),
-        UserFollowingScreen.routeName: (context) => const UserFollowingScreen(),
+        ViewLikedRecipesScreen.routeName: (_) => const ViewLikedRecipesScreen(),
+        UserProfileScreen.routeName: (_) => const UserProfileScreen(),
+        UserFollowersScreen.routeName: (_) => const UserFollowersScreen(),
+        UserFollowingScreen.routeName: (_) => const UserFollowingScreen(),
         ViewRecipeScreen.routeName: (_) => const ViewRecipeScreen(),
         AppSettingsScreen.routeName: (_) => const AppSettingsScreen(),
-        TestScreen.routeName: (_) => const TestScreen(),
       },
     );
   }

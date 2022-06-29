@@ -1,12 +1,23 @@
 import 'package:flutter/cupertino.dart';
 
+import '../models/recipe.dart';
 import '../models/user.dart';
 
 class CommentProvider with ChangeNotifier {
-  User? replyTarget;
+  User? targetUser;
+  RecipeComment? targetComment;
 
-  void setReplyTarget(User? user) {
-    replyTarget = user;
+  bool get hasTarget => targetUser != null && targetComment != null;
+
+  void setReplyTarget({User? user, RecipeComment? comment}) {
+    targetUser = user;
+    targetComment = comment;
+    notifyListeners();
+  }
+
+  void reset() {
+    targetUser = null;
+    targetComment = null;
     notifyListeners();
   }
 }

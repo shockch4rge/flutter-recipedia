@@ -37,29 +37,25 @@ class RecipeRepository {
           toFirestore: User.toFirestore,
         )
         .get();
-    final authorIds = user.get(User.followingField);
 
+    final authorIds = user.get(User.followingField);
     final List<Recipe> followedRecipes = [];
 
     for (final authorId in authorIds) {
       final snap = await _recipes
-          .where(
-            Recipe.authorIdField,
-            isEqualTo: authorId,
-          )
           .withConverter<Recipe>(
               fromFirestore: Recipe.fromFirestore,
               toFirestore: Recipe.toFirestore)
-          .get();
+          .where(Recipe.authorIdField, whereIn: [authorId, userId]).get();
 
-      final authorRecipes = snap.docs.map((doc) => doc.data());
-      followedRecipes.addAll(authorRecipes);
+      final userRecipes = snap.docs.map((doc) => doc.data());
+      followedRecipes.addAll(userRecipes);
     }
 
     return followedRecipes;
   }
 
-  // this probably does not work
+  // is not implemented yet
   Stream<List<Recipe>> getBatchedFollowedRecipes(
     DocumentReference userId,
   ) async* {
@@ -115,5 +111,41 @@ class RecipeRepository {
       Recipe.imageUrlField: imageUrl,
       Recipe.likesField: [],
     });
+  }
+
+  Future<void> deleteRecipe({required DocumentReference recipeId}) async {
+    await recipeId.delete();
+  }
+
+  Future<void> addLike({
+    required DocumentReference recipeId,
+    required DocumentReference likerId,
+  }) async {
+    await recipeId.update({
+      Recipe.likesField: FieldValue.arrayUnion([likerId]),
+    });
+  }
+
+  Future<void> removeLike({
+    required DocumentReference recipeId,
+    required DocumentReference likerId,
+  }) async {
+    await recipeId.update({
+      Recipe.likesField: FieldValue.arrayRemove([likerId]),
+    });
+  }
+
+  Future<List<Recipe>> getLikedRecipes({
+    required DocumentReference userId,
+  }) async {
+    final snap = await _recipes
+        .withConverter<Recipe>(
+          fromFirestore: Recipe.fromFirestore,
+          toFirestore: Recipe.toFirestore,
+        )
+        .where(Recipe.likesField, arrayContains: userId)
+        .get();
+
+    return snap.docs.map((doc) => doc.data()).toList();
   }
 }

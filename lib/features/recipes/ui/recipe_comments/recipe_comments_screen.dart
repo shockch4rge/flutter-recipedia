@@ -10,6 +10,7 @@ import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:provider/provider.dart';
 
 import './widgets/recipe_comment.dart' as widgets;
+import '../../app/recipe_comment_reply_repository.dart';
 import '../../app/recipe_comment_repository.dart';
 import 'widgets/recipe_comments_app_bar.dart';
 
@@ -69,11 +70,12 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                 itemCount: comments.length,
                 itemBuilder: ((context, index) {
                   return widgets.RecipeComment(
-                    comment: comments[0],
+                    comment: comments[index],
                     onReply: (commentAuthor) async {
-                      context
-                          .read<CommentProvider>()
-                          .setReplyTarget(commentAuthor);
+                      context.read<CommentProvider>().setReplyTarget(
+                            user: commentAuthor,
+                            comment: comments[index],
+                          );
                       // un-focus in case we focused it before
                       _commentInputFocus.unfocus();
                       // allow time for widget to re-render
@@ -89,7 +91,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
             bottom: 0,
             child: Column(
               children: [
-                if (context.watch<CommentProvider>().replyTarget != null)
+                if (context.watch<CommentProvider>().targetUser != null)
                   Container(
                     height: 46,
                     width: MediaQuery.of(context).size.width,
@@ -100,7 +102,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          "Replying to ${context.watch<CommentProvider>().replyTarget!.username}",
+                          "Replying to ${context.watch<CommentProvider>().targetUser!.username}",
                           style: const TextStyle(
                             fontSize: 13,
                             color: Colors.grey,
@@ -108,9 +110,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                         ),
                         IconButton(
                           onPressed: () {
-                            context
-                                .read<CommentProvider>()
-                                .setReplyTarget(null);
+                            context.read<CommentProvider>().reset();
                             _commentInputFocus.unfocus();
                           },
                           icon: Icon(
@@ -164,22 +164,26 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                       ),
                       TextButton(
                         onPressed: () {
-                          if (context.read<CommentProvider>().replyTarget !=
-                              null) {
-                            // context
-                            //     .read<RecipeCommentReplyRepository>()
-                            //     .addReply(
-                            //       recipeId: recipeId,
-                            //       authorId: mockMeId,
-                            //       commentId: ,
-                            //       content: _commentInputController.text,
-                            //     );
+                          if (context.read<CommentProvider>().hasTarget) {
+                            context
+                                .read<RecipeCommentReplyRepository>()
+                                .addReply(
+                                  recipeId: recipeId,
+                                  authorId: mockMeId,
+                                  commentId: context
+                                      .read<CommentProvider>()
+                                      .targetComment!
+                                      .id,
+                                  content: _commentInputController.text,
+                                );
+                            return;
                           }
 
                           context.read<RecipeCommentRepository>().addComment(
-                              recipeId: recipeId,
-                              authorId: mockMeId,
-                              content: _commentInputController.text);
+                                recipeId: recipeId,
+                                authorId: mockMeId,
+                                content: _commentInputController.text,
+                              );
                         },
                         child: Text(
                           "Send",
@@ -207,7 +211,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
 
   @override
   void didPop() {
-    context.read<CommentProvider>().setReplyTarget(null);
+    context.read<CommentProvider>().reset();
   }
 
   @override
