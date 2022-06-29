@@ -28,14 +28,18 @@ class ViewRecipeScreen extends StatefulWidget {
 class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
   final _controller = ScrollController();
 
+  // calculate the minimum height of the appbar to show the title
   double get minHeight => kToolbarHeight + MediaQuery.of(context).padding.top;
+  // calculate the maximum height of the appbar by adding 200 pixels to the safe area padding
   double get maxHeight => 200 + MediaQuery.of(context).padding.top;
+  // receive args passed in from the previous screen in tuple type
   Recipe get recipe => getArgs<Tuple2>(context).item1;
   User get user => getArgs<Tuple2>(context).item2;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // snap the app bar to the top or bottom based on the scroll position when it stops scrolling
       body: NotificationListener<ScrollEndNotification>(
         onNotification: (_) {
           _snapAppbar();
@@ -70,12 +74,16 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
   }
 
   void _snapAppbar() {
+    // get the difference between maxHeight & minHeight;
     final scrollDistance = maxHeight - minHeight;
 
+    // if we scrolled past the initial distance of 0 pixels and past the
+    // max scroll distance to snap back to, we move the scroll position to the calculated offset
     if (_controller.offset > 0 && _controller.offset < scrollDistance) {
       final double snapOffset =
           _controller.offset / scrollDistance > 0.5 ? scrollDistance : 0;
 
+      // delegate a microtask to the animator to avoid re-rendering
       Future.microtask(
         () => _controller.animateTo(
           snapOffset,

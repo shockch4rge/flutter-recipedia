@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// helper class to avoid boilerplate
 class Snack {
   static bad(BuildContext context, String content, [SnackBarAction? action]) {
     ScaffoldMessenger.of(context).showSnackBar(

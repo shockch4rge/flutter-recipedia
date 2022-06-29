@@ -12,6 +12,7 @@ class AddStepDialog extends StatefulWidget {
 }
 
 class _AddStepDialogState extends State<AddStepDialog> {
+  // controllers to manage text field state
   final _stepController = TextEditingController();
 
   @override

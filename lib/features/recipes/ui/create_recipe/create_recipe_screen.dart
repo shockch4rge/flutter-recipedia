@@ -25,6 +25,7 @@ class CreateRecipeScreen extends StatefulWidget {
   State<CreateRecipeScreen> createState() => _CreateRecipeScreenState();
 }
 
+// this widget has the RouteAware mixin, which purpose is shown at the end of the class
 class _CreateRecipeScreenState extends State<CreateRecipeScreen>
     with RouteAware {
   final _formKey =
@@ -383,23 +384,30 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
         _formKey.currentState!.validate();
   }
 
+  // reset our forms to be empty and remove the current image from the provider
   void _resetForms() {
     _formKey.currentState!.reset();
     context.read<CreateRecipeProvider>().reset();
   }
 
+  /// didPop comes from the RouteAware mixin, which allows a widget to be aware of when it is popped from the stack.
+  /// this is a workaround for the fact that the build context cannot be accessed
+  /// in the dispose method.
   @override
   void didPop() {
     _formKey.currentState?.save();
     super.didPop();
   }
 
+  /// in order to actually listen to the routeAware mixin, we need to override the didChangeDependencies method.
+  /// and subscribe this widget to the routeObserver.
   @override
   void didChangeDependencies() {
     routeObserver.subscribe(this, ModalRoute.of(context) as PageRoute);
     super.didChangeDependencies();
   }
 
+  /// in the dispose method is where we unsubscribe from the routeObserver, to avoid memory leaks.
   @override
   void dispose() {
     routeObserver.unsubscribe(this);

@@ -5,9 +5,15 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'recipe.g.dart';
 
+/// we use this annotation to tell json_serializable to map our model to/from JSON.
 @JsonSerializable(explicitToJson: true)
+
+/// we use our DocumentSerializer annotation to map DocumentReferences as well,
+/// as the default JsonConverter only maps to/from strings.
 @DocumentSerializer()
 class Recipe {
+  // instead of strings, I've stored ids as DocumentReferences to make them easier
+  // to query and type. this also allows for some encapsulation of logic.
   final DocumentReference id;
   final DocumentReference authorId;
   final String title;
@@ -18,6 +24,8 @@ class Recipe {
   final List<String> steps;
   final String notes;
 
+  /// these static fields are used when querying data, where we don't want to
+  /// retype the field name every time and potentially make mistakes.
   static const collectionName = "recipes";
   static const authorIdField = "authorId";
   static const titleField = "title";
@@ -40,8 +48,10 @@ class Recipe {
     required this.notes,
   });
 
+  // convenience constructor for the fromFirestore property in CollectionReference.withConverter
   factory Recipe.fromFirestore(DocumentSnapshot snap, dynamic _) {
     final json = snap.data() as JsonResponse;
+    // add a property named 'id' to the json
     json["id"] = snap.reference;
 
     return Recipe.fromJson(json);

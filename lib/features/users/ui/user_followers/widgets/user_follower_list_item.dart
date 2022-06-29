@@ -4,6 +4,7 @@ import 'package:flutter_recipedia/models/user.dart';
 
 import 'remove_follower_dialog.dart';
 
+// this widget is displayed for every follower a user has
 class UserFollowerListItem extends StatelessWidget {
   final User follower;
 

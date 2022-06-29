@@ -28,6 +28,7 @@ class PersonalProfileSettingsForm extends StatefulWidget {
 class _PersonalProfileSettingsFormState
     extends State<PersonalProfileSettingsForm> with RouteAware {
   final _formKey = GlobalKey<FormState>();
+  // controllers to manage text field state
   late final _usernameController = TextEditingController(text: username);
   late final _nameController = TextEditingController(text: name);
   late final _bioController = TextEditingController(text: bio);
@@ -110,6 +111,7 @@ class _PersonalProfileSettingsFormState
 
 class _UsernameFormField extends StatelessWidget {
   final String username;
+  // controllers to manage text field state
   final TextEditingController controller;
 
   const _UsernameFormField(
@@ -147,6 +149,7 @@ class _UsernameFormField extends StatelessWidget {
 
 class _NameFormField extends StatelessWidget {
   final String name;
+  // controllers to manage text field state
   final TextEditingController controller;
 
   const _NameFormField({Key? key, required this.controller, required this.name})
@@ -178,6 +181,7 @@ class _NameFormField extends StatelessWidget {
 
 class _BioFormField extends StatelessWidget {
   final String bio;
+  // controllers to manage text field state
   final TextEditingController controller;
 
   const _BioFormField({Key? key, required this.controller, required this.bio})

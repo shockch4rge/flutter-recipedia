@@ -1,12 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/common/snack.dart';
 import 'package:flutter_recipedia/features/authentication/ui/reset_password/reset_password_screen.dart';
 import 'package:flutter_recipedia/features/authentication/ui/signup/signup_screen.dart';
 import 'package:flutter_recipedia/features/misc/home_screen.dart';
-import 'package:flutter_recipedia/models/user.dart';
-import 'package:flutter_recipedia/providers/auth_provider.dart';
-import 'package:provider/provider.dart';
 
 import 'login_buttons.dart';
 
@@ -19,6 +14,7 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
+  // controllers to manage text field state
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _showPassword = false;
@@ -115,27 +111,6 @@ class _LoginFormState extends State<LoginForm> {
                 children: [
                   SignInButton(
                     onPressed: () async {
-                      final auth.UserCredential credentials;
-                      final User user;
-
-                      try {
-                        credentials = await context.read<AuthProvider>().signIn(
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                            );
-                      } catch (e) {
-                        Snack.bad(
-                          context,
-                          "Incorrect email or password",
-                          SnackBarAction(
-                            label: "Dismiss",
-                            textColor: Colors.white,
-                            onPressed: () {},
-                          ),
-                        );
-                        return;
-                      }
-
                       Navigator.of(context).pushReplacementNamed(
                         HomeScreen.routeName,
                       );

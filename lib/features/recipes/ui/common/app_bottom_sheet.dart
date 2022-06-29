@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// generic bottom sheet that is already configured to the app's theme
 class AppBottomSheet extends StatelessWidget {
   final List<AppBottomSheetAction> actions;
   const AppBottomSheet({Key? key, required this.actions}) : super(key: key);
@@ -60,6 +61,7 @@ class AppBottomSheet extends StatelessWidget {
   }
 }
 
+// describes the action for each tile in the bottom sheet
 class AppBottomSheetAction {
   final Icon icon;
   final String title;

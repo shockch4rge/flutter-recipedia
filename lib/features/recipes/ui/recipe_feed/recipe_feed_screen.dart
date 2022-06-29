@@ -33,12 +33,14 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
       body: FutureBuilder(
         future: context.read<RecipeRepository>().getFollowedRecipes(mockMeId),
         builder: (context, snap) {
+          // if the future returns an error, we show an error message.
           if (snap.hasError) {
             return const Center(
               child: Text("There was an error. Try again later."),
             );
           }
 
+          // if the future is still pending, we show a placeholder skeleton
           if (snap.waiting) {
             return ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
@@ -52,6 +54,7 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
 
           final recipes = snap.data as List<Recipe>;
 
+          // if the future is done and there are no recipes, we show a message.
           if (recipes.isEmpty) {
             return Center(
               child: Padding(
@@ -73,6 +76,7 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
             );
           }
 
+          // otherwise, we show the recipes.
           return ListView.builder(
             controller: _scrollController,
             physics: const BouncingScrollPhysics(),

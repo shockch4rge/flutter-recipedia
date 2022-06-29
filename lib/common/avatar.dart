@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+// this is a generic widget that displays a circular network image that caches itself into the device's memory.
+// it saves on loading images that have already been loaded before.
 class Avatar extends StatelessWidget {
   final double size;
   final String avatarUrl;

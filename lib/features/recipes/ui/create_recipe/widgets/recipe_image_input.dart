@@ -17,12 +17,14 @@ class RecipeImageInput extends StatefulWidget {
 }
 
 class _RecipeImageInputState extends State<RecipeImageInput> {
+  // these two objects come from image_picker and image_cropper
   final _imagePicker = ImagePicker();
   final _imageCropper = ImageCropper();
   double get horizontalPadding => 48;
 
   @override
   Widget build(BuildContext context) {
+    // watch for changes to the current image
     final File? currentImage =
         context.watch<CreateRecipeProvider>().uploadedImage;
 
@@ -66,9 +68,11 @@ class _RecipeImageInputState extends State<RecipeImageInput> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
+    // first, pick an image from the source
     final initial = await _imagePicker.pickImage(source: source);
     if (initial == null) return;
 
+    // initialise a cropping session with AndroidUiSettings
     final cropped = await _imageCropper.cropImage(
       sourcePath: File(initial.path).absolute.path,
       uiSettings: [
@@ -81,6 +85,7 @@ class _RecipeImageInputState extends State<RecipeImageInput> {
     );
 
     if (cropped == null) return;
+    // set the cropped image in the provider
     context.read<CreateRecipeProvider>().setUploadedImage(File(cropped.path));
   }
 }

@@ -255,10 +255,14 @@ class _RecipePreviewSliverGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverGrid(
+      // SliverChildBuilderDelegate acts as a ListView.builder
       delegate: SliverChildBuilderDelegate(
         (context, index) => RecipePreview(recipe: recipes[index], user: user),
         childCount: recipes.length,
       ),
+
+      /// limit the grid layout to 3 columns,
+      /// each with 6 pixels of horizontal & vertical spacing
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         crossAxisSpacing: 6,

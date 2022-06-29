@@ -1,3 +1,4 @@
+// this is a helper class to manage form validation, but I plan to remove it in place of the FormBuilder package
 class AuthHelper {
   static final upperCasePattern = RegExp('((.*[A-Z]){2})');
   static final lowerCasePattern = RegExp('((.*[a-z]){3})');

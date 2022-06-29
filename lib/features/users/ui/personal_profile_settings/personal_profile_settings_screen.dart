@@ -54,6 +54,7 @@ class _PersonalProfileSettingsScreenState
               child: ElevatedButton(
                 onPressed: () => showDialog(
                   context: context,
+                  // deleting the user is unimplemented as that would cause problems with the demo.
                   builder: (_) => DeleteProfileDialog(
                     user: user,
                     onConfirm: () {},

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// we implement PreferredSizeWidget as we need to specify the height of the AppBar
+// we're returning in the build method.
 class CreateRecipeAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final VoidCallback onResetPressed;

@@ -34,10 +34,13 @@ import 'features/users/app/avatar_repository.dart';
 import 'firebase.dart';
 
 void main() async {
+  // required to initialise Firebase.
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     MultiProvider(
+      /// Providers help us to share data between different screens without prop-drilling.
+      /// This way we can access the data from any screen without having to pass it as a parameter.
       providers: [
         /* ChangeNotifierProviders */
         ChangeNotifierProvider(
@@ -93,14 +96,17 @@ void main() async {
   );
 }
 
+// create the route observer for usage in other screens
 final routeObserver = RouteObserver<PageRoute>();
 
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
+  // our app's main colour palette
   static const _primaryColor = Color(0xFF795DFE);
   static const _primaryAccent = Color(0xFF4B23EA);
 
+  // custom svg icons; will probably remove them
   static final heartOutlinedIcon = SvgPicture.asset(
     "assets/heart_outlined.svg",
     width: 20,
@@ -126,17 +132,20 @@ class App extends StatelessWidget {
     color: App._primaryAccent,
   );
 
-  // This widget is the root of your application.
+  // This widget is the root of the application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      // required for the FormBuilder package
       localizationsDelegates: const [
         FormBuilderLocalizations.delegate,
       ],
       supportedLocales: FormBuilderLocalizations.delegate.supportedLocales,
+      // i attached a route observer to the app to perform some operations in other screens.
       navigatorObservers: [routeObserver],
       title: 'recipedia',
+      // theme data that will be used in majority of the app
       theme: ThemeData(
         primaryColor: const Color(0xFF795DFE),
         primaryColorDark: const Color(0xFF4B23EA),
@@ -197,12 +206,11 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      // TODO: Use a ternary to check sign-in status and replace routes accordingly
-      home: StreamBuilder(
-          stream: context.watch<AuthProvider>().authStateChanges,
-          builder: (_, snap) {
-            return snap.data == null ? const LoginScreen() : const HomeScreen();
-          }),
+      // we use the MaterialApp's home property to set the initial route
+      home: const LoginScreen(),
+
+      /// we set up the routes for the app here in this map.
+      /// each key has a route name and the route screen itself.
       routes: {
         HomeScreen.routeName: (_) => const HomeScreen(),
         RecipeCommentsScreen.routeName: (_) => const RecipeCommentsScreen(),

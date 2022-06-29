@@ -3,6 +3,7 @@ import 'package:flutter_recipedia/common/switch_list_item.dart';
 
 import 'widgets/app_settings_app_bar.dart';
 
+// this screen is unimplemented at the moment as it deals with app preferences
 class AppSettingsScreen extends StatelessWidget {
   static const routeName = "/settings";
 

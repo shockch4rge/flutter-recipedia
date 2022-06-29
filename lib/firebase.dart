@@ -60,22 +60,3 @@ class DefaultFirebaseOptions {
     iosBundleId: 'favteo.com.flutterRecipedia',
   );
 }
-//
-// Widget firebase() {
-//   final Future<FirebaseApp> firebaseApp =
-//       Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-//
-//   return FutureBuilder(
-//     future: firebaseApp,
-//     builder: (context, snapshot) {
-//       if (snapshot.hasError) {
-//         print("You have an error! ${snapshot.error.toString()}");
-//         return const Text("Something went wrong!");
-//       } else if (snapshot.hasData) {
-//         return const PostFeedScreen();
-//       } else {
-//         return const Center(child: CircularProgressIndicator());
-//       }
-//     },
-//   );
-// }

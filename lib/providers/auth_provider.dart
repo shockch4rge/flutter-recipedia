@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/models/user.dart' as local;
 
+// unimplemented in the app
 class AuthProvider with ChangeNotifier {
   final auth.FirebaseAuth _firebaseAuth;
   late final local.User user;

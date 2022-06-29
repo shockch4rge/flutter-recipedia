@@ -1,3 +1,6 @@
+/// shorten a large number to a formatted string
+/// e.g. 1000000 -> 1.0M
+/// e.g. 1200 -> 1.2K
 String shortenNumber(int n) {
   String num = n.toString();
   int len = num.length;

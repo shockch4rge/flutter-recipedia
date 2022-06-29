@@ -12,6 +12,7 @@ class AddIngredientDialog extends StatefulWidget {
 }
 
 class _AddIngredientDialogState extends State<AddIngredientDialog> {
+  // controllers to manage text field state
   final _ingredientController = TextEditingController();
 
   @override

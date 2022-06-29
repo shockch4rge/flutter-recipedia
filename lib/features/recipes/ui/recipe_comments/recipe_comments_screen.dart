@@ -25,8 +25,11 @@ class RecipeCommentsScreen extends KeepAliveStateful {
 
 class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
     with RouteAware {
+  // a controller to manipulate the scroll position of the list
   final _scrollController = ScrollController();
+  // this allows us to focus on an attached text field
   final FocusNode _commentInputFocus = FocusNode();
+  // controllers to manage text field state
   final _commentInputController = TextEditingController();
   DocumentReference get recipeId => getArgs<DocumentReference>(context);
 
@@ -34,6 +37,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: RecipeCommentsAppBar(
+        // scroll to the top of the screen when the app bar title is tapped
         onTitleTapped: () => _scrollController.animateTo(
           _scrollController.position.minScrollExtent,
           duration: const Duration(milliseconds: 300),
@@ -80,6 +84,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                       _commentInputFocus.unfocus();
                       // allow time for widget to re-render
                       await Future.delayed(const Duration(milliseconds: 200));
+                      // request focus of the field when we press the button
                       _commentInputFocus.requestFocus();
                     },
                   );
@@ -164,12 +169,15 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                       ),
                       TextButton(
                         onPressed: () {
+                          // if we have a target user, we're replying to someone
                           if (context.read<CommentProvider>().hasTarget) {
+                            // add a reply to the comment through the repo
                             context
                                 .read<RecipeCommentReplyRepository>()
                                 .addReply(
                                   recipeId: recipeId,
                                   authorId: mockMeId,
+                                  // get the target comment
                                   commentId: context
                                       .read<CommentProvider>()
                                       .targetComment!
@@ -179,6 +187,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                             return;
                           }
 
+                          // otherwise, we add a regular comment to the recipe
                           context.read<RecipeCommentRepository>().addComment(
                                 recipeId: recipeId,
                                 authorId: mockMeId,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'widgets/search_app_bar.dart';
 
+// this screen is unimplemented as it deals with external APIs
 class SearchScreen extends StatelessWidget {
   static const routeName = "/home/search";
 

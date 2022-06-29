@@ -1,40 +1,15 @@
-// final mockUser = User(
-//   id: "d12ifdh2itjwid219jsf07a",
-//   name: "Lisa Hannigan",
-//   username: "lisahannigan",
-//   avatarUrl:
-//       "https://firebasestorage.googleapis.com/v0/b/flutter-recipedia.appspot.com/o/lisapfp2.png?alt=media&token=ba5642dd-f3c4-4a04-b7b4-1911dd193634",
-//   bio: "Hey! I'm Lisa Hannigan. I love making music and cooking!",
-//   followers: [],
-//   following: [],
-// );
-
 import '../models/user.dart';
 import 'constants/firestore_collections.dart';
 
+// this is our test user for the application.
+// while authentication is not implemented for this submission, the user
+// remains in the database for testing purposes.
 final mockMeId = USERS
     .withConverter<User>(
       fromFirestore: User.fromFirestore,
       toFirestore: User.toFirestore,
     )
     .doc("sOCPIiDNpxC3qlW7tzEb");
-
-final mockMeUser = User(
-  id: USERS
-      .withConverter<User>(
-        fromFirestore: User.fromFirestore,
-        toFirestore: User.toFirestore,
-      )
-      .doc("sOCPIiDNpxC3qlW7tzEb"),
-  name: "John Doe",
-  username: "johndoe123",
-  avatarUrl:
-      "https://firebasestorage.googleapis.com/v0/b/flutter-recipedia.appspot.com/o/nerd.jpg?alt=media&token=df113971-b024-4b25-baed-12211cc83286",
-  bio:
-      "Hello I am John Doe I like to doe and john because my name is john doe!",
-  followers: [],
-  following: [],
-);
 
 // final mockRecipe = Recipe(
 //   id: "2i2ffw8gwhf9iruy17dghs",
