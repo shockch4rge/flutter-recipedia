@@ -108,7 +108,10 @@ class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
                         );
                       }
 
-                      return _RecipePreviewSliverGrid(recipes: recipes);
+                      return _RecipePreviewSliverGrid(
+                        recipes: recipes,
+                        user: user,
+                      );
                     },
                   ),
                 ],
@@ -243,15 +246,17 @@ class _UserDescription extends StatelessWidget {
 
 class _RecipePreviewSliverGrid extends StatelessWidget {
   final List<Recipe> recipes;
+  final User user;
 
-  const _RecipePreviewSliverGrid({Key? key, required this.recipes})
+  const _RecipePreviewSliverGrid(
+      {Key? key, required this.recipes, required this.user})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SliverGrid(
       delegate: SliverChildBuilderDelegate(
-        (context, index) => RecipePreview(recipe: recipes[index]),
+        (context, index) => RecipePreview(recipe: recipes[index], user: user),
         childCount: recipes.length,
       ),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
