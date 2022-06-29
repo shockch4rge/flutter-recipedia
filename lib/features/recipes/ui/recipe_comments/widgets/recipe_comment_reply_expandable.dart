@@ -83,7 +83,7 @@ class _RecipeCommentReplyExpandableState
                               Text(
                                 author.username,
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: Theme.of(context).primaryColorDark,
                                 ),
@@ -91,13 +91,13 @@ class _RecipeCommentReplyExpandableState
                               const SizedBox(height: 2),
                               Text(
                                 reply.content,
-                                style: const TextStyle(fontSize: 11),
+                                style: const TextStyle(fontSize: 14),
                               ),
                               const SizedBox(height: 6),
                               Text(
                                 "${shortenNumber(reply.likes.length)} likes",
                                 style: const TextStyle(
-                                  fontSize: 11,
+                                  fontSize: 13,
                                   color: Colors.grey,
                                 ),
                               ),

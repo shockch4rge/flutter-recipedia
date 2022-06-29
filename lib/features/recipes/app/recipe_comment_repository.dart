@@ -40,9 +40,13 @@ class RecipeCommentRepository {
     await comment.set({
       RecipeComment.authorIdField: authorId,
       RecipeComment.recipeIdField: recipeId,
-      RecipeComment.likesField: [],
       RecipeComment.contentField: content,
+      RecipeComment.likesField: [],
     });
+  }
+
+  Future<void> deleteComment(DocumentReference commentId) async {
+    await commentId.delete();
   }
 
   Future<void> addLike({

@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/keep_alive_stateful.dart';
-import 'package:flutter_recipedia/features/recipes/app/recipe_comment_reply_repository.dart';
 import 'package:flutter_recipedia/main.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
+import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:provider/provider.dart';
 
 import './widgets/recipe_comment.dart' as widgets;
@@ -69,7 +69,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                 itemCount: comments.length,
                 itemBuilder: ((context, index) {
                   return widgets.RecipeComment(
-                    comment: comments[index],
+                    comment: comments[0],
                     onReply: (commentAuthor) async {
                       context
                           .read<CommentProvider>()
@@ -164,11 +164,22 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                       ),
                       TextButton(
                         onPressed: () {
-                          if (context.read<CommentProvider>().replyTarget != null) {
-                            // TODO
+                          if (context.read<CommentProvider>().replyTarget !=
+                              null) {
+                            // context
+                            //     .read<RecipeCommentReplyRepository>()
+                            //     .addReply(
+                            //       recipeId: recipeId,
+                            //       authorId: mockMeId,
+                            //       commentId: ,
+                            //       content: _commentInputController.text,
+                            //     );
                           }
 
-                          context.read<RecipeCommentReplyRepository>().addReply(recipeId: recipeId, commentId: commentId, authorId: authorId, content: content)
+                          context.read<RecipeCommentRepository>().addComment(
+                              recipeId: recipeId,
+                              authorId: mockMeId,
+                              content: _commentInputController.text);
                         },
                         child: Text(
                           "Send",
