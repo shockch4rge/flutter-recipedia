@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/widgets/recipe_comment_likes.dart';
+import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/widgets/recipe_comment_likes_app_bar.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/widgets/recipe_like_list_item.dart';
 import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/repositories/user_repository.dart';
