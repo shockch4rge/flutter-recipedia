@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/common/keep_alive_stateful.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_feed/widgets/recipe_content.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
@@ -8,22 +10,25 @@ import 'package:provider/provider.dart';
 
 import 'widgets/recipe_feed_app_bar.dart';
 
-class RecipeFeedScreen extends StatefulWidget {
+class RecipeFeedScreen extends KeepAliveStateful {
   static const routeName = "/home/feed";
 
   const RecipeFeedScreen({Key? key}) : super(key: key);
 
   @override
-  State<RecipeFeedScreen> createState() => _RecipeFeedScreenState();
+  State<StatefulWidget> createState() => _RecipeFeedScreenState();
 }
 
-class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
+class _RecipeFeedScreenState extends KeepAliveState {
   final _scrollController = ScrollController();
-  late final getFollowedRecipes =
-      context.read<RecipeRepository>().getFollowedRecipes(mockMeId);
+  late final getFollowedRecipeIds =
+      context.read<RecipeRepository>().getFollowedRecipeIds;
+  late final getRecipeUpdates =
+      context.read<RecipeRepository>().getRecipeUpdates;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: RecipeFeedAppBar(
         onTitleTapped: () => _scrollController.animateTo(
@@ -32,11 +37,10 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
           curve: Curves.easeInOut,
         ),
       ),
-      body: StreamBuilder(
-        stream: getFollowedRecipes,
+      body: FutureBuilder(
+        future: getFollowedRecipeIds(mockMeId),
         builder: (context, snap) {
           if (snap.hasError) {
-            print(snap.error);
             return const Center(
               child: Text("There was an error. Try again later."),
             );
@@ -45,7 +49,6 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
           if (snap.waiting) {
             return ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
-              cacheExtent: 500,
               itemCount: 4,
               itemBuilder: (context, index) {
                 return const RecipeContentPlaceholder();
@@ -53,10 +56,9 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
             );
           }
 
-          print(snap.data);
-          final recipes = snap.data as List<Recipe>;
+          final recipeIds = snap.data as List<DocumentReference>;
 
-          if (recipes.isEmpty) {
+          if (recipeIds.isEmpty) {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -77,14 +79,32 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
             );
           }
 
-          return ListView.builder(
-            controller: _scrollController,
-            physics: const BouncingScrollPhysics(),
-            cacheExtent: 500,
-            itemCount: recipes.length,
-            itemBuilder: (context, index) {
-              return RecipeContent(recipe: recipes[index]);
+          return RefreshIndicator(
+            strokeWidth: 3.0,
+            color: Theme.of(context).primaryColor,
+            displacement: 20,
+            triggerMode: RefreshIndicatorTriggerMode.onEdge,
+            onRefresh: () async {
+              await getFollowedRecipeIds(mockMeId);
             },
+            child: ListView.builder(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              itemCount: recipeIds.length,
+              cacheExtent: 400.0 * recipeIds.length,
+              itemBuilder: (context, index) {
+                return StreamBuilder(
+                  stream: getRecipeUpdates(recipeIds[index]),
+                  builder: (_, snap) {
+                    if (snap.waiting) {
+                      return const RecipeContentPlaceholder();
+                    }
+                    final recipe = snap.data as Recipe;
+                    return RecipeContent(recipe: recipe);
+                  },
+                );
+              },
+            ),
           );
         },
       ),

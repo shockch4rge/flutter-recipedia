@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:async/async.dart' show StreamGroup;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
@@ -31,7 +30,9 @@ class RecipeRepository {
     return recipes;
   }
 
-  Stream<List<Recipe>> getFollowedRecipes(DocumentReference userId) async* {
+  Future<List<DocumentReference>> getFollowedRecipeIds(
+    DocumentReference userId,
+  ) async {
     final user = await userId
         .withConverter<User>(
           fromFirestore: User.fromFirestore,
@@ -40,17 +41,27 @@ class RecipeRepository {
         .get();
 
     final authorIds = user.get(User.followingField) as List<dynamic>;
+    final List<DocumentReference> recipeIds = [];
 
-    yield* StreamGroup.merge(authorIds.map((id) {
-      return _recipes
+    for (final authorId in authorIds) {
+      final snap = await _recipes
           .withConverter<Recipe>(
+              fromFirestore: Recipe.fromFirestore,
+              toFirestore: Recipe.toFirestore)
+          .where(Recipe.authorIdField, whereIn: [authorId, userId]).get();
+
+      recipeIds.addAll(snap.docs.map((doc) => doc.reference).toList());
+    }
+    return recipeIds;
+  }
+
+  Stream<Recipe> getRecipeUpdates(DocumentReference recipeId) {
+    return recipeId
+        .withConverter<Recipe>(
             fromFirestore: Recipe.fromFirestore,
-            toFirestore: Recipe.toFirestore,
-          )
-          .where(Recipe.authorIdField, whereIn: [id, userId])
-          .snapshots()
-          .map((snap) => snap.docs.map((doc) => doc.data()).toList());
-    }).toList());
+            toFirestore: Recipe.toFirestore)
+        .snapshots()
+        .map((snap) => snap.data()!);
   }
 
   // is not implemented yet
