@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
               pageController.animateToPage(
                 index,
                 curve: Curves.easeInOutCubicEmphasized,
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 250),
               );
             });
           },
@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: PageView(
           controller: pageController,
-          scrollBehavior: null,
+          physics: const NeverScrollableScrollPhysics(),
           children: _screens,
         ));
   }
