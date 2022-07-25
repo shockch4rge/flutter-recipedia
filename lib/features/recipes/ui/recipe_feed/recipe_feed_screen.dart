@@ -19,6 +19,8 @@ class RecipeFeedScreen extends StatefulWidget {
 
 class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
   final _scrollController = ScrollController();
+  late final getFollowedRecipes =
+      context.read<RecipeRepository>().getFollowedRecipes(mockMeId);
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +32,11 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
           curve: Curves.easeInOut,
         ),
       ),
-      body: FutureBuilder(
-        future: context.read<RecipeRepository>().getFollowedRecipes(mockMeId),
+      body: StreamBuilder(
+        stream: getFollowedRecipes,
         builder: (context, snap) {
           if (snap.hasError) {
+            print(snap.error);
             return const Center(
               child: Text("There was an error. Try again later."),
             );
@@ -50,6 +53,7 @@ class _RecipeFeedScreenState extends State<RecipeFeedScreen> {
             );
           }
 
+          print(snap.data);
           final recipes = snap.data as List<Recipe>;
 
           if (recipes.isEmpty) {

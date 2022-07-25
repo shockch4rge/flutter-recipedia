@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:async/async.dart' show StreamGroup;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
@@ -30,7 +31,7 @@ class RecipeRepository {
     return recipes;
   }
 
-  Future<List<Recipe>> getFollowedRecipes(DocumentReference userId) async {
+  Stream<List<Recipe>> getFollowedRecipes(DocumentReference userId) async* {
     final user = await userId
         .withConverter<User>(
           fromFirestore: User.fromFirestore,
@@ -38,21 +39,18 @@ class RecipeRepository {
         )
         .get();
 
-    final authorIds = user.get(User.followingField);
-    final List<Recipe> followedRecipes = [];
+    final authorIds = user.get(User.followingField) as List<dynamic>;
 
-    for (final authorId in authorIds) {
-      final snap = await _recipes
+    yield* StreamGroup.merge(authorIds.map((id) {
+      return _recipes
           .withConverter<Recipe>(
-              fromFirestore: Recipe.fromFirestore,
-              toFirestore: Recipe.toFirestore)
-          .where(Recipe.authorIdField, whereIn: [authorId, userId]).get();
-
-      final userRecipes = snap.docs.map((doc) => doc.data());
-      followedRecipes.addAll(userRecipes);
-    }
-
-    return followedRecipes;
+            fromFirestore: Recipe.fromFirestore,
+            toFirestore: Recipe.toFirestore,
+          )
+          .where(Recipe.authorIdField, whereIn: [id, userId])
+          .snapshots()
+          .map((snap) => snap.docs.map((doc) => doc.data()).toList());
+    }).toList());
   }
 
   // is not implemented yet
@@ -98,6 +96,7 @@ class RecipeRepository {
     required List<String> ingredients,
     required List<String> steps,
     required File image,
+    required String notes,
   }) async {
     final recipeId = _recipes.doc();
     final imageUrl = await _images.uploadImage(recipeId: recipeId, file: image);
@@ -110,6 +109,7 @@ class RecipeRepository {
       Recipe.stepsField: steps,
       Recipe.imageUrlField: imageUrl,
       Recipe.likesField: [],
+      Recipe.notesField: notes,
     });
   }
 
