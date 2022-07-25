@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
+import 'package:flutter_recipedia/common/keep_alive_stateful.dart';
 import 'package:flutter_recipedia/features/recipes/ui/common/recipe_preview.dart';
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/personal_profile_settings_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_followers/user_followers_screen.dart';
@@ -16,20 +17,21 @@ import 'package:provider/provider.dart';
 import 'widgets/personal_profile_actions.dart';
 import 'widgets/personal_profile_app_bar.dart';
 
-class PersonalProfileScreen extends StatefulWidget {
+class PersonalProfileScreen extends KeepAliveStateful {
   static const routeName = "/home/profile/me/settings";
 
   const PersonalProfileScreen({Key? key}) : super(key: key);
 
   @override
-  State<PersonalProfileScreen> createState() => _PersonalProfileScreenState();
+  KeepAliveState createState() => _PersonalProfileScreenState();
 }
 
-class _PersonalProfileScreenState extends State<PersonalProfileScreen> {
+class _PersonalProfileScreenState extends KeepAliveState {
   DocumentReference get userId => mockMeId;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return FutureBuilder(
         future: context.read<UserRepository>().getUserById(userId),
         builder: (context, snap) {

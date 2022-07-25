@@ -4,10 +4,10 @@ abstract class KeepAliveStateful extends StatefulWidget {
   const KeepAliveStateful({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _KeepAliveStatefulState();
+  State<StatefulWidget> createState() => KeepAliveState();
 }
 
-class _KeepAliveStatefulState extends State<KeepAliveStateful>
+class KeepAliveState extends State<KeepAliveStateful>
     with AutomaticKeepAliveClientMixin<KeepAliveStateful> {
   @override
   bool get wantKeepAlive => true;

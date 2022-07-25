@@ -16,7 +16,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentScreenIndex = 0;
+  int _currentIndex = 0;
+  final pageController = PageController();
 
   final List<Widget> _screens = [
     const RecipeFeedScreen(),
@@ -29,38 +30,50 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: (index) => setState(() => _currentScreenIndex = index),
-        unselectedItemColor: Colors.black,
-        selectedItemColor: Theme.of(context).primaryColorDark,
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: true,
-        showUnselectedLabels: false,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.home),
-            label: "•",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.search),
-            label: "•",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.plusSquare),
-            label: "•",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.user),
-            label: "•",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(FeatherIcons.settings),
-            label: "•",
-          ),
-        ],
-        currentIndex: _currentScreenIndex,
-      ),
-      body: _screens[_currentScreenIndex],
-    );
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+              pageController.animateToPage(
+                index,
+                curve: Curves.easeInOutCubicEmphasized,
+                duration: Duration(milliseconds: 200),
+              );
+            });
+          },
+          unselectedItemColor: Colors.black,
+          selectedItemColor: Theme.of(context).primaryColorDark,
+          type: BottomNavigationBarType.fixed,
+          showSelectedLabels: true,
+          showUnselectedLabels: false,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(FeatherIcons.home),
+              label: "•",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(FeatherIcons.search),
+              label: "•",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(FeatherIcons.plusSquare),
+              label: "•",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(FeatherIcons.user),
+              label: "•",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(FeatherIcons.settings),
+              label: "•",
+            ),
+          ],
+          currentIndex: _currentIndex,
+        ),
+        body: PageView(
+          controller: pageController,
+          scrollBehavior: null,
+          children: _screens,
+        ));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_recipedia/common/keep_alive_stateful.dart';
 import 'package:flutter_recipedia/common/snack.dart';
 import 'package:flutter_recipedia/features/recipes/app/create_recipe_provider.dart';
 import 'package:flutter_recipedia/features/recipes/ui/create_recipe/widgets/create_recipe_app_bar.dart';
@@ -16,17 +17,16 @@ import 'widgets/add_ingredient_dialog.dart';
 import 'widgets/add_step_dialog.dart';
 import 'widgets/recipe_image_input.dart';
 
-class CreateRecipeScreen extends StatefulWidget {
+class CreateRecipeScreen extends KeepAliveStateful {
   static const routeName = "/create-recipe";
 
   const CreateRecipeScreen({Key? key}) : super(key: key);
 
   @override
-  State<CreateRecipeScreen> createState() => _CreateRecipeScreenState();
+  KeepAliveState createState() => _CreateRecipeScreenState();
 }
 
-class _CreateRecipeScreenState extends State<CreateRecipeScreen>
-    with RouteAware {
+class _CreateRecipeScreenState extends KeepAliveState with RouteAware {
   final _formKey =
       GlobalKey<FormBuilderState>(debugLabel: "create_recipe_form");
 
@@ -341,8 +341,9 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
                         _formKey.currentState!.fields["title"]!.value as String;
                     final description = _formKey
                         .currentState!.fields["description"]!.value as String;
+                    final notes =
+                        _formKey.currentState!.fields["notes"] as String;
 
-                    // final notes = _formKey.currentState!.fields["notes"] as String;
                     await context.read<RecipeRepository>().addRecipe(
                           authorId: mockMeId,
                           title: title,
@@ -352,6 +353,7 @@ class _CreateRecipeScreenState extends State<CreateRecipeScreen>
                           image: context
                               .read<CreateRecipeProvider>()
                               .uploadedImage!,
+                          notes: notes,
                         );
                     print(_formKey.currentState!.value);
                   },
