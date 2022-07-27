@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_recipedia/models/user.dart';
 
 class DeleteProfileDialog extends StatefulWidget {
@@ -14,23 +15,28 @@ class DeleteProfileDialog extends StatefulWidget {
 }
 
 class _DeleteProfileDialogState extends State<DeleteProfileDialog> {
-  bool _isExactUsername = false;
-  final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormBuilderState>();
+  bool isExactUsername = false;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Are you sure you want to delete your profile?"),
-      content: Form(
+      title: const Text("Are you sure you want to delete your profile?"),
+      content: FormBuilder(
         key: _formKey,
-        child: TextFormField(
+        child: FormBuilderTextField(
+          name: "username",
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           cursorColor: Colors.black,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
           validator: (value) {
             if (value != widget.user.username) {
-              return "";
+              return "Username does not match.";
             }
             return null;
+          },
+          onChanged: (_) {
+            setState(() => isExactUsername = _formKey.currentState!.validate());
           },
           decoration: InputDecoration(
             label: Text(
@@ -39,10 +45,6 @@ class _DeleteProfileDialogState extends State<DeleteProfileDialog> {
             ),
             floatingLabelBehavior: FloatingLabelBehavior.always,
             contentPadding: EdgeInsets.zero,
-          ),
-          onTap: () => _formKey.currentState!.validate(),
-          onChanged: (_) => setState(
-            () => _isExactUsername = _formKey.currentState!.validate(),
           ),
         ),
       ),
@@ -55,9 +57,10 @@ class _DeleteProfileDialogState extends State<DeleteProfileDialog> {
           ),
         ),
         TextButton(
-          onPressed: !_isExactUsername
+          onPressed: !isExactUsername
               ? null
               : () {
+                  widget.onConfirm();
                   Navigator.of(context).pop();
                 },
           child: Text("Delete"),

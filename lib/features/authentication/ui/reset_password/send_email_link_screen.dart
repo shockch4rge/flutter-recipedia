@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/features/authentication/ui/login/login_screen.dart';
-import 'package:flutter_recipedia/features/authentication/ui/reset_password/widgets/reset_password_forms.dart';
 
-class ResetPasswordScreen extends StatefulWidget {
-  static const routeName = "/reset-password";
+import './widgets/reset_password_forms.dart';
 
-  const ResetPasswordScreen({Key? key}) : super(key: key);
+class SendEmailLinkScreen extends StatefulWidget {
+  static const String routeName = "/send-email-link";
+
+  const SendEmailLinkScreen({Key? key}) : super(key: key);
 
   @override
-  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
+  State<SendEmailLinkScreen> createState() => _SendEmailLinkScreenState();
 }
 
-class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+class _SendEmailLinkScreenState extends State<SendEmailLinkScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,8 +23,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             child: Align(
               alignment: Alignment.topLeft,
               child: TextButton.icon(
-                onPressed: () => Navigator.of(context)
-                    .pushReplacementNamed(LoginScreen.routeName),
+                onPressed: () => Navigator.of(context).pop(),
                 style: TextButton.styleFrom(
                   primary: Theme.of(context).primaryColor,
                 ),
@@ -48,15 +47,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   ),
                 ),
                 const SizedBox(height: 58),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Enter the code sent to your email.",
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
+                Text(
+                  "Enter your e-mail so we can send a password reset link. We'll sort things out from there!",
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
-                const SizedBox(height: 18),
-                const SizedBox(child: ResetPasswordForm()),
+                const SizedBox(height: 58),
+                const SizedBox(child: SendEmailLinkForm()),
               ],
             ),
           )

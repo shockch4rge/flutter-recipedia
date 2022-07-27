@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_recipedia/common/snack.dart';
-import 'package:flutter_recipedia/features/authentication/ui/reset_password/reset_password_screen.dart';
+import 'package:flutter_recipedia/features/authentication/ui/reset_password/send_email_link_screen.dart';
 import 'package:flutter_recipedia/features/authentication/ui/signup/signup_screen.dart';
 import 'package:flutter_recipedia/features/misc/home_screen.dart';
-import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
+import 'package:flutter_recipedia/repositories/user_repository.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:provider/provider.dart';
 
 import 'login_buttons.dart';
@@ -18,26 +21,24 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _showPassword = false;
+  final _formKey = GlobalKey<FormBuilderState>();
+  bool showPassword = false;
   bool disableSignInButton = false;
 
   @override
   Widget build(BuildContext context) {
-    return Form(
+    return FormBuilder(
       key: _formKey,
       child: Column(
         children: [
-          TextFormField(
-            controller: _emailController,
-            validator: (value) {
-              return value!.length == 3 ? null : "Invalid email.";
-            },
-            onChanged: (value) => {
-              if (_formKey.currentState!.validate()) {},
-            },
+          FormBuilderTextField(
+            name: "email",
+            // controller: _emailController,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            validator: FormBuilderValidators.compose([
+              FormBuilderValidators.required(),
+              FormBuilderValidators.email(),
+            ]),
             decoration: InputDecoration(
               hoverColor: Theme.of(context).primaryColorDark,
               border: OutlineInputBorder(
@@ -59,19 +60,37 @@ class _LoginFormState extends State<LoginForm> {
           const SizedBox(height: 20),
           Column(
             children: [
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
+              FormBuilderTextField(
+                name: "password",
+                obscureText: !showPassword,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(),
+                  FormBuilderValidators.minLength(
+                    8,
+                    errorText: "Password must be at least 8 characters long.",
+                  ),
+                ]),
                 style: TextStyle(
                   color: Theme.of(context).textTheme.headline3?.color,
                 ),
                 decoration: InputDecoration(
                   suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() => _showPassword = !_showPassword);
-                    },
-                    color: Colors.black45,
-                    icon: const Icon(Icons.lock),
+                    onPressed: () =>
+                        setState(() => showPassword = !showPassword),
+                    color: showPassword ? Colors.black : Colors.grey.shade400,
+                    splashRadius: 20,
+                    icon: showPassword
+                        ? Icon(
+                            FontAwesomeIcons.eye,
+                            size: 18,
+                            color: Theme.of(context).primaryColorDark,
+                          )
+                        : Icon(
+                            FontAwesomeIcons.eyeSlash,
+                            size: 18,
+                            color: Theme.of(context).primaryColorDark,
+                          ),
                   ),
                   filled: true,
                   fillColor: Colors.grey.shade200,
@@ -94,14 +113,12 @@ class _LoginFormState extends State<LoginForm> {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: TextButton(
-                    child: Text(
-                      "Forgot Password?",
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                      ),
+                    child: const Text("Forgot password?"),
+                    style: TextButton.styleFrom(
+                      primary: Theme.of(context).primaryColor,
                     ),
                     onPressed: () => Navigator.of(context).pushNamed(
-                      ResetPasswordScreen.routeName,
+                      SendEmailLinkScreen.routeName,
                     ),
                   ),
                 ),
@@ -115,15 +132,36 @@ class _LoginFormState extends State<LoginForm> {
                 children: [
                   SignInButton(
                     onPressed: () async {
-                      final auth.UserCredential credentials;
-                      final User user;
+                      if (!_formKey.currentState!.saveAndValidate()) {
+                        Snack.bad(
+                          context,
+                          "Invalid form submitted.",
+                          SnackBarAction(
+                            label: "Dismiss",
+                            textColor: Colors.white,
+                            onPressed: () {},
+                          ),
+                        );
+                        return;
+                      }
+
+                      final authProvider = context.read<AuthProvider>();
+                      final userRepo = context.read<UserRepository>();
+
+                      final String email =
+                          _formKey.currentState!.value["email"];
+                      final String password =
+                          _formKey.currentState!.value["password"];
 
                       try {
-                        credentials = await context.read<AuthProvider>().signIn(
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                            );
-                      } catch (e) {
+                        final credentials = await authProvider.signIn(
+                          email: email,
+                          password: password,
+                        );
+                        final user =
+                            await userRepo.getUserByUid(credentials.user!.uid);
+                        authProvider.setCurrentUser(user);
+                      } on auth.FirebaseAuthException catch (e) {
                         Snack.bad(
                           context,
                           "Incorrect email or password",
@@ -136,7 +174,8 @@ class _LoginFormState extends State<LoginForm> {
                         return;
                       }
 
-                      Navigator.of(context).pushReplacementNamed(
+                      Snack.good(context, "Welcome back!");
+                      await Navigator.of(context).pushReplacementNamed(
                         HomeScreen.routeName,
                       );
                     },
@@ -145,16 +184,31 @@ class _LoginFormState extends State<LoginForm> {
                 ],
               ),
               GoogleSignInButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final authProvider = context.read<AuthProvider>();
+                  final email = _formKey.currentState!.value["email"];
+
+                  if (await authProvider.isUserAlreadyExists(email)) {
+                    Snack.bad(
+                      context,
+                      "That email is already registered!.",
+                      SnackBarAction(
+                        label: "Dismiss",
+                        textColor: Colors.white,
+                        onPressed: () {},
+                      ),
+                    );
+                    return;
+                  }
+                  await authProvider.signInGoogle();
+                },
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: TextButton(
-                  child: Text(
-                    "Don't have an account?",
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColorDark,
-                    ),
+                  child: const Text("Don't have an account?"),
+                  style: TextButton.styleFrom(
+                    primary: Theme.of(context).primaryColor,
                   ),
                   onPressed: () =>
                       Navigator.of(context).pushNamed(SignUpScreen.routeName),

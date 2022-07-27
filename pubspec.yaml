@@ -59,6 +59,7 @@ flutter:
     - assets/heart_filled.svg
     - assets/chat_bubble.svg
     - assets/share.svg
+    - assets/google_logo.svg
 
   fonts:
     - family: WorkSans

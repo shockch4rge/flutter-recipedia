@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/main.dart';
 
 class SignInButton extends StatefulWidget {
   final bool disabled;
@@ -17,17 +18,13 @@ class _SignInButtonState extends State<SignInButton> {
     return SizedBox(
       width: Size.infinite.width,
       child: ElevatedButton(
-        style: ButtonStyle(
-          elevation: MaterialStateProperty.all(0),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(9.0),
-            ),
-          ),
-          backgroundColor:
-              MaterialStateProperty.all(Theme.of(context).primaryColorDark),
-        ),
         onPressed: widget.disabled ? null : widget.onPressed,
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(9.0),
+          ),
+          primary: Theme.of(context).primaryColorDark,
+        ),
         child: const Padding(
           padding: EdgeInsets.symmetric(vertical: 15.0),
           child: Text(
@@ -52,7 +49,7 @@ class GoogleSignInButton extends StatelessWidget {
       width: Size.infinite.width,
       child: ElevatedButton.icon(
         onPressed: () => onPressed(),
-        icon: const FlutterLogo(),
+        icon: App.googleLogo,
         label: Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
           child: Text(

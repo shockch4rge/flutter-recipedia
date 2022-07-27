@@ -18,7 +18,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          Padding(
+          Container(
             padding: const EdgeInsets.only(top: 80.0, left: 16.0),
             child: Align(
               alignment: Alignment.topLeft,
@@ -29,12 +29,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   color: Theme.of(context).primaryColor,
                   size: 16,
                 ),
-                label: Text(
-                  "Back to login",
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                  ),
+                style: TextButton.styleFrom(
+                  primary: Theme.of(context).primaryColor,
                 ),
+                label: const Text("Back to login"),
               ),
             ),
           ),
@@ -48,11 +46,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     width: 300,
                     child: Text(
                       "Sign up for an account.",
-                      style: Theme.of(context).textTheme.headline1,
+                      style: Theme.of(context).textTheme.headline2,
                     ),
                   ),
                 ),
-                const SizedBox(height: 34),
+                const SizedBox(height: 28),
                 const SizedBox(child: SignUpForm()),
               ],
             ),

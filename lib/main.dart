@@ -4,6 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/features/authentication/ui/login/login_screen.dart';
+import 'package:flutter_recipedia/features/authentication/ui/reset_password/reset_password_screen.dart';
+import 'package:flutter_recipedia/features/authentication/ui/reset_password/send_email_link_screen.dart';
+import 'package:flutter_recipedia/features/authentication/ui/signup/signup_screen.dart';
 import 'package:flutter_recipedia/features/misc/home_screen.dart';
 import 'package:flutter_recipedia/features/recipes/app/create_recipe_provider.dart';
 import 'package:flutter_recipedia/features/recipes/app/recipe_image_repository.dart';
@@ -25,6 +28,7 @@ import 'package:flutter_recipedia/repositories/recipe_repository.dart';
 import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
 import 'features/recipes/app/recipe_comment_reply_repository.dart';
@@ -36,12 +40,44 @@ import 'firebase.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Future.wait([
+    precachePicture(
+      ExactAssetPicture(
+          SvgPicture.svgStringDecoderBuilder, "assets/heart_outlined.svg"),
+      null,
+    ),
+    precachePicture(
+      ExactAssetPicture(
+          SvgPicture.svgStringDecoderBuilder, "assets/heart_filled.svg"),
+      null,
+    ),
+    precachePicture(
+      ExactAssetPicture(
+          SvgPicture.svgStringDecoderBuilder, "assets/chat_bubble.svg"),
+      null,
+    ),
+    precachePicture(
+      ExactAssetPicture(SvgPicture.svgStringDecoderBuilder, "assets/share.svg"),
+      null,
+    ),
+    precachePicture(
+      ExactAssetPicture(
+          SvgPicture.svgStringDecoderBuilder, "assets/google_logo.svg"),
+      null,
+    ),
+  ]);
+
   runApp(
     MultiProvider(
       providers: [
         /* ChangeNotifierProviders */
         ChangeNotifierProvider(
-          create: (_) => AuthProvider(firebase_auth.FirebaseAuth.instance),
+          create: (_) =>
+              AuthProvider(firebase_auth.FirebaseAuth.instance, GoogleSignIn()),
+        ),
+        StreamProvider(
+          create: (context) => context.read<AuthProvider>().authStateChanges,
+          initialData: null,
         ),
         ChangeNotifierProvider(
           create: (_) => CommentProvider(),
@@ -125,6 +161,11 @@ class App extends StatelessWidget {
     height: 20,
     color: App._primaryAccent,
   );
+  static final googleLogo = SvgPicture.asset(
+    "assets/google_logo.svg",
+    width: 20,
+    height: 20,
+  );
 
   // This widget is the root of your application.
   @override
@@ -197,13 +238,15 @@ class App extends StatelessWidget {
           ),
         ),
       ),
-      // TODO: Use a ternary to check sign-in status and replace routes accordingly
       home: StreamBuilder(
           stream: context.watch<AuthProvider>().authStateChanges,
           builder: (_, snap) {
             return snap.data == null ? const LoginScreen() : const HomeScreen();
           }),
       routes: {
+        SignUpScreen.routeName: (_) => const SignUpScreen(),
+        ResetPasswordScreen.routeName: (_) => const ResetPasswordScreen(),
+        SendEmailLinkScreen.routeName: (_) => const SendEmailLinkScreen(),
         HomeScreen.routeName: (_) => const HomeScreen(),
         RecipeCommentsScreen.routeName: (_) => const RecipeCommentsScreen(),
         RecipeCommentLikesScreen.routeName: (_) =>

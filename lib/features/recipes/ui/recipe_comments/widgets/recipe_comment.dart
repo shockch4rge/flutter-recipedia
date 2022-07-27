@@ -107,7 +107,7 @@ class RecipeComment extends StatelessWidget {
                                 child: Text(
                                   "${shortenNumber(comment.likes.length)} likes",
                                   style: const TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 14,
                                     color: Colors.grey,
                                   ),
                                 ),

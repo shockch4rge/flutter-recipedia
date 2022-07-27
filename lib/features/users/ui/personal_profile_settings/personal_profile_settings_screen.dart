@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/common/snack.dart';
+import 'package:flutter_recipedia/features/authentication/ui/login/login_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/widgets/delete_profile_dialog.dart';
 import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
+import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:provider/provider.dart';
 
@@ -38,7 +41,8 @@ class _PersonalProfileSettingsScreenState
               child: ElevatedButton(
                 onPressed: () async {
                   await context.read<AuthProvider>().signOut();
-                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .pushReplacementNamed(LoginScreen.routeName);
                 },
                 child: const Text("SIGN OUT"),
                 style: ElevatedButton.styleFrom(
@@ -56,7 +60,16 @@ class _PersonalProfileSettingsScreenState
                   context: context,
                   builder: (_) => DeleteProfileDialog(
                     user: user,
-                    onConfirm: () {},
+                    onConfirm: () async {
+                      final authProvider = context.read<AuthProvider>();
+                      final userRepo = context.read<UserRepository>();
+
+                      await authProvider.deleteUser();
+                      await userRepo.deleteUser(user.id);
+                      Snack.good(context, "Profile deleted successfully.");
+                      await Navigator.of(context)
+                          .pushReplacementNamed(LoginScreen.routeName);
+                    },
                   ),
                 ),
                 child: const Text("DELETE PROFILE"),

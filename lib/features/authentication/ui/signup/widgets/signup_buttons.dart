@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:flutter_recipedia/main.dart';
 
 class SignUpButton extends StatelessWidget {
   final void Function() onPressed;
@@ -10,15 +11,11 @@ class SignUpButton extends StatelessWidget {
     return SizedBox(
       width: Size.infinite.width,
       child: ElevatedButton(
-        style: ButtonStyle(
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(9.0),
-            ),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(9.0),
           ),
-          elevation: MaterialStateProperty.all(0),
-          backgroundColor:
-              MaterialStateProperty.all(Theme.of(context).primaryColorDark),
+          primary: Theme.of(context).primaryColorDark,
         ),
         onPressed: () => onPressed(),
         child: const Padding(
@@ -45,7 +42,7 @@ class GoogleSignUpButton extends StatelessWidget {
       width: Size.infinite.width,
       child: ElevatedButton.icon(
         onPressed: () => onPressed(),
-        icon: const FlutterLogo(),
+        icon: App.googleLogo,
         label: Padding(
           padding: const EdgeInsets.symmetric(vertical: 15.0),
           child: Text(

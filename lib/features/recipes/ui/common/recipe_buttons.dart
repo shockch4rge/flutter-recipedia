@@ -1,15 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/models/recipe.dart';
 
 import '../../../../main.dart';
 
 class CommentButton extends StatelessWidget {
-  final List<RecipeComment> comments;
+  final int count;
   final void Function() onPressed;
 
-  const CommentButton(
-      {Key? key, required this.comments, required this.onPressed})
+  const CommentButton({Key? key, required this.count, required this.onPressed})
       : super(key: key);
 
   @override
@@ -24,7 +22,7 @@ class CommentButton extends StatelessWidget {
       onPressed: onPressed,
       icon: App.chatBubbleIcon,
       label: Text(
-        comments.length.toString(),
+        count.toString(),
         style: TextStyle(
           color: Theme.of(context).primaryColorDark,
         ),
