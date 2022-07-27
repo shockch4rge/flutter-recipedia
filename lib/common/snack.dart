@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Snack {
-  static bad(BuildContext context, String content, [SnackBarAction? action]) {
+  static void bad(BuildContext context, String content,
+      [SnackBarAction? action]) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -18,7 +19,8 @@ class Snack {
     );
   }
 
-  static good(BuildContext context, String content, [SnackBarAction? action]) {
+  static void good(BuildContext context, String content,
+      [SnackBarAction? action]) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
