@@ -19,7 +19,7 @@ class User {
   static const collectionName = "users";
   static final idField = FieldPath.documentId;
   static const usernameField = "username";
-  static const nameField = "nameField";
+  static const nameField = "name";
   static const avatarUrlField = "avatarUrl";
   static const bioField = "bio";
   static const followersField = "followers";

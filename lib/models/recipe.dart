@@ -107,7 +107,7 @@ class RecipeCommentReply {
   static const collectionName = "replies";
   static const authorIdField = "authorId";
   static const commentIdField = "commentId";
-  static const recipeIdField = "recipeIdField";
+  static const recipeIdField = "recipeId";
   static const contentField = "content";
   static const likesField = "likes";
 
