@@ -15,6 +15,7 @@ class User {
   final String bio;
   final List<DocumentReference> followers;
   final List<DocumentReference> following;
+  final List<DocumentReference> savedRecipes;
 
   static const collectionName = "users";
   static final idField = FieldPath.documentId;
@@ -24,6 +25,7 @@ class User {
   static const bioField = "bio";
   static const followersField = "followers";
   static const followingField = "following";
+  static const savedRecipesField = "savedRecipes";
 
   const User({
     required this.id,
@@ -33,6 +35,7 @@ class User {
     required this.bio,
     required this.followers,
     required this.following,
+    required this.savedRecipes,
   });
 
   factory User.fromFirestore(DocumentSnapshot snap, dynamic _) {
