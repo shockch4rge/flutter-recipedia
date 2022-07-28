@@ -23,11 +23,22 @@ class AuthProvider with ChangeNotifier {
     return credentials;
   }
 
-  Future<void> deleteUser() async {
+  Future<void> deleteUser({
+    required String email,
+    required String password,
+  }) async {
+    await _firebaseAuth.currentUser!.reauthenticateWithCredential(
+      auth.EmailAuthProvider.credential(
+        email: email,
+        password: password,
+      ),
+    );
+
     await _firebaseAuth.currentUser!.delete();
+    setCurrentUser(null);
   }
 
-  void setCurrentUser(local.User user) {
+  void setCurrentUser(local.User? user) {
     this.user = user;
     notifyListeners();
   }

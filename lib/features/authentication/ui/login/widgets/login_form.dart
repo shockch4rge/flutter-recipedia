@@ -89,7 +89,6 @@ class _LoginFormState extends State<LoginForm> {
                         : Icon(
                             FontAwesomeIcons.eyeSlash,
                             size: 18,
-                            color: Theme.of(context).primaryColorDark,
                           ),
                   ),
                   filled: true,

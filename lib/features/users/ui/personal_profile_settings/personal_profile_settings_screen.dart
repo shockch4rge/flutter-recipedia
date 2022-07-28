@@ -60,11 +60,14 @@ class _PersonalProfileSettingsScreenState
                   context: context,
                   builder: (_) => DeleteProfileDialog(
                     user: user,
-                    onConfirm: () async {
+                    onConfirm: (email, password) async {
                       final authProvider = context.read<AuthProvider>();
                       final userRepo = context.read<UserRepository>();
 
-                      await authProvider.deleteUser();
+                      await authProvider.deleteUser(
+                        email: email,
+                        password: password,
+                      );
                       await userRepo.deleteUser(user.id);
                       Snack.good(context, "Profile deleted successfully.");
                       await Navigator.of(context)
