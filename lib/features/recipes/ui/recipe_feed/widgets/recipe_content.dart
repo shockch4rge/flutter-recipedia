@@ -157,18 +157,19 @@ class _RecipeContentActions extends StatelessWidget {
                   likes: recipe.likes,
                   onPressed: () {},
                 ),
-                FutureBuilder(
-                  future: context
+                StreamBuilder(
+                  stream: context
                       .read<RecipeCommentRepository>()
-                      .getAllByRecipeId(recipe.id),
+                      .getCommentCountByRecipeId(recipe.id),
                   builder: (context, snap) {
                     if (snap.waiting) {
                       return Container();
                     }
 
-                    final comments = snap.data as List<RecipeComment>;
+                    final commentCount = snap.data as int;
+
                     return CommentButton(
-                      comments: comments,
+                      count: commentCount,
                       onPressed: () => Navigator.of(context).pushNamed(
                         RecipeCommentsScreen.routeName,
                         arguments: recipe.id,

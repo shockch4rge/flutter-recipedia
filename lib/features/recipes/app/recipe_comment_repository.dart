@@ -16,6 +16,30 @@ class RecipeCommentRepository {
     return snap.data()!;
   }
 
+  Stream<int> getCommentCountByRecipeId(DocumentReference recipeId) {
+    return _comments
+        .withConverter<RecipeComment>(
+          fromFirestore: RecipeComment.fromFirestore,
+          toFirestore: RecipeComment.toFirestore,
+        )
+        .where(RecipeComment.recipeIdField, isEqualTo: recipeId)
+        .snapshots()
+        .map((snap) => snap.docs.length);
+  }
+
+  Stream<List<RecipeComment>> getAllByRecipeIdStream(
+      DocumentReference recipeId) {
+    return _comments
+        .withConverter<RecipeComment>(
+          fromFirestore: RecipeComment.fromFirestore,
+          toFirestore: RecipeComment.toFirestore,
+        )
+        .where('recipeId', isEqualTo: recipeId)
+        // .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs.map((doc) => doc.data()).toList());
+  }
+
   Future<List<RecipeComment>> getAllByRecipeId(
     DocumentReference recipeId,
   ) async {
