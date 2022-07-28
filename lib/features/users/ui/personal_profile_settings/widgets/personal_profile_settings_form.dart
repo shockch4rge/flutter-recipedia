@@ -55,23 +55,24 @@ class _PersonalProfileSettingsFormState
             child: ElevatedButton(
               onPressed: () async {
                 String? newAvatarUrl;
+                final avatarProvider = context.read<AvatarProvider>();
+                final avatarRepo = context.read<AvatarRepository>();
+                final userRepo = context.read<UserRepository>();
 
-                if (context.read<AvatarProvider>().uploadedAvatar != null) {
-                  newAvatarUrl = await context
-                      .read<AvatarRepository>()
-                      .updateAvatar(
-                        userId: user.id,
-                        file: context.read<AvatarProvider>().uploadedAvatar!,
-                      );
+                if (avatarProvider.uploadedAvatar != null) {
+                  newAvatarUrl = await avatarRepo.updateAvatar(
+                    userId: user.id,
+                    file: avatarProvider.uploadedAvatar!,
+                  );
                 }
 
-                await context.read<UserRepository>().updateUser(
-                      user: widget.user,
-                      username: _usernameController.text,
-                      name: _nameController.text,
-                      bio: _bioController.text,
-                      avatarUrl: newAvatarUrl ?? avatarUrl,
-                    );
+                await userRepo.updateUser(
+                  user: widget.user,
+                  username: _usernameController.text,
+                  name: _nameController.text,
+                  bio: _bioController.text,
+                  avatarUrl: newAvatarUrl ?? avatarUrl,
+                );
 
                 Navigator.of(context).pop();
               },
