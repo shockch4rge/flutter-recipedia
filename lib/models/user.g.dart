@@ -21,6 +21,10 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
           .map((e) => const DocumentSerializer()
               .fromJson(e as DocumentReference<Object?>))
           .toList(),
+      savedRecipes: (json['savedRecipes'] as List<dynamic>)
+          .map((e) => const DocumentSerializer()
+              .fromJson(e as DocumentReference<Object?>))
+          .toList(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -33,4 +37,6 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
           instance.followers.map(const DocumentSerializer().toJson).toList(),
       'following':
           instance.following.map(const DocumentSerializer().toJson).toList(),
+      'savedRecipes':
+          instance.savedRecipes.map(const DocumentSerializer().toJson).toList(),
     };
