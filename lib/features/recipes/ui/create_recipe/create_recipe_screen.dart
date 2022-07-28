@@ -32,6 +32,7 @@ class _CreateRecipeScreenState extends KeepAliveState with RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: CreateRecipeAppBar(
         onResetPressed: () {
