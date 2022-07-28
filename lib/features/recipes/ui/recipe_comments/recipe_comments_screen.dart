@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_recipedia/common/keep_alive_stateful.dart';
 import 'package:flutter_recipedia/main.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
@@ -14,7 +13,7 @@ import '../../app/recipe_comment_reply_repository.dart';
 import '../../app/recipe_comment_repository.dart';
 import 'widgets/recipe_comments_app_bar.dart';
 
-class RecipeCommentsScreen extends KeepAliveStateful {
+class RecipeCommentsScreen extends StatefulWidget {
   static const routeName = "/recipe/comments";
 
   const RecipeCommentsScreen({Key? key}) : super(key: key);
@@ -29,6 +28,8 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
   final FocusNode _commentInputFocus = FocusNode();
   final _commentInputController = TextEditingController();
   DocumentReference get recipeId => getArgs<DocumentReference>(context);
+  late final Stream<List<RecipeComment>> comments =
+      context.read<RecipeCommentRepository>().getAllByRecipeIdStream(recipeId);
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +43,8 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
       ),
       body: Stack(
         children: [
-          FutureBuilder(
-            future: context
-                .read<RecipeCommentRepository>()
-                .getAllByRecipeId(recipeId),
+          StreamBuilder(
+            stream: comments,
             builder: (context, snap) {
               if (snap.waiting) {
                 return ListView.builder(
@@ -56,6 +55,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                   },
                 );
               }
+
               final comments = snap.data as List<RecipeComment>;
 
               if (comments.isEmpty) {
@@ -64,26 +64,31 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                 );
               }
 
-              return ListView.builder(
-                controller: _scrollController,
-                physics: const BouncingScrollPhysics(),
-                itemCount: comments.length,
-                itemBuilder: ((context, index) {
-                  return widgets.RecipeComment(
-                    comment: comments[index],
-                    onReply: (commentAuthor) async {
-                      context.read<CommentProvider>().setReplyTarget(
-                            user: commentAuthor,
-                            comment: comments[index],
-                          );
-                      // un-focus in case we focused it before
-                      _commentInputFocus.unfocus();
-                      // allow time for widget to re-render
-                      await Future.delayed(const Duration(milliseconds: 200));
-                      _commentInputFocus.requestFocus();
-                    },
-                  );
-                }),
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 64),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  physics: const BouncingScrollPhysics(),
+                  cacheExtent: 100.0 * comments.length,
+                  itemCount: comments.length,
+                  itemBuilder: ((context, index) {
+                    return widgets.RecipeComment(
+                      comment: comments[index],
+                      onReply: (commentAuthor) async {
+                        context.read<CommentProvider>().setReplyTarget(
+                              user: commentAuthor,
+                              comment: comments[index],
+                            );
+                        // un-focus in case we focused it before
+                        _commentInputFocus.unfocus();
+                        // allow time for widget to re-render
+                        await Future.delayed(const Duration(milliseconds: 200));
+                        _commentInputFocus.requestFocus();
+                      },
+                    );
+                  }),
+                ),
               );
             },
           ),
@@ -143,10 +148,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                         ),
                         decoration: InputDecoration(
                           isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 12,
-                          ),
+                          contentPadding: const EdgeInsets.all(12),
                           hintText: "Add a thought...",
                           hintStyle: TextStyle(
                             fontSize: 14,
@@ -163,9 +165,13 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                         ),
                       ),
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          if (_commentInputController.value.text.isEmpty) {
+                            return;
+                          }
+
                           if (context.read<CommentProvider>().hasTarget) {
-                            context
+                            await context
                                 .read<RecipeCommentReplyRepository>()
                                 .addReply(
                                   recipeId: recipeId,
@@ -174,16 +180,21 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                                       .read<CommentProvider>()
                                       .targetComment!
                                       .id,
-                                  content: _commentInputController.text,
+                                  content: _commentInputController.text.trim(),
                                 );
+                            _commentInputController.clear();
                             return;
                           }
 
-                          context.read<RecipeCommentRepository>().addComment(
+                          await context
+                              .read<RecipeCommentRepository>()
+                              .addComment(
                                 recipeId: recipeId,
                                 authorId: mockMeId,
-                                content: _commentInputController.text,
+                                content: _commentInputController.text.trim(),
                               );
+                          _commentInputController.clear();
+                          _commentInputFocus.unfocus();
                         },
                         child: Text(
                           "Send",
