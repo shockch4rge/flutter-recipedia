@@ -141,4 +141,13 @@ class UserRepository {
       User.followingField: FieldValue.arrayRemove([followingId]),
     });
   }
+
+  Future<void> saveRecipe(
+    DocumentReference userId,
+    DocumentReference recipeId,
+  ) async {
+    await userId.update({
+      User.savedRecipesField: FieldValue.arrayUnion([recipeId]),
+    });
+  }
 }

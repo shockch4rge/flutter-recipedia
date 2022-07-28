@@ -159,4 +159,21 @@ class RecipeRepository {
 
     return snap.docs.map((doc) => doc.data()).toList();
   }
+
+  Future<List<Recipe>> getRecipes({
+    required List<DocumentReference> recipeIds,
+  }) async {
+    final snaps = await Future.wait(
+      recipeIds.map((recipeId) {
+        return recipeId
+            .withConverter<Recipe>(
+              fromFirestore: Recipe.fromFirestore,
+              toFirestore: Recipe.toFirestore,
+            )
+            .get();
+      }),
+    );
+
+    return snaps.map((snap) => snap.data()!).toList();
+  }
 }

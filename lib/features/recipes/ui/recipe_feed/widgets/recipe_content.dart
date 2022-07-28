@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
+import 'package:flutter_recipedia/common/snack.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comments_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_feed/widgets/recipe_options_menu.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
+import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +17,7 @@ import '../../../app/recipe_comment_repository.dart';
 import '../../common/recipe_buttons.dart';
 import '../../view_recipe/view_recipe_screen.dart';
 
-class _RecipeContentHeader extends StatelessWidget {
+class _RecipeContentHeader extends StatefulWidget {
   final Recipe recipe;
   final User author;
   const _RecipeContentHeader({
@@ -23,6 +25,13 @@ class _RecipeContentHeader extends StatelessWidget {
     required this.recipe,
     required this.author,
   }) : super(key: key);
+
+  @override
+  State<_RecipeContentHeader> createState() => _RecipeContentHeaderState();
+}
+
+class _RecipeContentHeaderState extends State<_RecipeContentHeader> {
+  late final user = context.read<AuthProvider>().user!;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +44,7 @@ class _RecipeContentHeader extends StatelessWidget {
           TextButton.icon(
             onPressed: () => Navigator.of(context).pushNamed(
               UserProfileScreen.routeName,
-              arguments: author,
+              arguments: widget.author,
             ),
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
@@ -45,16 +54,23 @@ class _RecipeContentHeader extends StatelessWidget {
               padding: const EdgeInsets.only(right: 5.0),
               child: Avatar(
                 size: 36,
-                avatarUrl: author.avatarUrl,
+                avatarUrl: widget.author.avatarUrl,
               ),
             ),
             label: Text(
-              author.username,
+              widget.author.username,
               style: Theme.of(context).textTheme.subtitle1,
             ),
           ),
           RecipeOptionsMenu(
-            onSaveTapped: () {},
+            isRecipeSaved: user.savedRecipes.contains(widget.recipe.id),
+            onSaveTapped: () async {
+              await context.read<UserRepository>().saveRecipe(
+                    user.id,
+                    widget.recipe.id,
+                  );
+              Snack.good(context, "Recipe saved!");
+            },
             onShareTapped: () {},
           ),
         ],
