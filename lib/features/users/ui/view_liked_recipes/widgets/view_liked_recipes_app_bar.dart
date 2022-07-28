@@ -14,7 +14,7 @@ class ViewLikedRecipesAppBar extends StatelessWidget
         splashRadius: 20,
         icon: const Icon(Icons.arrow_back, color: Colors.black),
         tooltip: "Back",
-        onPressed: () => Navigator.pop(context),
+        onPressed: () => Navigator.of(context).pop(),
       ),
       title: Text(
         "Liked Recipes",
