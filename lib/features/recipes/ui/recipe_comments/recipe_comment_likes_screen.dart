@@ -35,14 +35,25 @@ class _RecipeCommentLikesScreenState extends State<RecipeCommentLikesScreen> {
       body: FutureBuilder(
         future: context.read<UserRepository>().getUsers(likes),
         builder: (context, snap) {
-          return ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, index) {
-              if (snap.waiting) {
-                return Container();
-              }
+          if (snap.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-              final likers = snap.data as List<User>;
+          final likers = snap.data as List<User>;
+
+          if (likers.isEmpty) {
+            return const Center(
+              child: Text("There are no likes on this comment!"),
+            );
+          }
+
+          return ListView.builder(
+            controller: _scrollController,
+            physics: const BouncingScrollPhysics(),
+            itemCount: likes.length,
+            itemBuilder: (context, index) {
               return RecipeLikeListItem(liker: likers[index]);
             },
           );
