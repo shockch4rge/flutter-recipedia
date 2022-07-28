@@ -33,25 +33,14 @@ class RecipeCommentReplyRepository {
     return snap.data()!;
   }
 
-  Future<void> addToComment(
-    DocumentReference commentId,
-    RecipeCommentReply reply,
-  ) async {
-    final replyId = _replies.doc().withConverter<RecipeCommentReply>(
-          fromFirestore: RecipeCommentReply.fromFirestore,
-          toFirestore: RecipeCommentReply.toFirestore,
-        );
-    replyId.set(reply);
-  }
-
   Future<void> addReply({
-    required recipeId,
-    required commentId,
-    required authorId,
-    required content,
+    required DocumentReference recipeId,
+    required DocumentReference commentId,
+    required DocumentReference authorId,
+    required String content,
   }) async {
-    final reply = _replies.doc();
-    await reply.set({
+    final replyId = _replies.doc();
+    await replyId.set({
       RecipeCommentReply.authorIdField: authorId,
       RecipeCommentReply.recipeIdField: recipeId,
       RecipeCommentReply.contentField: content,
