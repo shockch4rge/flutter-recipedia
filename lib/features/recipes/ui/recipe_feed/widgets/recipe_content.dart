@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/avatar.dart';
 import 'package:flutter_recipedia/common/snack.dart';
+import 'package:flutter_recipedia/features/recipes/ui/edit_recipe/edit_recipe_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comments_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_feed/widgets/recipe_options_menu.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
@@ -63,6 +64,11 @@ class _RecipeContentHeaderState extends State<_RecipeContentHeader> {
             ),
           ),
           RecipeOptionsMenu(
+            isOwnRecipe: widget.author.id == user.id,
+            onEditTapped: () => Navigator.of(context).pushNamed(
+              EditRecipeScreen.routeName,
+              arguments: widget.recipe,
+            ),
             isRecipeSaved: user.savedRecipes.contains(widget.recipe.id),
             onSaveTapped: () async {
               await context.read<UserRepository>().saveRecipe(

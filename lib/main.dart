@@ -9,6 +9,7 @@ import 'package:flutter_recipedia/features/authentication/ui/reset_password/send
 import 'package:flutter_recipedia/features/authentication/ui/signup/signup_screen.dart';
 import 'package:flutter_recipedia/features/misc/home_screen.dart';
 import 'package:flutter_recipedia/features/recipes/app/create_recipe_provider.dart';
+import 'package:flutter_recipedia/features/recipes/app/edit_recipe_provider.dart';
 import 'package:flutter_recipedia/features/recipes/app/recipe_image_repository.dart';
 import 'package:flutter_recipedia/features/recipes/ui/create_recipe/create_recipe_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comment_likes_screen.dart';
@@ -21,7 +22,7 @@ import 'package:flutter_recipedia/features/users/ui/user_followers/user_follower
 import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/view_liked_recipes/view_liked_recipes_screen.dart';
-import 'package:flutter_recipedia/models/recipe.dart';
+import 'package:flutter_recipedia/features/users/ui/view_saved_recipes/view_saved_recipes_screen.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
@@ -40,6 +41,20 @@ import 'firebase.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // final fcmToken = await FirebaseMessaging.instance.getToken();
+  // FirebaseMessaging.onMessage.listen((message) {
+  //   print("onMessage: ${message.data}");
+  //
+  //   if (message.notification == null) return;
+  //
+  //   print('Message also contained a notification: ${message.notification}');
+  // });
+  //
+  // FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+  //   print("Token refreshed: $token");
+  //   FirebaseMessaging.instance.subscribeToTopic("recipedia");
+  // });
+
   await Future.wait([
     precachePicture(
       ExactAssetPicture(
@@ -72,12 +87,10 @@ void main() async {
       providers: [
         /* ChangeNotifierProviders */
         ChangeNotifierProvider(
-          create: (_) =>
-              AuthProvider(firebase_auth.FirebaseAuth.instance, GoogleSignIn()),
-        ),
-        StreamProvider(
-          create: (context) => context.read<AuthProvider>().authStateChanges,
-          initialData: null,
+          create: (_) => AuthProvider(
+            firebase_auth.FirebaseAuth.instance,
+            GoogleSignIn(),
+          ),
         ),
         ChangeNotifierProvider(
           create: (_) => CommentProvider(),
@@ -87,6 +100,13 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => CreateRecipeProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => EditRecipeProvider(),
+        ),
+        StreamProvider(
+          create: (context) => context.read<AuthProvider>().authStateChanges,
+          initialData: null,
         ),
 
         /* Repositories */
@@ -110,12 +130,7 @@ void main() async {
         ),
         Provider(
           create: (_) => RecipeCommentReplyRepository(
-            FirebaseFirestore.instance
-                .collection("replies")
-                .withConverter<RecipeCommentReply>(
-                  fromFirestore: RecipeCommentReply.fromFirestore,
-                  toFirestore: RecipeCommentReply.toFirestore,
-                ),
+            FirebaseFirestore.instance.collection("replies"),
           ),
         ),
         Provider(
@@ -256,6 +271,7 @@ class App extends StatelessWidget {
         PersonalProfileSettingsScreen.routeName: (_) =>
             const PersonalProfileSettingsScreen(),
         ViewLikedRecipesScreen.routeName: (_) => const ViewLikedRecipesScreen(),
+        ViewSavedRecipesScreen.routeName: (_) => const ViewSavedRecipesScreen(),
         UserProfileScreen.routeName: (_) => const UserProfileScreen(),
         UserFollowersScreen.routeName: (_) => const UserFollowersScreen(),
         UserFollowingScreen.routeName: (_) => const UserFollowingScreen(),

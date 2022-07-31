@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/snack.dart';
 import 'package:flutter_recipedia/features/authentication/ui/login/login_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/widgets/delete_profile_dialog.dart';
-import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/repositories/user_repository.dart';
-import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/personal_profile_settings_app_bar.dart';
@@ -23,7 +21,7 @@ class PersonalProfileSettingsScreen extends StatefulWidget {
 
 class _PersonalProfileSettingsScreenState
     extends State<PersonalProfileSettingsScreen> {
-  User get user => getArgs<User>(context);
+  late final user = context.read<AuthProvider>().user!;
 
   @override
   Widget build(BuildContext context) {

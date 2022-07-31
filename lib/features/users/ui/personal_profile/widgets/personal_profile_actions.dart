@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/features/users/ui/view_liked_recipes/view_liked_recipes_screen.dart';
+import 'package:flutter_recipedia/features/users/ui/view_saved_recipes/view_saved_recipes_screen.dart';
 
 import '../../personal_profile_settings/personal_profile_settings_screen.dart';
 
@@ -48,7 +49,8 @@ class PersonalProfileActions extends StatelessWidget {
                 thickness: 1,
               ),
               ListTile(
-                onTap: () => Navigator.of(context).pushNamed(ViewLikedRecipesScreen.routeName),
+                onTap: () => Navigator.of(context)
+                    .pushNamed(ViewLikedRecipesScreen.routeName),
                 title: Wrap(
                   spacing: 12,
                   crossAxisAlignment: WrapCrossAlignment.center,
@@ -69,7 +71,8 @@ class PersonalProfileActions extends StatelessWidget {
                 thickness: 1,
               ),
               ListTile(
-                onTap: () => Navigator.of(context).pushNamed(""),
+                onTap: () => Navigator.of(context)
+                    .pushNamed(ViewSavedRecipesScreen.routeName),
                 title: Wrap(
                   spacing: 12,
                   crossAxisAlignment: WrapCrossAlignment.center,

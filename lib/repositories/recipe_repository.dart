@@ -176,4 +176,14 @@ class RecipeRepository {
 
     return snaps.map((snap) => snap.data()!).toList();
   }
+
+  Future<void> editRecipe({
+    required DocumentReference authorId,
+    required String title,
+    required String description,
+    required List<String> ingredients,
+    required List<String> steps,
+    required File image,
+    required String notes,
+  }) async {}
 }
