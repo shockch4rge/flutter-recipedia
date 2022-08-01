@@ -3,18 +3,20 @@ import 'package:flutter_recipedia/main.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // This is the type used by the popup menu below.
-enum RecipeOption { save, share }
+enum RecipeOption { save, share, edit }
 
 class RecipeOptionsMenu extends StatelessWidget {
   final bool isRecipeSaved;
   final void Function() onSaveTapped;
   final void Function() onShareTapped;
+  final void Function()? onEditTapped;
 
   const RecipeOptionsMenu({
     Key? key,
     required this.isRecipeSaved,
     required this.onSaveTapped,
     required this.onShareTapped,
+    this.onEditTapped,
   }) : super(key: key);
 
   @override
@@ -49,6 +51,18 @@ class RecipeOptionsMenu extends StatelessWidget {
             ],
           ),
         ),
+        if (onEditTapped != null)
+          PopupMenuItem(
+            value: RecipeOption.edit,
+            onTap: onEditTapped,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                App.shareIcon,
+                const Text("Share"),
+              ],
+            ),
+          ),
         PopupMenuItem(
           value: RecipeOption.share,
           onTap: onShareTapped,
