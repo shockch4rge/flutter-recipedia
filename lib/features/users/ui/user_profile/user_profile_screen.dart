@@ -5,11 +5,11 @@ import 'package:flutter_recipedia/features/users/ui/user_followers/user_follower
 import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
+import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
 import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
-import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/user_profile_app_bar.dart';
@@ -96,13 +96,20 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 }
 
-class _UserDescription extends StatelessWidget {
+class _UserDescription extends StatefulWidget {
   final User user;
   final int recipesCount;
 
   const _UserDescription(
       {Key? key, required this.user, required this.recipesCount})
       : super(key: key);
+
+  @override
+  State<_UserDescription> createState() => _UserDescriptionState();
+}
+
+class _UserDescriptionState extends State<_UserDescription> {
+  late final currentUser = context.read<AuthProvider>().user!;
 
   @override
   Widget build(BuildContext context) {
@@ -117,14 +124,14 @@ class _UserDescription extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Avatar(size: 80, avatarUrl: user.avatarUrl),
+            Avatar(size: 80, avatarUrl: widget.user.avatarUrl),
             Wrap(
               spacing: 14,
               children: [
                 Column(
                   children: [
                     Text(
-                      "$recipesCount",
+                      "${widget.recipesCount}",
                       style: countTextStyle,
                     ),
                     Text(
@@ -136,12 +143,12 @@ class _UserDescription extends StatelessWidget {
                 GestureDetector(
                   onTap: () => Navigator.of(context).pushNamed(
                     UserFollowersScreen.routeName,
-                    arguments: user,
+                    arguments: widget.user,
                   ),
                   child: Column(
                     children: [
                       Text(
-                        "${user.followers.length}",
+                        "${widget.user.followers.length}",
                         style: countTextStyle,
                       ),
                       Text(
@@ -154,12 +161,12 @@ class _UserDescription extends StatelessWidget {
                 GestureDetector(
                   onTap: () => Navigator.of(context).pushNamed(
                     UserFollowingScreen.routeName,
-                    arguments: user,
+                    arguments: widget.user,
                   ),
                   child: Column(
                     children: [
                       Text(
-                        "${user.following.length}",
+                        "${widget.user.following.length}",
                         style: countTextStyle,
                       ),
                       Text(
@@ -180,12 +187,13 @@ class _UserDescription extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                user.name,
+                widget.user.name,
                 textAlign: TextAlign.left,
                 style: Theme.of(context).textTheme.subtitle2,
               ),
               const SizedBox(height: 10),
-              Text(user.bio, style: Theme.of(context).textTheme.bodyText2),
+              Text(widget.user.bio,
+                  style: Theme.of(context).textTheme.bodyText2),
             ],
           ),
         ),
@@ -194,17 +202,21 @@ class _UserDescription extends StatelessWidget {
           width: Size.infinite.width,
           child: ElevatedButton(
             onPressed: () async {
-              if (user.followers.contains(mockMeId)) {
-                context
+              if (widget.user.followers.contains(currentUser.id)) {
+                await context
                     .read<UserRepository>()
-                    .removeUserFollower(user.id, mockMeId);
+                    .removeUserFollower(widget.user.id, currentUser.id);
                 return;
               }
 
-              context.read<UserRepository>().addUserFollower(user.id, mockMeId);
+              context
+                  .read<UserRepository>()
+                  .addUserFollower(widget.user.id, currentUser.id);
             },
             child: Text(
-              user.followers.contains(mockMeId) ? "UNFOLLOW" : "FOLLOW",
+              widget.user.followers.contains(currentUser.id)
+                  ? "UNFOLLOW"
+                  : "FOLLOW",
               style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(context).primaryColorDark,

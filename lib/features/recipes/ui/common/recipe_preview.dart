@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/features/recipes/ui/common/app_bottom_sheet.dart';
 import 'package:flutter_recipedia/features/recipes/ui/common/recipe_preview_actions.dart';
 import 'package:flutter_recipedia/models/user.dart';
-import 'package:tuple/tuple.dart';
 
 import '../../../../models/recipe.dart';
 import '../view_recipe/view_recipe_screen.dart';
@@ -23,7 +22,7 @@ class RecipePreview extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).pushNamed(
         ViewRecipeScreen.routeName,
-        arguments: Tuple2<Recipe, User>(recipe, user),
+        arguments: recipe,
       ),
       onLongPress: () => showModalBottomSheet(
         context: context,

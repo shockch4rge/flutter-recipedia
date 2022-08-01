@@ -6,9 +6,9 @@ import 'package:flutter_recipedia/features/recipes/app/recipe_comment_repository
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comment_likes_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/widgets/recipe_comment_reply_expandable.dart';
 import 'package:flutter_recipedia/models/recipe.dart' as model;
+import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
-import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:flutter_recipedia/utils/shorten_number.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../../models/user.dart';
 
-class RecipeComment extends StatelessWidget {
+class RecipeComment extends StatefulWidget {
   final model.RecipeComment comment;
   final void Function(User author) onReply;
 
@@ -24,9 +24,17 @@ class RecipeComment extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<RecipeComment> createState() => _RecipeCommentState();
+}
+
+class _RecipeCommentState extends State<RecipeComment> {
+  late final currentUser = context.read<AuthProvider>().user!;
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: context.read<UserRepository>().getUserById(comment.authorId),
+      future:
+          context.read<UserRepository>().getUserById(widget.comment.authorId),
       builder: (context, snap) {
         if (snap.waiting) {
           return Container();
@@ -45,17 +53,17 @@ class RecipeComment extends StatelessWidget {
                   SlidableAction(
                     backgroundColor: Colors.grey,
                     foregroundColor: Colors.white,
-                    onPressed: (_) => onReply(author),
+                    onPressed: (_) => widget.onReply(author),
                     icon: CupertinoIcons.arrow_turn_up_left,
                   ),
-                  if (author.id == mockMeId)
+                  if (author.id == currentUser.id)
                     SlidableAction(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
                       onPressed: (_) async {
                         await context
                             .read<RecipeCommentRepository>()
-                            .deleteComment(comment.id);
+                            .deleteComment(widget.comment.id);
                       },
                       icon: CupertinoIcons.delete_simple,
                     ),
@@ -88,24 +96,24 @@ class RecipeComment extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            comment.content,
+                            widget.comment.content,
                             style: const TextStyle(
                               fontSize: 14,
                               color: Colors.black,
                             ),
                           ),
                           const SizedBox(height: 6),
-                          RecipeCommentReplyExpandable(comment: comment),
+                          RecipeCommentReplyExpandable(comment: widget.comment),
                           const SizedBox(height: 6),
                           Row(
                             children: [
                               GestureDetector(
                                 onTap: () => Navigator.of(context).pushNamed(
                                   RecipeCommentLikesScreen.routeName,
-                                  arguments: comment.likes,
+                                  arguments: widget.comment.likes,
                                 ),
                                 child: Text(
-                                  "${shortenNumber(comment.likes.length)} likes",
+                                  "${shortenNumber(widget.comment.likes.length)} likes",
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
@@ -114,7 +122,7 @@ class RecipeComment extends StatelessWidget {
                               ),
                               const SizedBox(width: 12),
                               GestureDetector(
-                                onTap: () => onReply(author),
+                                onTap: () => widget.onReply(author),
                                 child: const Text(
                                   "Reply",
                                   style: TextStyle(
@@ -135,11 +143,11 @@ class RecipeComment extends StatelessWidget {
                         onPressed: () => _toggleLike(context, author.id),
                         splashRadius: 18,
                         icon: Icon(
-                          comment.likes.contains(author.id)
+                          widget.comment.likes.contains(author.id)
                               ? FontAwesomeIcons.solidHeart
                               : FontAwesomeIcons.heart,
                           size: 18,
-                          color: comment.likes.contains(author.id)
+                          color: widget.comment.likes.contains(author.id)
                               ? Theme.of(context).primaryColor
                               : null,
                         ),
@@ -157,16 +165,16 @@ class RecipeComment extends StatelessWidget {
 
   Future<void> _toggleLike(
       BuildContext context, DocumentReference userId) async {
-    if (comment.likes.contains(userId)) {
+    if (widget.comment.likes.contains(userId)) {
       await context.read<RecipeCommentRepository>().removeLike(
-            commentId: comment.id,
+            commentId: widget.comment.id,
             likerId: userId,
           );
       return;
     }
 
     context.read<RecipeCommentRepository>().addLike(
-          commentId: comment.id,
+          commentId: widget.comment.id,
           likerId: userId,
         );
   }

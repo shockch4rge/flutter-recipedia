@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/common/keep_alive_stateful.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_feed/widgets/recipe_content.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
+import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
-import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/recipe_feed_app_bar.dart';
@@ -21,10 +21,10 @@ class RecipeFeedScreen extends KeepAliveStateful {
 
 class _RecipeFeedScreenState extends KeepAliveState {
   final _scrollController = ScrollController();
-  late final getFollowedRecipeIds =
+  late var getFollowedRecipeIds =
       context.read<RecipeRepository>().getFollowedRecipeIds;
-  late final getRecipeUpdates =
-      context.read<RecipeRepository>().getRecipeUpdates;
+  late var getRecipeUpdates = context.read<RecipeRepository>().getRecipeUpdates;
+  late final currentUser = context.read<AuthProvider>().user!;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class _RecipeFeedScreenState extends KeepAliveState {
         ),
       ),
       body: FutureBuilder(
-        future: getFollowedRecipeIds(mockMeId),
+        future: getFollowedRecipeIds(currentUser.id),
         builder: (context, snap) {
           if (snap.hasError) {
             return const Center(
@@ -85,7 +85,7 @@ class _RecipeFeedScreenState extends KeepAliveState {
             displacement: 20,
             triggerMode: RefreshIndicatorTriggerMode.onEdge,
             onRefresh: () async {
-              await getFollowedRecipeIds(mockMeId);
+              await getFollowedRecipeIds(currentUser.id);
             },
             child: ListView.builder(
               controller: _scrollController,

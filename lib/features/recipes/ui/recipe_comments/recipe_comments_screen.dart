@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/main.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
+import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
-import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:provider/provider.dart';
 
 import './widgets/recipe_comment.dart' as widgets;
@@ -30,6 +30,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
   DocumentReference get recipeId => getArgs<DocumentReference>(context);
   late final Stream<List<RecipeComment>> comments =
       context.read<RecipeCommentRepository>().getAllByRecipeIdStream(recipeId);
+  late final currentUser = context.read<AuthProvider>().user!;
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +176,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                                 .read<RecipeCommentReplyRepository>()
                                 .addReply(
                                   recipeId: recipeId,
-                                  authorId: mockMeId,
+                                  authorId: currentUser.id,
                                   commentId: context
                                       .read<CommentProvider>()
                                       .targetComment!
@@ -190,7 +191,7 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                               .read<RecipeCommentRepository>()
                               .addComment(
                                 recipeId: recipeId,
-                                authorId: mockMeId,
+                                authorId: currentUser.id,
                                 content: _commentInputController.text.trim(),
                               );
                           _commentInputController.clear();

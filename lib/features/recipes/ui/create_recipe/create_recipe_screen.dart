@@ -6,8 +6,8 @@ import 'package:flutter_recipedia/features/recipes/app/create_recipe_provider.da
 import 'package:flutter_recipedia/features/recipes/ui/create_recipe/widgets/create_recipe_app_bar.dart';
 import 'package:flutter_recipedia/features/recipes/ui/create_recipe/widgets/reset_recipe_dialog.dart';
 import 'package:flutter_recipedia/main.dart';
+import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
-import 'package:flutter_recipedia/utils/mock_data.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -27,8 +27,8 @@ class CreateRecipeScreen extends KeepAliveStateful {
 }
 
 class _CreateRecipeScreenState extends KeepAliveState with RouteAware {
-  final _formKey =
-      GlobalKey<FormBuilderState>(debugLabel: "create_recipe_form");
+  final _formKey = GlobalKey<FormBuilderState>();
+  late final currentUser = context.read<AuthProvider>().user!;
 
   @override
   Widget build(BuildContext context) {
@@ -346,7 +346,7 @@ class _CreateRecipeScreenState extends KeepAliveState with RouteAware {
                         _formKey.currentState!.fields["notes"] as String;
 
                     await context.read<RecipeRepository>().addRecipe(
-                          authorId: mockMeId,
+                          authorId: currentUser.id,
                           title: title,
                           description: description,
                           ingredients: provider.ingredients,
