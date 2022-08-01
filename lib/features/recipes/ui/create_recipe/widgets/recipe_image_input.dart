@@ -75,7 +75,7 @@ class _RecipeImageInputState extends State<RecipeImageInput> {
         AndroidUiSettings(
           activeControlsWidgetColor: Theme.of(context).primaryColor,
           toolbarWidgetColor: Theme.of(context).primaryColorDark,
-          toolbarTitle: "Crop Avatar",
+          toolbarTitle: "Crop Image",
         )
       ],
     );
