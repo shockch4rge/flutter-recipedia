@@ -6,10 +6,10 @@ import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_sc
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/models/user.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
+import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
 import 'package:provider/provider.dart';
-import 'package:tuple/tuple.dart';
 
 import '../../app/recipe_comment_repository.dart';
 import '../common/recipe_buttons.dart';
@@ -30,8 +30,9 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
 
   double get minHeight => kToolbarHeight + MediaQuery.of(context).padding.top;
   double get maxHeight => 200 + MediaQuery.of(context).padding.top;
-  Recipe get recipe => getArgs<Tuple2>(context).item1;
-  User get user => getArgs<Tuple2>(context).item2;
+  Recipe get recipe => getArgs<Recipe>(context);
+
+  late final getUser = context.read<UserRepository>().getUserById;
 
   @override
   Widget build(BuildContext context) {
@@ -41,29 +42,43 @@ class _ViewRecipeScreenState extends State<ViewRecipeScreen> {
           _snapAppbar();
           return false;
         },
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          controller: _controller,
-          slivers: [
-            ViewRecipeAppBar(
-              recipe: recipe,
-              maxHeight: maxHeight,
-              minHeight: minHeight,
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _RecipeActions(recipe: recipe, user: user),
-                    _RecipeDescription(recipe: recipe),
-                    _RecipeDirections(recipe: recipe),
-                  ],
+        child: FutureBuilder(
+          future: getUser(recipe.authorId),
+          builder: (context, snap) {
+            if (snap.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            final user = snap.data as User;
+
+            return CustomScrollView(
+              physics: const BouncingScrollPhysics(),
+              controller: _controller,
+              slivers: [
+                ViewRecipeAppBar(
+                  recipe: recipe,
+                  maxHeight: maxHeight,
+                  minHeight: minHeight,
                 ),
-              ),
-            ),
-          ],
+                SliverPadding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _RecipeActions(recipe: recipe, user: user),
+                        _RecipeDescription(recipe: recipe),
+                        _RecipeDirections(recipe: recipe),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

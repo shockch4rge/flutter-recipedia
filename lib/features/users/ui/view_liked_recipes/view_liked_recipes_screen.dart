@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_recipedia/features/recipes/ui/view_recipe/view_recipe_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/view_liked_recipes/widgets/view_liked_recipes_app_bar.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
@@ -53,12 +54,20 @@ class _ViewLikedRecipesScreenState extends State<ViewLikedRecipesScreen> {
                 return CachedNetworkImage(
                   imageUrl: likedRecipes[index].imageUrl,
                   imageBuilder: (_, image) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        image: DecorationImage(
-                          image: image,
-                          fit: BoxFit.cover,
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamed(
+                          ViewRecipeScreen.routeName,
+                          arguments: likedRecipes[index],
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          image: DecorationImage(
+                            image: image,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     );
