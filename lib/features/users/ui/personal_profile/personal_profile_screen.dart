@@ -27,7 +27,6 @@ class PersonalProfileScreen extends KeepAliveStateful {
 
 class _PersonalProfileScreenState extends KeepAliveState {
   late final user = context.read<AuthProvider>().user!;
-  // get userId => mockMeId;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +52,7 @@ class _PersonalProfileScreenState extends KeepAliveState {
                       topRight: Radius.circular(8),
                     ),
                   ),
-                  builder: (_) => const PersonalProfileActions(),
+                  builder: (_) => PersonalProfileActions(user: user),
                 );
               },
             ),

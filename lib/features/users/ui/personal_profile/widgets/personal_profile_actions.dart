@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/features/users/ui/view_liked_recipes/view_liked_recipes_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/view_saved_recipes/view_saved_recipes_screen.dart';
+import 'package:flutter_recipedia/models/user.dart';
 
 import '../../personal_profile_settings/personal_profile_settings_screen.dart';
 
 class PersonalProfileActions extends StatelessWidget {
-  const PersonalProfileActions({Key? key}) : super(key: key);
+  final User user;
+
+  const PersonalProfileActions({Key? key, required this.user})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +32,7 @@ class PersonalProfileActions extends StatelessWidget {
               ListTile(
                 onTap: () => Navigator.of(context).pushNamed(
                   PersonalProfileSettingsScreen.routeName,
+                  arguments: user,
                 ),
                 title: Wrap(
                   spacing: 12,
