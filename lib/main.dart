@@ -23,7 +23,6 @@ import 'package:flutter_recipedia/features/users/ui/user_following/user_followin
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/view_liked_recipes/view_liked_recipes_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/view_saved_recipes/view_saved_recipes_screen.dart';
-import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
@@ -119,12 +118,7 @@ void main() async {
         ),
         Provider(
           create: (_) => RecipeCommentReplyRepository(
-            FirebaseFirestore.instance
-                .collection("replies")
-                .withConverter<RecipeCommentReply>(
-                  fromFirestore: RecipeCommentReply.fromFirestore,
-                  toFirestore: RecipeCommentReply.toFirestore,
-                ),
+            FirebaseFirestore.instance.collection("replies"),
           ),
         ),
         Provider(

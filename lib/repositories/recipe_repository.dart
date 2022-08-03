@@ -35,20 +35,18 @@ class RecipeRepository {
   ) async {
     final user = await userId
         .withConverter<User>(
-          fromFirestore: User.fromFirestore,
-          toFirestore: User.toFirestore,
-        )
+            fromFirestore: User.fromFirestore, toFirestore: User.toFirestore)
         .get();
 
-    final authorIds = user.get(User.followingField) as List<dynamic>;
+    final followedUserIds = user.get(User.followingField) as List<dynamic>;
     final List<DocumentReference> recipeIds = [];
 
-    for (final authorId in authorIds) {
+    for (final id in followedUserIds) {
       final snap = await _recipes
           .withConverter<Recipe>(
               fromFirestore: Recipe.fromFirestore,
               toFirestore: Recipe.toFirestore)
-          .where(Recipe.authorIdField, whereIn: [authorId, userId]).get();
+          .where(Recipe.authorIdField, whereIn: [id, userId]).get();
 
       recipeIds.addAll(snap.docs.map((doc) => doc.reference).toList());
     }
