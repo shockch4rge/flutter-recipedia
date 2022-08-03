@@ -183,17 +183,16 @@ class _RecipeCommentsScreenState extends State<RecipeCommentsScreen>
                                       .id,
                                   content: _commentInputController.text.trim(),
                                 );
-                            _commentInputController.clear();
-                            return;
+                          } else {
+                            await context
+                                .read<RecipeCommentRepository>()
+                                .addComment(
+                                  recipeId: recipeId,
+                                  authorId: currentUser.id,
+                                  content: _commentInputController.text.trim(),
+                                );
                           }
 
-                          await context
-                              .read<RecipeCommentRepository>()
-                              .addComment(
-                                recipeId: recipeId,
-                                authorId: currentUser.id,
-                                content: _commentInputController.text.trim(),
-                              );
                           _commentInputController.clear();
                           _commentInputFocus.unfocus();
                         },
