@@ -343,7 +343,7 @@ class _CreateRecipeScreenState extends KeepAliveState with RouteAware {
                     final description = _formKey
                         .currentState!.fields["description"]!.value as String;
                     final notes =
-                        _formKey.currentState!.fields["notes"] as String;
+                        _formKey.currentState!.fields["notes"]!.value as String;
 
                     await context.read<RecipeRepository>().addRecipe(
                           authorId: currentUser.id,
