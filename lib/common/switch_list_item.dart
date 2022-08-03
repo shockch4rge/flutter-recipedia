@@ -1,33 +1,26 @@
 import 'package:flutter/material.dart';
 
-class SwitchListItem extends StatefulWidget {
+class SwitchListItem extends StatelessWidget {
   final String title;
   final String? subtitle;
-  final void Function(bool checked) onSwitch;
   final bool checked;
+  final void Function(bool checked) onSwitch;
 
-  const SwitchListItem(
-      {Key? key,
-      required this.title,
-      this.subtitle,
-      required this.onSwitch,
-      required this.checked})
-      : super(key: key);
+  const SwitchListItem({
+    Key? key,
+    required this.title,
+    required this.onSwitch,
+    required this.checked,
+    this.subtitle,
+  }) : super(key: key);
 
-  @override
-  State<SwitchListItem> createState() => _SwitchListItemState();
-}
-
-class _SwitchListItemState extends State<SwitchListItem> {
   @override
   Widget build(BuildContext context) {
     return SwitchListTile.adaptive(
-      value: widget.checked,
-      onChanged: (value) => setState(() {
-        widget.onSwitch(value);
-      }),
-      title: Text(widget.title),
-      subtitle: widget.subtitle == null ? null : Text(widget.subtitle!),
+      value: checked,
+      onChanged: (value) => onSwitch(value),
+      title: Text(title),
+      subtitle: subtitle == null ? null : Text(subtitle!),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
