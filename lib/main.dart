@@ -9,6 +9,7 @@ import 'package:flutter_recipedia/features/authentication/ui/reset_password/send
 import 'package:flutter_recipedia/features/authentication/ui/signup/signup_screen.dart';
 import 'package:flutter_recipedia/features/misc/home_screen.dart';
 import 'package:flutter_recipedia/features/recipes/app/create_recipe_provider.dart';
+import 'package:flutter_recipedia/features/recipes/app/edit_recipe_provider.dart';
 import 'package:flutter_recipedia/features/recipes/app/recipe_image_repository.dart';
 import 'package:flutter_recipedia/features/recipes/ui/create_recipe/create_recipe_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comment_likes_screen.dart';
@@ -21,6 +22,7 @@ import 'package:flutter_recipedia/features/users/ui/user_followers/user_follower
 import 'package:flutter_recipedia/features/users/ui/user_following/user_following_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_profile/user_profile_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/view_liked_recipes/view_liked_recipes_screen.dart';
+import 'package:flutter_recipedia/features/users/ui/view_saved_recipes/view_saved_recipes_screen.dart';
 import 'package:flutter_recipedia/models/recipe.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
@@ -29,6 +31,7 @@ import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_builder_validators/localization/l10n.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 
 import 'features/recipes/app/recipe_comment_reply_repository.dart';
@@ -39,6 +42,9 @@ import 'firebase.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox("settings");
+  await Hive.openBox("ingredientsChecklist");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await Future.wait([
     precachePicture(
@@ -87,6 +93,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => CreateRecipeProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => EditRecipeProvider(),
         ),
 
         /* Repositories */
@@ -256,6 +265,7 @@ class App extends StatelessWidget {
         PersonalProfileSettingsScreen.routeName: (_) =>
             const PersonalProfileSettingsScreen(),
         ViewLikedRecipesScreen.routeName: (_) => const ViewLikedRecipesScreen(),
+        ViewSavedRecipesScreen.routeName: (_) => const ViewSavedRecipesScreen(),
         UserProfileScreen.routeName: (_) => const UserProfileScreen(),
         UserFollowersScreen.routeName: (_) => const UserFollowersScreen(),
         UserFollowingScreen.routeName: (_) => const UserFollowingScreen(),

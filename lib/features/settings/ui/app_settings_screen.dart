@@ -28,7 +28,7 @@ class AppSettingsScreen extends StatelessWidget {
                 onSwitch: (checked) {
                   box.put("enableNotifications", checked);
                 },
-                checked: box.get("enableNotifications"),
+                checked: box.get("enableNotifications", defaultValue: false),
               ),
               ElevatedButton(
                 onPressed: () async {

@@ -9,6 +9,7 @@ import 'package:flutter_recipedia/repositories/recipe_repository.dart';
 import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_recipedia/utils/extensions/async_helper.dart';
 import 'package:flutter_recipedia/utils/get_args.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../../app/recipe_comment_repository.dart';
@@ -218,11 +219,30 @@ class _RecipeDirections extends StatelessWidget {
           style: Theme.of(context).textTheme.headline3,
         ),
         const SizedBox(height: 6),
-        Wrap(
-          runSpacing: 4,
-          children: recipe.ingredients
-              .map((ingredient) => CheckBoxListItem(title: ingredient))
-              .toList(),
+        ValueListenableBuilder<Box>(
+          valueListenable: Hive.box("ingredientsChecklist").listenable(),
+          builder: (context, box, widget) {
+            return Wrap(
+              runSpacing: 4,
+              children: recipe.ingredients
+                  .mapIndexed(
+                    (index, ingredient) => CheckBoxListItem(
+                      title: ingredient,
+                      onChanged: (value) {
+                        box.put(
+                          "recipe-${recipe.id}-ingredient-$index",
+                          value,
+                        );
+                      },
+                      checked: box.get(
+                        "recipe-${recipe.id}-ingredient-$index",
+                        defaultValue: false,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            );
+          },
         ),
         const SizedBox(height: 20),
         Text(
