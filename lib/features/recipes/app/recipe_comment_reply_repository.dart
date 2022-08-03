@@ -6,19 +6,17 @@ class RecipeCommentReplyRepository {
 
   const RecipeCommentReplyRepository(this._replies);
 
-  Future<List<RecipeCommentReply>> getAllByCommentId(
+  Stream<List<RecipeCommentReply>> getAllByCommentId(
     DocumentReference commentId,
-  ) async {
-    final snap = await _replies
+  ) {
+    return _replies
         .withConverter<RecipeCommentReply>(
           fromFirestore: RecipeCommentReply.fromFirestore,
           toFirestore: RecipeCommentReply.toFirestore,
         )
         .where(RecipeCommentReply.commentIdField, isEqualTo: commentId)
-        .get();
-
-    final replies = snap.docs.map((doc) => doc.data()).toList();
-    return replies;
+        .snapshots()
+        .map((snap) => snap.docs.map((doc) => doc.data()).toList());
   }
 
   Future<RecipeCommentReply> getByCommentId(String commentId) async {
@@ -44,6 +42,7 @@ class RecipeCommentReplyRepository {
       RecipeCommentReply.authorIdField: authorId,
       RecipeCommentReply.recipeIdField: recipeId,
       RecipeCommentReply.contentField: content,
+      RecipeCommentReply.commentIdField: commentId,
       RecipeCommentReply.likesField: [],
     });
   }

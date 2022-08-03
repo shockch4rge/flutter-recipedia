@@ -24,14 +24,14 @@ class RecipeCommentReplyExpandable extends StatefulWidget {
 
 class _RecipeCommentReplyExpandableState
     extends State<RecipeCommentReplyExpandable> {
-  late final comment = widget.comment;
+  late final replies = context
+      .read<RecipeCommentReplyRepository>()
+      .getAllByCommentId(widget.comment.id);
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: context
-          .read<RecipeCommentReplyRepository>()
-          .getAllByCommentId(comment.id),
+    return StreamBuilder(
+      stream: replies,
       builder: (context, snap) {
         if (snap.waiting) {
           return Container();
