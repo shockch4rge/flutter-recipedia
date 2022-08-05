@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_recipedia/features/authentication/ui/login/login_screen.dart';
@@ -15,7 +16,8 @@ import 'package:flutter_recipedia/features/recipes/ui/create_recipe/create_recip
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comment_likes_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/recipe_comments/recipe_comments_screen.dart';
 import 'package:flutter_recipedia/features/recipes/ui/view_recipe/view_recipe_screen.dart';
-import 'package:flutter_recipedia/features/search/ui/search_screen.dart';
+import 'package:flutter_recipedia/features/search/app/search_provider.dart';
+import 'package:flutter_recipedia/features/search/ui/view_searched_recipe/view_searched_recipe_screen.dart';
 import 'package:flutter_recipedia/features/settings/ui/app_settings_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/personal_profile_settings/personal_profile_settings_screen.dart';
 import 'package:flutter_recipedia/features/users/ui/user_followers/user_followers_screen.dart';
@@ -25,6 +27,7 @@ import 'package:flutter_recipedia/features/users/ui/view_liked_recipes/view_like
 import 'package:flutter_recipedia/features/users/ui/view_saved_recipes/view_saved_recipes_screen.dart';
 import 'package:flutter_recipedia/providers/auth_provider.dart';
 import 'package:flutter_recipedia/providers/comment_provider.dart';
+import 'package:flutter_recipedia/providers/notification_service.dart';
 import 'package:flutter_recipedia/repositories/recipe_repository.dart';
 import 'package:flutter_recipedia/repositories/user_repository.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -35,9 +38,14 @@ import 'package:provider/provider.dart';
 
 import 'features/recipes/app/recipe_comment_reply_repository.dart';
 import 'features/recipes/app/recipe_comment_repository.dart';
+import 'features/search/ui/search/search_screen.dart';
 import 'features/users/app/avatar_provider.dart';
 import 'features/users/app/avatar_repository.dart';
 import 'firebase.dart';
+
+Future<void> _handleFirebaseBackgroundMessage(RemoteMessage message) async {
+  print("Handling a background message: ${message.messageId}");
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +53,14 @@ void main() async {
   await Hive.openBox("settings");
   await Hive.openBox("ingredientsChecklist");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(_handleFirebaseBackgroundMessage);
+  FirebaseMessaging.onMessage.listen((message) {
+    print('Message data: ${message.data}');
+
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification}');
+    }
+  });
   await Future.wait([
     precachePicture(
       ExactAssetPicture(
@@ -96,6 +112,11 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => EditRecipeProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => SearchProvider(
+            FirebaseFirestore.instance.collection("users"),
+          ),
+        ),
 
         /* Repositories */
         Provider(
@@ -126,6 +147,13 @@ void main() async {
             FirebaseStorage.instance.ref().child("avatars"),
           ),
         ),
+
+        /* Services */
+        Provider(
+          create: (_) => NotificationService(
+            FirebaseMessaging.instance,
+          ),
+        )
       ],
       child: const App(),
     ),
@@ -255,6 +283,8 @@ class App extends StatelessWidget {
         RecipeCommentLikesScreen.routeName: (_) =>
             const RecipeCommentLikesScreen(),
         SearchScreen.routeName: (_) => const SearchScreen(),
+        ViewSearchedRecipeScreen.routeName: (_) =>
+            const ViewSearchedRecipeScreen(),
         CreateRecipeScreen.routeName: (_) => const CreateRecipeScreen(),
         PersonalProfileSettingsScreen.routeName: (_) =>
             const PersonalProfileSettingsScreen(),

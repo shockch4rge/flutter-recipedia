@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_recipedia/utils/document_serializer.dart';
+import 'package:flutter_recipedia/utils/extensions/string.dart';
 import 'package:flutter_recipedia/utils/types.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -133,4 +134,95 @@ class RecipeCommentReply {
       reply.toJson();
 
   JsonResponse toJson() => _$RecipeCommentReplyToJson(this);
+}
+
+class MealDbRecipe {
+  final String name;
+  final List<String> ingredients;
+  final List<String> steps;
+  final String imageUrl;
+
+  const MealDbRecipe({
+    required this.name,
+    required this.imageUrl,
+    required this.ingredients,
+    required this.steps,
+  });
+
+  factory MealDbRecipe.fromJson(JsonResponse json) {
+    final List<String> ingredients = [];
+
+    for (var i = 1; i <= 20; i++) {
+      final ingredient = json["strIngredient$i"];
+      final measurement = json["strMeasure$i"];
+
+      if (ingredient == "" || measurement == "") break;
+
+      ingredients.add("$measurement $ingredient");
+    }
+
+    final steps = (json["strInstructions"] as String).split("\n");
+
+    return MealDbRecipe(
+      name: (json["strMeal"] as String).toTitleCase(),
+      imageUrl: json["strMealThumb"],
+      ingredients: ingredients,
+      steps: steps,
+    );
+  }
+
+  JsonResponse toJson() {
+    return {
+      "name": name,
+      "imageUrl": imageUrl,
+      "ingredients": ingredients,
+      "steps": steps,
+    };
+  }
+}
+
+class SpoonacularRecipe {
+  final String id;
+  final String name;
+  final String imageUrl;
+  final List<String> ingredients;
+  final List<String> steps;
+
+  const SpoonacularRecipe({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.ingredients,
+    required this.steps,
+  });
+
+  factory SpoonacularRecipe.fromJson(JsonResponse json) {
+    final instructions =
+        json["analyzedInstructions"][0]["steps"] as List<dynamic>;
+    final steps = instructions.map((s) => s["step"] as String).toList();
+    final ingredients = instructions
+        .map((s) => (s["ingredients"] as List<dynamic>)
+            .map((i) => (i["name"] as String).toCapitalized()))
+        .expand((e) => e)
+        .toSet()
+        .toList();
+
+    return SpoonacularRecipe(
+      id: (json["id"] as int).toString(),
+      name: json["title"],
+      imageUrl: json["image"],
+      ingredients: ingredients,
+      steps: steps,
+    );
+  }
+
+  JsonResponse toJson() {
+    return {
+      "id": id,
+      "name": name,
+      "imageUrl": imageUrl,
+      "ingredients": ingredients,
+      "steps": steps,
+    };
+  }
 }
