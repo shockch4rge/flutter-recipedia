@@ -31,15 +31,16 @@ class SearchProvider with ChangeNotifier {
   }
 
   Future<void> searchForUsers(String query) async {
+    query = query.toLowerCase();
     users.clear();
     isSearchingUsers = true;
     notifyListeners();
 
     final snap = await _users
         .withConverter<User>(
-            fromFirestore: User.fromFirestore, toFirestore: User.toFirestore)
-        .where(User.nameField, isGreaterThanOrEqualTo: query)
-        .where(User.nameField, isLessThanOrEqualTo: "$query\uf8ff")
+          fromFirestore: User.fromFirestore,
+          toFirestore: User.toFirestore,
+        )
         .where(User.usernameField, isGreaterThanOrEqualTo: query)
         .where(User.usernameField, isLessThanOrEqualTo: "$query\uf8ff")
         .limit(20)

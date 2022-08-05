@@ -65,12 +65,19 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(160);
 }
 
-class SearchBar extends StatelessWidget {
+class SearchBar extends StatefulWidget {
   final String searchTerm;
   final void Function(String query) onSearch;
 
   const SearchBar({Key? key, required this.searchTerm, required this.onSearch})
       : super(key: key);
+
+  @override
+  State<SearchBar> createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<SearchBar> {
+  final searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -79,12 +86,13 @@ class SearchBar extends StatelessWidget {
       alignment: AlignmentDirectional.centerEnd,
       children: [
         TextField(
+          controller: searchController,
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w400,
             color: Colors.black,
           ),
-          onSubmitted: onSearch,
+          onSubmitted: (_) => widget.onSearch(searchController.text),
           decoration: InputDecoration(
             isDense: true,
             filled: true,
@@ -95,7 +103,7 @@ class SearchBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide.none,
             ),
-            hintText: "Search for ${searchTerm.toLowerCase()}!",
+            hintText: "Search for ${widget.searchTerm.toLowerCase()}!",
             hintStyle: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w400,
@@ -106,17 +114,21 @@ class SearchBar extends StatelessWidget {
         Positioned(
           top: -4,
           right: 0,
-          child: Container(
-            padding: const EdgeInsets.all(10),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Theme.of(context).primaryColorDark,
-            ),
-            child: const Icon(
-              Icons.search,
-              color: Colors.white,
-              size: 28,
+          child: Material(
+            child: InkWell(
+              onTap: () => widget.onSearch(searchController.text),
+              child: Ink(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Theme.of(context).primaryColorDark,
+                ),
+                child: const Icon(
+                  Icons.search,
+                  color: Colors.white,
+                  size: 28,
+                ),
+              ),
             ),
           ),
         ),
